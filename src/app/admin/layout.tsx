@@ -13,7 +13,7 @@ import { AdminSettingsLink } from "@modules/admin/components/admin-settings-link
 import { AdminMobileMenu } from "@modules/admin/components/admin-mobile-menu"
 import { AdminNotificationDropdown } from "@modules/admin/components/notifications"
 import { AdminGlobalSearch } from "@modules/admin/components/admin-global-search"
-import { inter } from "@lib/fonts"
+import { poppins } from "@lib/fonts"
 
 export const metadata = {
   title: "Apindex Admin",
@@ -80,7 +80,7 @@ export default async function AdminLayout({
   return (
     <PermissionsProvider initialPermissions={initialPermissions}>
       <div
-        className={`flex flex-col lg:grid lg:grid-cols-[260px_1fr] min-h-screen bg-gray-50 ${inter.variable} font-inter`}
+        className={`flex flex-col lg:grid lg:grid-cols-[260px_1fr] min-h-screen bg-gray-50 ${poppins.variable} font-inter`}
       >
         {/* Desktop Sidebar - Hidden on mobile, visible on lg+ */}
         <aside className="hidden lg:flex bg-white border-r border-gray-200 flex-col sticky top-0 h-screen overflow-hidden">

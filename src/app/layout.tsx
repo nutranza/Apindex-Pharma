@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { inter } from "@lib/fonts"
+import { poppins } from "@lib/fonts"
 import Providers from "./providers"
 import "@/styles/globals.css"
 
@@ -26,7 +26,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
       lang="en"
       data-mode="light"
       suppressHydrationWarning
-      className={inter.variable}
+      className={poppins.variable}
     >
       <body suppressHydrationWarning className="font-sans">
         <Providers>{props.children}</Providers>

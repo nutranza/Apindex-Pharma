@@ -96,8 +96,7 @@ module.exports = {
       },
       fontFamily: {
         sans: [
-          "var(--font-Grandstander)",
-          "Inter",
+          "var(--font-poppins)",
           "-apple-system",
           "BlinkMacSystemFont",
           "Segoe UI",
@@ -106,8 +105,9 @@ module.exports = {
           "Ubuntu",
           "sans-serif",
         ],
-        grandstander: ["var(--font-Grandstander)", "sans-serif"],
-        inter: ["var(--font-inter)", "sans-serif"],
+        grandstander: ["var(--font-poppins)", "sans-serif"],
+        inter: ["var(--font-poppins)", "sans-serif"],
+        poppins: ["var(--font-poppins)", "sans-serif"],
       },
       keyframes: {
         ring: {
