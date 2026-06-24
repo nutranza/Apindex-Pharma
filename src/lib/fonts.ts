@@ -1,31 +1,54 @@
 import localFont from "next/font/local"
-import { Inter } from "next/font/google"
 
-export const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
-    display: "swap",
-})
-
-export const grandstander = localFont({
+export const poppins = localFont({
     src: [
         {
-            path: "../../public/assets/fonts/Grandstander-Regular.ttf",
+            path: "../../public/assets/fonts/Poppins-Thin.ttf",
+            weight: "100",
+            style: "normal",
+        },
+        {
+            path: "../../public/assets/fonts/Poppins-ExtraLight.ttf",
+            weight: "200",
+            style: "normal",
+        },
+        {
+            path: "../../public/assets/fonts/Poppins-Light.ttf",
+            weight: "300",
+            style: "normal",
+        },
+        {
+            path: "../../public/assets/fonts/Poppins-Regular.ttf",
             weight: "400",
             style: "normal",
         },
         {
-            path: "../../public/assets/fonts/Grandstander-SemiBold.ttf",
+            path: "../../public/assets/fonts/Poppins-Medium.ttf",
+            weight: "500",
+            style: "normal",
+        },
+        {
+            path: "../../public/assets/fonts/Poppins-SemiBold.ttf",
             weight: "600",
             style: "normal",
         },
         {
-            path: "../../public/assets/fonts/Grandstander-Bold.ttf",
+            path: "../../public/assets/fonts/Poppins-Bold.ttf",
             weight: "700",
             style: "normal",
         },
+        {
+            path: "../../public/assets/fonts/Poppins-ExtraBold.ttf",
+            weight: "800",
+            style: "normal",
+        },
+        {
+            path: "../../public/assets/fonts/Poppins-Black.ttf",
+            weight: "900",
+            style: "normal",
+        },
     ],
-    variable: "--font-Grandstander",
+    variable: "--font-poppins",
     display: "swap",
     preload: true,
 })

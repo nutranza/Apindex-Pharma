@@ -1,39 +1,56 @@
 import Image from "next/image"
-import SectionBadge from "@modules/common/components/section-badge"
 
 const WELCOME_IMAGE_URL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAqn5mGy4tBW7R-mFwByWYGx2rc1xuPI8beh1p8OKwZb1nhKY9ANVEOWgYA97BhbNqskkNwVBPGjRk5paTpQSFnonLojpwaXbtJAmUl8Ui4zynW85S7UMzIUAdOVgYRU9ALRRaYWKL4v7PQkgjxKH5GfoDjEWGFQWYJ0_MP8ZVVo2u0pIVOBf5c5Oty3TXeJG3YDF7eO21qn2JTMnRRM1N-Dc9FvSF3zNQhKIoOWJatBRZDKZU8TnTqRrr4QyBdgxhfqyRbYSYbgZI"
 
+const TRUST_POINTS = [
+  { value: "WHO-GMP", label: "Certified" },
+  { value: "1500+", label: "Products" },
+  { value: "86+", label: "Countries" },
+]
+
 export default function WelcomeSection() {
   return (
-    <section id="welcome" className="bg-surface py-16 lg:py-24">
+    <section id="welcome" className="bg-white py-16 lg:py-24">
       <div className="content-container">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          {/* Left: text content */}
-          <div className="space-y-6">
-            <SectionBadge tone="primary">Welcome to Apindex</SectionBadge>
-            <h2 className="section-heading">
-              A Legacy of Trust in{" "}
-              <span className="text-primary">Pharmaceutical</span>{" "}
-              Excellence
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
+          <div className="max-w-2xl">
+            <h2 className="apx-font-headline text-3xl font-extrabold leading-[1.12] text-on-surface sm:text-4xl lg:text-5xl">
+              <span className="block">A Legacy of Trust in</span>
+              <span className="block">
+                <span className="text-primary">Pharmaceutical</span> Excellence
+              </span>
             </h2>
-            <p className="section-description">
-              Apindex Pharmaceutical Pvt. Ltd. is a WHO-GMP certified company
-              dedicated to delivering high-quality, affordable medicines to
-              patients across the globe. With over two decades of experience,
-              we have built a reputation for reliability, innovation, and
-              uncompromising quality.
-            </p>
-            <p className="section-description">
-              Our portfolio of 1500+ products spans diverse therapeutic
-              categories, exported to 86+ countries. We combine modern
-              manufacturing infrastructure with research-driven formulations
-              to meet international regulatory standards consistently.
-            </p>
+
+            <div className="mt-6 space-y-4 text-base leading-relaxed text-on-surface-variant sm:text-lg">
+              <p>
+                Apindex Pharmaceutical Pvt. Ltd. is a WHO-GMP certified company
+                delivering high-quality, affordable medicines across the globe.
+                With over two decades of experience, we are trusted for
+                reliability, innovation, and uncompromising quality.
+              </p>
+              <p>
+                Our portfolio of 1500+ products spans diverse therapeutic
+                categories and reaches 86+ countries through modern
+                manufacturing and research-driven formulations.
+              </p>
+            </div>
+
+            <div className="mt-8 grid grid-cols-3 gap-x-4 py-3">
+              {TRUST_POINTS.map((point) => (
+                <div key={point.label}>
+                  <div className="apx-font-headline text-lg font-extrabold leading-none text-on-surface sm:text-2xl">
+                    {point.value}
+                  </div>
+                  <div className="mt-2 text-xs font-semibold uppercase text-on-surface-variant sm:text-sm">
+                    {point.label}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Right: image */}
-          <div className="relative h-[420px] overflow-hidden rounded-2xl lg:h-[500px]">
+          <div className="relative h-[320px] overflow-hidden rounded-xl border border-outline-variant/50 bg-surface-low shadow-[0_24px_60px_rgba(86,67,54,0.10)] sm:h-[420px] lg:h-[500px]">
             <Image
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"

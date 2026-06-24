@@ -5,86 +5,110 @@ import {
   FaSyringe,
   FaTablets,
 } from "react-icons/fa"
-import { MdApps, MdSanitizer } from "react-icons/md"
+import { MdApps, MdOutlineMedication, MdSanitizer } from "react-icons/md"
 import { TbMedicineSyrup } from "react-icons/tb"
-import SectionBadge from "@modules/common/components/section-badge"
 
 type CategoryCard = {
   icon: IconType
   title: string
-  bgClass: string
+  description: string
+  tone: "primary" | "secondary"
 }
 
 const CATEGORY_CARDS: CategoryCard[] = [
   {
     icon: FaTablets,
     title: "Tablet",
-    bgClass: "bg-amber-500",
+    description: "Solid oral dosage forms for precise daily therapy.",
+    tone: "primary",
   },
   {
     icon: FaCapsules,
     title: "Capsule",
-    bgClass: "bg-blue-600",
-  },
-  {
-    icon: FaEyeDropper,
-    title: "Eye / EarDrops",
-    bgClass: "bg-green-600",
+    description: "Encapsulated formulations for controlled delivery.",
+    tone: "secondary",
   },
   {
     icon: FaSyringe,
     title: "Injection",
-    bgClass: "bg-red-800",
+    description: "Sterile injectable products for clinical requirements.",
+    tone: "primary",
+  },
+  {
+    icon: FaEyeDropper,
+    title: "Eye / Ear Drops",
+    description: "Focused liquid care for ophthalmic and otic use.",
+    tone: "secondary",
   },
   {
     icon: MdSanitizer,
     title: "Creams",
-    bgClass: "bg-purple-600",
+    description: "Topical preparations built for smooth application.",
+    tone: "secondary",
+  },
+  {
+    icon: MdOutlineMedication,
+    title: "Ointments / Gels",
+    description: "Semi-solid topical formats for targeted treatment.",
+    tone: "primary",
   },
   {
     icon: TbMedicineSyrup,
     title: "Suspension / Syrup",
-    bgClass: "bg-slate-700",
+    description: "Palatable liquid medicines for flexible dosing.",
+    tone: "secondary",
   },
   {
     icon: MdApps,
-    title: "Other",
-    bgClass: "bg-yellow-500",
+    title: "Other Dosage Forms",
+    description: "Additional formulations for specialized needs.",
+    tone: "primary",
   },
 ]
 
+const TONE_CLASS: Record<CategoryCard["tone"], string> = {
+  primary: "bg-primary-fixed text-primary",
+  secondary: "bg-secondary-fixed text-on-secondary-container",
+}
+
 export default function CategoriesSection() {
   return (
-    <section id="categories" className="bg-surface-low py-16 lg:py-24">
+    <section id="categories" className="bg-white py-16 lg:py-24">
       <div className="content-container">
-        <div className="mb-16 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-          <div className="max-w-2xl">
-            <SectionBadge tone="secondary" className="mb-4">Dosage Forms</SectionBadge>
-            <h2 className="section-heading">
-              Product <span className="text-secondary">Categories</span>
-            </h2>
-          </div>
-          <div className="mx-12 mb-4 hidden h-px flex-grow bg-outline-variant/30 md:block" />
-          <p className="section-description max-w-xs font-serif italic">
+        <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between lg:mb-14">
+          <h2 className="section-heading max-w-2xl">
+            Product{" "}
+            <span className="rounded-lg bg-secondary-fixed px-2 text-on-secondary-container">
+              Categories
+            </span>
+          </h2>
+          <p className="section-description max-w-sm md:text-right">
             Engineered for every therapeutic need and patient requirement.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 lg:gap-6">
           {CATEGORY_CARDS.map((card) => {
             const Icon = card.icon
             return (
               <div
                 key={card.title}
-                className={`group flex flex-col items-center justify-center rounded-xl px-4 py-8 text-center text-white transition-transform duration-300 hover:-translate-y-2 ${card.bgClass}`}
+                className="flex min-h-[190px] flex-col rounded-xl bg-surface-low p-5 lg:p-6"
               >
-                <Icon
-                  aria-hidden="true"
-                  className="mb-4 text-5xl opacity-90 transition-opacity group-hover:opacity-100"
-                />
-                <h3 className="apx-font-headline text-sm font-bold leading-tight">
+                <div
+                  className={`mb-5 flex h-12 w-12 items-center justify-center rounded-lg ${TONE_CLASS[card.tone]}`}
+                >
+                  <Icon
+                    aria-hidden="true"
+                    className="text-2xl"
+                  />
+                </div>
+                <h3 className="apx-font-headline text-base font-extrabold leading-tight text-on-surface lg:text-lg">
                   {card.title}
                 </h3>
+                <p className="mt-3 text-sm leading-6 text-on-surface-variant">
+                  {card.description}
+                </p>
               </div>
             )
           })}

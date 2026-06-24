@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import Image from "next/image"
 import Link from "next/link"
@@ -13,10 +13,13 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
+  { label: "Company", href: "/company" },
   { label: "About", href: "/about" },
   { label: "Products", href: "/products" },
   { label: "Gallery", href: "/gallery" },
+  { label: "Global Presence", href: "/Global-Presence" },
   { label: "Contact", href: "/contact" },
+
 ]
 
 function normalizePathname(pathname: string) {
@@ -27,28 +30,56 @@ function normalizePathname(pathname: string) {
   return pathname.endsWith("/") ? pathname.slice(0, -1) : pathname
 }
 
-function isNavItemActive(pathname: string, href: string) {
-  if (href === "/") {
-    return pathname === "/"
-  }
-
-  return pathname === href || pathname.startsWith(`${href}/`)
-}
-
 export default function TopNavBar() {
   const pathname = normalizePathname(usePathname() ?? "/")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const quoteHref =
-    pathname === "/contact" ? "#contact-form" : "/contact#contact-form"
+  const scrollPositionRef = useRef(0)
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
   }, [pathname])
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return
+    }
+
+    const { body, documentElement } = document
+    const previousBodyPosition = body.style.position
+    const previousBodyTop = body.style.top
+    const previousBodyLeft = body.style.left
+    const previousBodyRight = body.style.right
+    const previousBodyWidth = body.style.width
+    const previousBodyOverflow = body.style.overflow
+    const previousHtmlOverflow = documentElement.style.overflow
+
+    scrollPositionRef.current = window.scrollY
+    body.classList.add("modal-open")
+    documentElement.style.overflow = "hidden"
+    body.style.overflow = "hidden"
+    body.style.position = "fixed"
+    body.style.top = `-${scrollPositionRef.current}px`
+    body.style.left = "0"
+    body.style.right = "0"
+    body.style.width = "100%"
+
+    return () => {
+      body.classList.remove("modal-open")
+      documentElement.style.overflow = previousHtmlOverflow
+      body.style.position = previousBodyPosition
+      body.style.top = previousBodyTop
+      body.style.left = previousBodyLeft
+      body.style.right = previousBodyRight
+      body.style.width = previousBodyWidth
+      body.style.overflow = previousBodyOverflow
+      window.scrollTo(0, scrollPositionRef.current)
+    }
+  }, [isMobileMenuOpen])
+
   return (
-    <nav className="glass-nav fixed top-0 z-50 w-full bg-white shadow-md">
+    <nav className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white">
       <div className="content-container">
-        <div className="flex w-full items-center justify-between gap-4 py-3 sm:py-4">
+        <div className="flex h-20 w-full items-center justify-between gap-6">
           <Link href="/" aria-label="Apindex home" className="shrink-0">
             <Image
               src="/apindex-logo.jpg"
@@ -57,29 +88,22 @@ export default function TopNavBar() {
               height={1187}
               priority
               quality={100}
-              className="h-14 w-auto object-contain"
+              className="h-14 w-auto object-contain sm:h-16"
             />
           </Link>
 
-          <div className="hidden items-center gap-8 md:flex">
-            {NAV_ITEMS.map((item) => {
-              const isActive = isNavItemActive(pathname, item.href)
-
-              return (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`apx-font-headline text-sm font-semibold uppercase tracking-wide transition-colors ${
-                    isActive
-                      ? "border-b-2 border-primary pb-1 text-primary"
-                      : "text-zinc-600 hover:text-primary"
-                  }`}
-                >
+          <div className="hidden flex-1 items-center justify-end gap-10 small:flex">
+            {NAV_ITEMS.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                className="group apx-font-headline inline-flex items-center py-2 text-[15px] font-bold uppercase text-on-surface focus-visible:outline-none lg:text-base"
+              >
+                <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-1 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
                   {item.label}
-                </Link>
-              )
-            })}
+                </span>
+              </Link>
+            ))}
           </div>
 
           <button
@@ -92,7 +116,7 @@ export default function TopNavBar() {
                 : "Open navigation menu"
             }
             onClick={() => setIsMobileMenuOpen((currentValue) => !currentValue)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/[0.14] bg-white text-primary transition-colors hover:border-primary hover:text-primary md:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center text-on-surface transition-colors hover:text-primary focus-visible:outline-none small:hidden"
           >
             {isMobileMenuOpen ? (
               <XMarkIcon className="h-6 w-6" />
@@ -100,47 +124,55 @@ export default function TopNavBar() {
               <Bars3Icon className="h-6 w-6" />
             )}
           </button>
-
-          <Link
-            href={quoteHref}
-            className="ambient-shadow hidden rounded-md bg-primary-container px-5 py-2.5 text-sm font-semibold text-white md:inline-flex"
-          >
-            Request a Quote
-          </Link>
         </div>
       </div>
 
       {isMobileMenuOpen ? (
-        <div
-          id="apindex-mobile-navigation"
-          className="border-t border-primary/10 bg-white/95 px-4 py-4 shadow-lg backdrop-blur md:hidden"
-        >
-          <div className="mx-auto flex w-full max-w-screen-2xl flex-col gap-2">
-            {NAV_ITEMS.map((item) => {
-              const isActive = isNavItemActive(pathname, item.href)
+        <div className="fixed inset-0 z-50 small:hidden">
+          <button
+            type="button"
+            aria-label="Close navigation menu"
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="absolute inset-0 bg-black/35"
+          />
 
-              return (
+          <div
+            id="apindex-mobile-navigation"
+            className="absolute right-0 top-0 flex h-full w-[min(80vw,360px)] animate-fade-in-right flex-col bg-white shadow-[-18px_0_36px_rgba(86,67,54,0.16)]"
+          >
+            <div className="flex h-20 items-center justify-between border-b border-gray-200/80 px-6">
+              <Image
+                src="/apindex-logo.jpg"
+                alt="Apindex"
+                width={1920}
+                height={1187}
+                quality={100}
+                className="h-14 w-auto object-contain"
+              />
+              <button
+                type="button"
+                aria-label="Close navigation menu"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="inline-flex h-11 w-11 items-center justify-center text-on-surface transition-colors hover:text-primary focus-visible:outline-none"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-1 px-5 py-6">
+              {NAV_ITEMS.map((item) => (
                 <Link
                   key={item.label}
                   href={item.href}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`rounded-xl px-4 py-3 text-sm font-semibold uppercase tracking-[0.16em] transition-colors ${
-                    isActive
-                      ? "bg-primary/[0.08] text-primary"
-                      : "text-zinc-700 hover:bg-zinc-100 hover:text-primary"
-                  }`}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="group apx-font-headline rounded-lg px-4 py-3 text-base font-bold uppercase text-on-surface focus-visible:outline-none"
                 >
-                  {item.label}
+                  <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-1 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
+                    {item.label}
+                  </span>
                 </Link>
-              )
-            })}
-
-            <Link
-              href={quoteHref}
-              className="mt-2 inline-flex items-center justify-center rounded-xl bg-primary-container px-4 py-3 text-sm font-semibold text-white"
-            >
-              Request a Quote
-            </Link>
+              ))}
+            </div>
           </div>
         </div>
       ) : null}
