@@ -77,7 +77,7 @@ export default function TopNavBar() {
   }, [isMobileMenuOpen])
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-primary/15 bg-white shadow-[0_10px_30px_rgba(232,150,29,0.08)]">
+    <nav className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white">
       <div className="content-container">
         <div className="flex h-20 w-full items-center justify-between gap-6">
           <Link href="/" aria-label="Apindex home" className="shrink-0">
@@ -140,7 +140,7 @@ export default function TopNavBar() {
             id="apindex-mobile-navigation"
             className="absolute right-0 top-0 flex h-full w-[min(80vw,360px)] animate-fade-in-right flex-col bg-white shadow-[-18px_0_36px_rgba(86,67,54,0.16)]"
           >
-            <div className="flex h-20 items-center justify-between border-b border-primary/15 px-6">
+            <div className="flex h-20 items-center justify-between border-b border-gray-200/80 px-6">
               <Image
                 src="/apindex-logo.jpg"
                 alt="Apindex"

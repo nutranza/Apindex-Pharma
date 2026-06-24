@@ -4,18 +4,13 @@ import {
   MdFactory,
   MdGavel,
   MdInventory2,
-  MdVerified,
 } from "react-icons/md"
-import SectionBadge from "@modules/common/components/section-badge"
 
 type ServiceCard = {
   icon: IconType
   title: string
   description: string
-  surface: "low" | "high"
-  iconTone: "primary" | "secondary"
-  offset?: boolean
-  orderClass?: string
+  tone: "primary" | "secondary"
 }
 
 const SERVICE_CARDS: ServiceCard[] = [
@@ -24,96 +19,66 @@ const SERVICE_CARDS: ServiceCard[] = [
     title: "Contract Manufacturing",
     description:
       "State-of-the-art facilities dedicated to high-volume production for global partners.",
-    surface: "high",
-    iconTone: "primary",
-    offset: true,
+    tone: "primary",
   },
   {
     icon: MdBiotech,
     title: "3rd Party Manufacturing",
     description:
       "Scalable solutions for private label brands with strict adherence to WHO-GMP.",
-    surface: "low",
-    iconTone: "secondary",
+    tone: "secondary",
   },
   {
     icon: MdInventory2,
     title: "Generic Products",
     description:
       "High-efficacy generic formulations providing accessible healthcare to millions.",
-    surface: "low",
-    iconTone: "secondary",
-    offset: true,
-    orderClass: "order-4 lg:order-none",
+    tone: "secondary",
   },
   {
     icon: MdGavel,
     title: "Institutional Tenders",
     description:
       "Reliable supply chain for governmental and health organization procurement.",
-    surface: "high",
-    iconTone: "primary",
-    orderClass: "order-3 lg:order-none",
+    tone: "primary",
   },
 ]
 
-const SURFACE_CLASS: Record<ServiceCard["surface"], string> = {
-  high: "bg-surface-high",
-  low: "bg-surface-low",
-}
-
-const ICON_TONE_CLASS: Record<ServiceCard["iconTone"], string> = {
-  primary: "text-primary",
-  secondary: "text-secondary",
+const ICON_TONE_CLASS: Record<ServiceCard["tone"], string> = {
+  primary: "bg-primary-fixed text-primary",
+  secondary: "bg-secondary-fixed text-on-secondary-container",
 }
 
 export default function ServicesSection() {
   return (
     <section id="infrastructure" className="bg-surface py-16 lg:py-24">
-      <div className="content-container grid items-center gap-12 lg:grid-cols-2">
-        {/* Text content — shown first on mobile via order */}
-        <div className="order-1 space-y-6 lg:order-2 lg:space-y-10">
-          <SectionBadge tone="secondary">Our Capabilities</SectionBadge>
-          <h2 className="section-heading">
-            Precision at every <span className="italic text-secondary">molecular</span>{" "}
-            level.
-          </h2>
-          <p className="section-description">
-            At Apindex, we combine industrial-scale efficiency with meticulous
-            pharmaceutical oversight. Our services are designed to bridge the gap
-            between complex chemistry and patient-ready solutions.
-          </p>
-          <div className="flex items-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary-fixed">
-              <MdVerified
-                aria-hidden="true"
-                className="text-on-secondary-container"
-              />
-            </div>
-            <div>
-              <p className="font-bold">Quality Assured</p>
-              <p className="text-sm text-on-surface-variant">
-                ISO 9001:2015 &amp; WHO-GMP Standards
-              </p>
-            </div>
+      <div className="content-container">
+        <div className="mb-12 max-w-3xl lg:mb-14">
+          <div>
+            <h2 className="section-heading max-w-3xl">
+              Precision at every{" "}
+              <span className="text-secondary">molecular</span> level.
+            </h2>
           </div>
         </div>
 
-        {/* Service cards — shown second on mobile */}
-        <div className="order-2 grid grid-cols-1 gap-4 lg:grid-cols-2 lg:order-1 lg:gap-6">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
           {SERVICE_CARDS.map((card) => {
             const Icon = card.icon
             return (
               <div
                 key={card.title}
-                className={`space-y-4 rounded-xl p-6 lg:p-8 ${SURFACE_CLASS[card.surface]} ${card.offset ? "lg:translate-y-8" : ""} ${card.orderClass ?? ""}`}
+                className="flex min-h-[230px] flex-col rounded-xl bg-white p-6 lg:p-7"
               >
-                <Icon
-                  aria-hidden="true"
-                  className={`text-4xl ${ICON_TONE_CLASS[card.iconTone]}`}
-                />
-                <h3 className="apx-font-headline text-lg font-bold lg:text-xl">{card.title}</h3>
-                <p className="text-sm leading-relaxed text-on-surface-variant">
+                <div
+                  className={`mb-6 flex h-12 w-12 items-center justify-center rounded-lg ${ICON_TONE_CLASS[card.tone]}`}
+                >
+                  <Icon aria-hidden="true" className="text-2xl" />
+                </div>
+                <h3 className="apx-font-headline text-lg font-extrabold leading-tight text-on-surface">
+                  {card.title}
+                </h3>
+                <p className="mt-4 text-sm leading-6 text-on-surface-variant">
                   {card.description}
                 </p>
               </div>
