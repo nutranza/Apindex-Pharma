@@ -56,8 +56,7 @@ export default function ServicesSection() {
         <div className="mb-12 max-w-3xl lg:mb-14">
           <div>
             <h2 className="section-heading max-w-3xl">
-              Precision at every{" "}
-              <span className="text-secondary">molecular</span> level.
+              Molecular <span className="text-primary">Precision.</span>
             </h2>
           </div>
         </div>

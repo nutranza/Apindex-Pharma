@@ -15,7 +15,7 @@ export default function WelcomeSection() {
       <div className="content-container">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
           <div className="max-w-2xl">
-            <h2 className="apx-font-headline text-3xl font-extrabold leading-[1.12] text-on-surface sm:text-4xl lg:text-5xl">
+            <h2 className="section-heading text-on-surface">
               <span className="block">A Legacy of Trust in</span>
               <span className="block">
                 <span className="text-primary">Pharmaceutical</span> Excellence

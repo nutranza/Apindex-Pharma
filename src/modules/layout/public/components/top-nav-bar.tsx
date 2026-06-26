@@ -13,11 +13,11 @@ type NavItem = {
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Company", href: "/company" },
+  // { label: "Company", href: "/company" },
   { label: "About", href: "/about" },
   { label: "Products", href: "/products" },
   { label: "Gallery", href: "/gallery" },
-  { label: "Global Presence", href: "/Global-Presence" },
+  // { label: "Global Presence", href: "/Global-Presence" },
   { label: "Contact", href: "/contact" },
 
 ]
@@ -77,9 +77,9 @@ export default function TopNavBar() {
   }, [isMobileMenuOpen])
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-gray-200/80 bg-white">
+    <nav className="fixed top-0 z-50 w-full border-b border-gray-200/60 shadow-sm bg-white">
       <div className="content-container">
-        <div className="flex h-20 w-full items-center justify-between gap-6">
+        <div className="flex h-20 w-full items-center justify-between">
           <Link href="/" aria-label="Apindex home" className="shrink-0">
             <Image
               src="/apindex-logo.jpg"
@@ -97,7 +97,7 @@ export default function TopNavBar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="group apx-font-headline inline-flex items-center py-2 text-[15px] font-bold uppercase text-on-surface focus-visible:outline-none lg:text-base"
+                className="group apx-font-headline inline-flex items-center py-2 text-sm font-semibold uppercase text-on-surface focus-visible:outline-none lg:text-base"
               >
                 <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-1 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
                   {item.label}

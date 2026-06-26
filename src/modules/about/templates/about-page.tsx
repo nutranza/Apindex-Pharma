@@ -1,8 +1,7 @@
 import AboutGlobalFootprintSection from "@modules/about/sections/about-global-footprint-section"
 import AboutHeroSection from "@modules/about/sections/about-hero-section"
 import AboutIntroSection from "@modules/about/sections/about-intro-section"
-import AboutPurposeSection from "@modules/about/sections/about-purpose-section"
-import AboutQuoteSection from "@modules/about/sections/about-quote-section"
+import AboutQualityCommitmentSection from "@modules/about/sections/about-quality-commitment-section"
 import AboutStatsSection from "@modules/about/sections/about-stats-section"
 import AboutValidatedExcellenceSection from "@modules/about/sections/about-validated-excellence-section"
 export default function AboutPageTemplate() {
@@ -12,8 +11,7 @@ export default function AboutPageTemplate() {
         <AboutHeroSection />
         <AboutIntroSection />
         <AboutStatsSection />
-        <AboutPurposeSection />
-        <AboutQuoteSection />
+        <AboutQualityCommitmentSection />
         <AboutGlobalFootprintSection />
         <AboutValidatedExcellenceSection />
       </main>
