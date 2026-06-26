@@ -1,5 +1,5 @@
 import Image from "next/image"
-import SectionBadge from "@modules/common/components/section-badge"
+import Link from "next/link"
 
 const INTRO_IMAGE_URL =
   "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=900&q=80"
@@ -9,27 +9,6 @@ export default function AboutIntroSection() {
     <section className="bg-surface py-16 lg:py-24">
       <div className="content-container">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-          {/* Left: text content */}
-          <div className="space-y-6">
-            <SectionBadge tone="primary">About Us</SectionBadge>
-            <h2 className="section-heading">
-              Precision in Chemistry,
-              <span className="block text-secondary">Vitality in Life</span>
-            </h2>
-            <p className="section-description">
-              Apindex Pharmaceuticals operates at the intersection of science,
-              compliance, and dependable manufacturing. Our facilities and quality
-              systems are built to support regulated supply with consistency at every
-              stage of production.
-            </p>
-            <p className="section-description">
-              From formulation planning to export execution, we align technical rigor
-              with long-term partner trust, helping customers scale safely across
-              domestic and international markets.
-            </p>
-          </div>
-
-          {/* Right: image */}
           <div className="relative h-[420px] overflow-hidden rounded-2xl lg:h-[500px]">
             <Image
               fill
@@ -38,6 +17,33 @@ export default function AboutIntroSection() {
               alt="Apindex team member working in a pharmaceutical laboratory"
               className="object-cover object-center"
             />
+          </div>
+
+          <div className="space-y-6">
+            <h2 className="section-heading">
+              Precision in Chemistry,
+              <span className="block text-primary">
+                Built for Global Care
+              </span>
+            </h2>
+            <p className="section-description">
+              Apindex Pharmaceuticals brings together scientific discipline,
+              regulatory focus, and dependable manufacturing systems to support
+              partners across regulated healthcare markets.
+            </p>
+            <p className="section-description">
+              From formulation planning and quality documentation to export-ready
+              production, we help pharmaceutical brands, distributors, and
+              institutions build supply programs with consistency and confidence.
+            </p>
+            <div className="pt-2">
+              <Link
+                href="/#infrastructure"
+                className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-extrabold text-white transition-colors hover:bg-primary-container"
+              >
+                Explore Capabilities
+              </Link>
+            </div>
           </div>
         </div>
       </div>

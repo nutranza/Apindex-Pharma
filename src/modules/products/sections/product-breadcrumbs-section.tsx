@@ -11,8 +11,8 @@ export default function ProductBreadcrumbsSection({
   product,
 }: ProductBreadcrumbsSectionProps) {
   return (
-    <section className="content-container pt-10 md:pt-12">
-      <nav className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-on-surface-variant">
+    <section className="content-container pt-5 md:pt-6">
+      <nav className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant md:text-[11px]">
         <Link href="/" className="transition-colors hover:text-primary">
           Home
         </Link>

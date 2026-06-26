@@ -1,167 +1,161 @@
-import Link from "next/link"
-import { HiOutlineArrowUpRight } from "react-icons/hi2"
+"use client"
 
-import {
-  CATALOG_DOSAGE_OPTIONS,
-  type PublicCatalogResult,
-} from "@/lib/data/public-catalog"
+import Link from "next/link"
+import { useMemo, useState } from "react"
+import { HiArrowUpRight } from "react-icons/hi2"
+
+import type { PublicCatalogResult } from "@/lib/data/public-catalog"
 import {
   buildCatalogRequestHref,
-  buildPageTokens,
-  buildProductsPageHref,
   getAllCategoriesIcon,
   getCategoryIcon,
   getProductBadge,
   getProductIcon,
-  getProductSummary,
 } from "@/modules/products/lib/catalog-ui"
 import { buildProductDetailHref } from "@/modules/products/lib/product-detail-ui"
 
 type ProductsCatalogSectionProps = {
   catalog: PublicCatalogResult
+  initialCategoryHandle?: string | null
 }
 
 export default function ProductsCatalogSection({
   catalog,
+  initialCategoryHandle = null,
 }: ProductsCatalogSectionProps) {
   const catalogRequestHref = buildCatalogRequestHref()
+  const initialCategoryExists = catalog.categories.some(
+    (category) => category.handle === initialCategoryHandle
+  )
+  const [selectedCategoryHandle, setSelectedCategoryHandle] = useState<
+    string | null
+  >(initialCategoryExists ? initialCategoryHandle : null)
+  const selectedCategory =
+    catalog.categories.find((category) => category.handle === selectedCategoryHandle) ??
+    null
+  const visibleProducts = useMemo(() => {
+    if (!selectedCategoryHandle) {
+      return catalog.products
+    }
+
+    return catalog.products.filter((product) =>
+      product.categories.some((category) => category.handle === selectedCategoryHandle)
+    )
+  }, [catalog.products, selectedCategoryHandle])
   const selectedCategoryName =
-    catalog.selectedCategory?.name ?? "All therapeutic categories"
-  const pageTokens = buildPageTokens(catalog.page, catalog.totalPages)
+    selectedCategory?.name ?? "All therapeutic categories"
   const AllCategoriesIcon = getAllCategoriesIcon()
 
   return (
-    <section className="content-container flex flex-col gap-12 py-16 lg:flex-row lg:gap-16 lg:py-24">
-      <aside className="lg:w-72 lg:shrink-0">
-        <div className="lg:sticky lg:top-28">
-          <div className="mb-8">
-            <h2 className="apx-font-headline text-2xl font-bold text-on-surface">
-              Therapeutic Categories
-            </h2>
-            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant">
-              Browse by molecular group
-            </p>
-          </div>
-
-          <nav className="space-y-2">
-            <Link
-              href={buildProductsPageHref({ query: catalog.query })}
-              className={`flex items-center gap-4 rounded-2xl px-4 py-4 text-sm font-semibold transition-all ${
-                !catalog.selectedCategory
-                  ? "scale-[0.98] bg-secondary-container text-on-secondary-container"
-                  : "text-zinc-600 hover:bg-surface-low hover:text-primary"
-              }`}
-            >
-              <AllCategoriesIcon className="text-xl" />
-              <span>All Categories</span>
-            </Link>
-
-            {catalog.categories.map((category) => {
-              const isSelected = category.handle === catalog.selectedCategory?.handle
-              const CategoryIcon = getCategoryIcon(category)
-
-              return (
-                <Link
-                  key={category.id}
-                  href={buildProductsPageHref({
-                    query: catalog.query,
-                    categoryHandle: category.handle,
-                  })}
-                  className={`flex items-center gap-4 rounded-2xl px-4 py-4 text-sm font-semibold transition-all ${
-                    isSelected
-                      ? "scale-[0.98] bg-secondary-container text-on-secondary-container"
-                      : "text-zinc-600 hover:bg-surface-low hover:text-primary"
-                  }`}
-                >
-                  <CategoryIcon className="text-xl" />
-                  <span>{category.name}</span>
-                </Link>
-              )
-            })}
-          </nav>
-
-          <div className="mt-10 rounded-2xl bg-primary-fixed p-6 shadow-sm">
-            <h3 className="apx-font-headline text-lg font-bold text-on-surface">
-              Request Catalog
-            </h3>
-            <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-              Get our full pharmaceutical directory delivered to your inbox for
-              institutional and export enquiries.
-            </p>
-            <a
-              href={catalogRequestHref}
-              className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-on-surface px-4 py-3 text-sm font-bold text-white transition-colors hover:bg-primary"
-            >
-              Email Catalog Request
-            </a>
-          </div>
-        </div>
-      </aside>
-
-      <div className="min-w-0 flex-1">
-        <div className="mb-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+    <section className="bg-surface py-14 lg:py-20">
+      <div className="content-container">
+        <div className="mb-8 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h2 className="apx-font-headline text-3xl font-bold text-on-surface md:text-4xl">
+            <h2 className="apx-font-headline text-3xl font-semibold text-on-surface md:text-4xl">
               Product Registry
             </h2>
             <p className="mt-2 text-sm leading-6 text-on-surface-variant md:text-base">
-              Showing {catalog.total} result{catalog.total === 1 ? "" : "s"} in {selectedCategoryName}
+              Showing {visibleProducts.length} result
+              {visibleProducts.length === 1 ? "" : "s"} in{" "}
+              {selectedCategoryName}
             </p>
           </div>
 
-          <div className="flex gap-4">
-            <select
-              disabled
-              defaultValue={CATALOG_DOSAGE_OPTIONS[0]}
-              className="w-full cursor-not-allowed rounded-2xl border border-outline-variant/20 bg-surface-low px-4 py-3 text-sm font-medium text-on-surface-variant opacity-80 outline-none md:w-[220px]"
-              aria-label="Dosage form filter coming later"
-            >
-              {CATALOG_DOSAGE_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
+          {/* <a
+            href={catalogRequestHref}
+            className="inline-flex w-fit items-center justify-center rounded-xl border border-outline-variant/25 bg-white px-5 py-3 text-sm font-semibold text-on-surface"
+          >
+            Request Catalog
+          </a> */}
+        </div>
+
+        <nav
+          aria-label="Therapeutic categories"
+          className="mb-10 flex flex-wrap gap-3"
+        >
+          <button
+            type="button"
+            onClick={() => setSelectedCategoryHandle(null)}
+            className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
+              !selectedCategoryHandle
+                ? "bg-secondary-container text-on-secondary-container"
+                : "bg-white text-on-surface-variant"
+            }`}
+          >
+            <AllCategoriesIcon className="text-base" />
+            <span>All Categories</span>
+          </button>
+
+          {catalog.categories.map((category) => {
+            const isSelected = category.handle === selectedCategoryHandle
+            const CategoryIcon = getCategoryIcon(category)
+
+            return (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setSelectedCategoryHandle(category.handle)}
+                className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${
+                  isSelected
+                    ? "bg-secondary-container text-on-secondary-container"
+                    : "bg-white text-on-surface-variant"
+                }`}
+              >
+                <CategoryIcon className="text-base" />
+                <span>{category.name}</span>
+              </button>
+            )
+          })}
+        </nav>
+
+        <div className="min-w-0">
+          <div className="mb-2 hidden border-b border-outline-variant/20 pb-3 text-xs font-semibold uppercase text-on-surface-variant md:grid md:grid-cols-[minmax(0,1fr)_160px_140px] md:items-center md:gap-8">
+            <span>Product</span>
+            <span>Category</span>
+            <span className="text-right">Action</span>
           </div>
         </div>
 
-        {catalog.products.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {catalog.products.map((product) => {
+        {visibleProducts.length > 0 ? (
+          <div className="divide-y divide-outline-variant/20">
+            {visibleProducts.map((product) => {
               const ProductIcon = getProductIcon(product)
+              const productBadge = getProductBadge(product)
 
               return (
                 <article
                   key={product.id}
-                  className="group flex min-h-[250px] flex-col justify-between rounded-2xl border border-outline-variant/15 bg-surface-lowest p-6 ambient-shadow transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                  className="group grid gap-4 py-6 md:grid-cols-[minmax(0,1fr)_160px_140px] md:items-center md:gap-8"
                 >
-                  <div>
-                    <div className="mb-6 flex items-start justify-between gap-4">
-                      <span className="rounded-full bg-secondary-container px-3 py-1 text-[11px] font-bold uppercase tracking-[0.18em] text-on-secondary-container">
-                        {getProductBadge(product)}
-                      </span>
-                      <ProductIcon className="text-2xl text-primary/30 transition-colors group-hover:text-primary" />
+                  <div className="flex min-w-0 items-center gap-4">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-primary">
+                      <ProductIcon className="text-xl" />
                     </div>
-                    <h3 className="apx-font-headline text-2xl font-bold tracking-tight text-on-surface">
-                      <Link
-                        href={buildProductDetailHref(product.handle)}
-                        className="transition-colors hover:text-primary"
-                      >
-                        {product.name}
-                      </Link>
-                    </h3>
-                    <p className="mt-3 text-sm leading-6 text-on-surface-variant">
-                      {getProductSummary(product)}
-                    </p>
+                    <div className="min-w-0">
+                      <h3 className="apx-font-headline text-xl font-semibold text-on-surface md:text-xl">
+                        <Link
+                          href={buildProductDetailHref(product.handle)}
+                          className="text-on-surface"
+                        >
+                          {product.name}
+                        </Link>
+                      </h3>
+                    </div>
                   </div>
 
-                  <div className="mt-8 border-t border-surface-high pt-6">
+                  <div className="flex items-center md:justify-start">
+                    <span className="inline-flex rounded-full bg-surface-low px-4 py-2 text-xs font-semibold text-on-surface-variant">
+                      {productBadge}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center md:justify-end">
                     <Link
                       href={buildProductDetailHref(product.handle)}
-                      className="flex items-center justify-between text-sm font-bold text-on-surface transition-colors hover:text-primary"
+                      className="inline-flex items-center group gap-2 text-sm font-semibold text-on-surface"
                     >
                       <span>View Product</span>
-                      <HiOutlineArrowUpRight className="text-lg" />
+                      <HiArrowUpRight className="text-lg transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1.5" />
                     </Link>
                   </div>
                 </article>
@@ -169,24 +163,25 @@ export default function ProductsCatalogSection({
             })}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-outline-variant/50 bg-surface-low px-6 py-16 text-center">
-            <h3 className="apx-font-headline text-2xl font-bold text-on-surface">
+          <div className="px-4 py-20 text-center">
+            <h3 className="apx-font-headline text-2xl font-semibold text-on-surface">
               No products found
             </h3>
-            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-on-surface-variant">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-6 text-on-surface-variant">
               Adjust your search or therapeutic category filter to review the available
               pharmaceutical catalogue entries.
             </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Link
                 href="/products"
-                className="rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-container"
+                className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-container"
+                onClick={() => setSelectedCategoryHandle(null)}
               >
                 Clear filters
               </Link>
               <a
                 href={catalogRequestHref}
-                className="rounded-xl border border-primary/20 bg-surface-lowest px-5 py-3 text-sm font-bold text-primary transition-colors hover:border-primary"
+                className="rounded-xl border border-primary/20 bg-surface-lowest px-5 py-3 text-sm font-semibold text-primary transition-colors hover:border-primary"
               >
                 Request catalog
               </a>
@@ -194,36 +189,6 @@ export default function ProductsCatalogSection({
           </div>
         )}
 
-        {catalog.totalPages > 1 ? (
-          <div className="mt-12 flex items-center justify-center gap-2">
-            {pageTokens.map((token, index) =>
-              token === "ellipsis" ? (
-                <span
-                  key={`ellipsis-${index + 1}`}
-                  className="px-2 text-sm font-semibold text-on-surface-variant"
-                >
-                  ...
-                </span>
-              ) : (
-                <Link
-                  key={token}
-                  href={buildProductsPageHref({
-                    query: catalog.query,
-                    categoryHandle: catalog.selectedCategory?.handle ?? null,
-                    page: token,
-                  })}
-                  className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold transition-all ${
-                    token === catalog.page
-                      ? "bg-surface-high text-on-surface"
-                      : "text-on-surface-variant hover:bg-surface-low"
-                  }`}
-                >
-                  {token}
-                </Link>
-              )
-            )}
-          </div>
-        ) : null}
       </div>
     </section>
   )

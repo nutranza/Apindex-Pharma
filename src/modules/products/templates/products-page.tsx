@@ -5,16 +5,21 @@ import ProductsValidationSection from "@/modules/products/sections/products-vali
 
 type ProductsPageTemplateProps = {
   catalog: PublicCatalogResult
+  initialCategoryHandle?: string | null
 }
 
 export default function ProductsPageTemplate({
   catalog,
+  initialCategoryHandle = null,
 }: ProductsPageTemplateProps) {
   return (
     <div className="apx-landing apx-font-body min-h-screen bg-surface text-on-surface">
       <main className="!pb-0 pt-20">
         <ProductsHeroSection catalog={catalog} />
-        <ProductsCatalogSection catalog={catalog} />
+        <ProductsCatalogSection
+          catalog={catalog}
+          initialCategoryHandle={initialCategoryHandle}
+        />
         <ProductsValidationSection />
       </main>
     </div>

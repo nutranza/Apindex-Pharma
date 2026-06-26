@@ -17,22 +17,25 @@ export default function ProductDetailContentSection({
     : getProductDescriptionParagraphs(product)
 
   return (
-    <section className="content-container mt-8 pb-24">
-      <div className="space-y-6">
-        <div>
-          <h2 className="apx-font-headline text-3xl font-extrabold tracking-tight text-on-surface md:text-[2.15rem]">
-            What is {product.name}?
+    <section className="content-container pb-20 pt-6 lg:pb-24">
+      <div className="max-w-4xl">
+        <div className="mb-8">
+          <h2 className="apx-font-headline text-3xl font-extrabold text-on-surface md:text-4xl">
+            Product Information
           </h2>
-          <div className="mt-4 h-1.5 w-20 rounded-full bg-secondary" />
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-on-surface-variant md:text-base">
+            Review the available product details, usage notes, and supporting
+            information for institutional and export enquiries.
+          </p>
         </div>
 
         {descriptionHtml ? (
           <div
-            className="rich-text-block text-lg leading-8 text-on-surface-variant"
+            className="rich-text-block max-w-none text-base leading-8 text-on-surface-variant md:text-lg"
             dangerouslySetInnerHTML={{ __html: descriptionHtml }}
           />
         ) : (
-          <div className="space-y-4 text-lg leading-8 text-on-surface-variant">
+          <div className="space-y-4 text-base leading-8 text-on-surface-variant md:text-lg">
             {descriptionParagraphs!.map((paragraph, index) => (
               <p key={`${product.id}-paragraph-${index + 1}`}>{paragraph}</p>
             ))}
