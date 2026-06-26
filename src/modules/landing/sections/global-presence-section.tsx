@@ -1,5 +1,4 @@
 import Image from "next/image"
-import SectionBadge from "@modules/common/components/section-badge"
 
 const GLOBAL_STATS = [
   { value: "86+", label: "Countries Served" },
@@ -38,11 +37,6 @@ export default function GlobalPresenceSection() {
       />
 
       <div className="relative z-10 content-container">
-        {/* Badge */}
-        <div className="mb-6 flex justify-center">
-          <SectionBadge tone="primary" variant="dark">Our Global Reach</SectionBadge>
-        </div>
-
         {/* Heading */}
         <div className="mb-16 text-center">
           <h2 className="section-heading mb-4 text-white">

@@ -33,7 +33,7 @@ const STORY_CARDS: StoryCard[] = [
   {
     title: "Leadership Voice",
     description:
-      '"Quality is not just a standard for us; it\'s a promise to the patients who rely on our products every single day." — MD Message.',
+      '"Quality is not just a standard for us; it\'s a promise to the patients who rely on our products every single day." - MD Message.',
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAmz7qGu1kSrO-j3LIFD3Oa_y98cJvLNgoaHSAkIg8ZR3tV6tTNlRJ4a20-nGSdkftbgdVnE63J0IzvHQSJ8UhUMtLDQu6ARjwMd5A3IhnMR4VIionc2I_47BNCiJK94YICDLLwOP1ux1rGpKCzg2cLC6BuPYdiPYIUtGuPWAa_tz58efwHzyQQYOeUk2YJLdZT3N7Y-HA4rvnPRJmZWfrdjEpot1fIYB5cy4wQXl9nLBCuHUGvLWqaKE7p6fAaQj1x3qYWmgxM5-4",
     imageAlt:
@@ -47,7 +47,7 @@ const BORDER_TONE_CLASS: Record<StoryCard["borderTone"], string> = {
   secondary: "border-secondary",
 }
 
-export default function QualityCommitmentSection() {
+export default function AboutQualityCommitmentSection() {
   return (
     <section className="bg-surface py-16 lg:py-24">
       <div className="content-container">
@@ -57,7 +57,7 @@ export default function QualityCommitmentSection() {
             Commitment to <span className="text-secondary">Excellence</span>
           </h2>
           <p className="section-description max-w-2xl">
-            Driven by purpose, guided by science — our mission, vision, and leadership define who we are.
+            Driven by purpose, guided by science - our mission, vision, and leadership define who we are.
           </p>
         </div>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -77,9 +77,7 @@ export default function QualityCommitmentSection() {
               >
                 {card.title}
               </h3>
-              <p className="section-description">
-                {card.description}
-              </p>
+              <p className="section-description">{card.description}</p>
             </div>
           ))}
         </div>
