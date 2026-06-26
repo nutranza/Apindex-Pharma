@@ -83,6 +83,30 @@ export function getAllCategoriesIcon(): IconType {
 export function getCategoryIcon(category: CatalogCategory): IconType {
   const name = category.name.toLowerCase()
 
+  if (name.includes("tablet")) {
+    return LuPill
+  }
+
+  if (name.includes("capsule")) {
+    return GiMedicines
+  }
+
+  if (name.includes("inject")) {
+    return LuSyringe
+  }
+
+  if (name.includes("drop")) {
+    return LuDroplets
+  }
+
+  if (name.includes("cream") || name.includes("ointment") || name.includes("gel")) {
+    return HiOutlineSparkles
+  }
+
+  if (name.includes("syrup") || name.includes("suspension")) {
+    return MdOutlineScience
+  }
+
   if (name.includes("cardio") || name.includes("heart")) {
     return HiOutlineHeart
   }
@@ -120,28 +144,37 @@ export function getCategoryIcon(category: CatalogCategory): IconType {
 
 export function getProductIcon(product: PublicCatalogProduct): IconType {
   const badge = getProductBadge(product).toLowerCase()
+  const categoryNames = product.categories
+    .map((category) => category.name)
+    .join(" ")
+    .toLowerCase()
+  const iconSource = `${badge} ${categoryNames}`
 
-  if (badge.includes("tablet")) {
+  if (iconSource.includes("tablet")) {
     return LuPill
   }
 
-  if (badge.includes("capsule")) {
+  if (iconSource.includes("capsule")) {
     return GiMedicines
   }
 
-  if (badge.includes("inject")) {
+  if (iconSource.includes("inject")) {
     return LuSyringe
   }
 
-  if (badge.includes("drop")) {
+  if (iconSource.includes("drop")) {
     return LuDroplets
   }
 
-  if (badge.includes("cream") || badge.includes("ointment") || badge.includes("gel")) {
+  if (
+    iconSource.includes("cream") ||
+    iconSource.includes("ointment") ||
+    iconSource.includes("gel")
+  ) {
     return HiOutlineSparkles
   }
 
-  if (badge.includes("syrup") || badge.includes("suspension")) {
+  if (iconSource.includes("syrup") || iconSource.includes("suspension")) {
     return MdOutlineScience
   }
 

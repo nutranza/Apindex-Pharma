@@ -15,13 +15,17 @@ export default async function ProductsPage({
   searchParams: Promise<{ q?: string; category?: string; page?: string }>
 }) {
   const resolvedSearchParams = await searchParams
-  const page = Number.parseInt(resolvedSearchParams.page ?? "1", 10)
 
   const catalog = await listPublicCatalogProducts({
-    page: Number.isNaN(page) ? 1 : page,
+    page: 1,
+    pageSize: 1000,
     query: resolvedSearchParams.q,
-    categoryHandle: resolvedSearchParams.category,
   })
 
-  return <ProductsPageTemplate catalog={catalog} />
+  return (
+    <ProductsPageTemplate
+      catalog={catalog}
+      initialCategoryHandle={resolvedSearchParams.category ?? null}
+    />
+  )
 }
