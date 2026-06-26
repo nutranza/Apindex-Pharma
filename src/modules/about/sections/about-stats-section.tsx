@@ -1,48 +1,93 @@
-import type { IconType } from "react-icons"
-import { MdLanguage, MdScience, MdVerified } from "react-icons/md"
+"use client"
 
-type StatTone = "primary" | "secondary" | "accent"
+import { useEffect, useRef, useState } from "react"
+import { BadgeCheck, Factory, FlaskConical, Globe2 } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 type StatItem = {
-  value: string
+  target: number
+  suffix: "+" | "%"
   label: string
-  icon: IconType
-  tone: StatTone
+  icon: LucideIcon
 }
 
 const STAT_ITEMS: StatItem[] = [
-  { value: "86+", label: "Export Markets", icon: MdLanguage, tone: "primary" },
-  { value: "500+", label: "Product SKUs", icon: MdScience, tone: "secondary" },
-  { value: "100%", label: "Quality Focus", icon: MdVerified, tone: "accent" },
+  {
+    target: 15,
+    suffix: "+",
+    label: "Years Experience",
+    icon: Factory,
+  },
+  {
+    target: 1800,
+    suffix: "+",
+    label: "Products",
+    icon: FlaskConical,
+  },
+  {
+    target: 86,
+    suffix: "+",
+    label: "Countries",
+    icon: Globe2,
+  },
+  {
+    target: 100,
+    suffix: "%",
+    label: "Quality Focus",
+    icon: BadgeCheck,
+  },
 ]
 
-const ICON_TONE_CLASS: Record<StatTone, string> = {
-  primary: "bg-primary/[0.08] text-primary",
-  secondary: "bg-secondary/[0.08] text-secondary",
-  accent: "bg-primary-container/[0.12] text-primary-container",
-}
-
 export default function AboutStatsSection() {
+  const sectionRef = useRef<HTMLDivElement | null>(null)
+  const [shouldAnimate, setShouldAnimate] = useState(false)
+
+  useEffect(() => {
+    const element = sectionRef.current
+
+    if (!element || shouldAnimate) {
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShouldAnimate(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.35 }
+    )
+
+    observer.observe(element)
+
+    return () => observer.disconnect()
+  }, [shouldAnimate])
+
   return (
-    <section className="bg-surface-low py-16 lg:py-24">
-      <div className="content-container grid gap-8 md:grid-cols-3">
+    <section className="bg-white py-16 lg:py-24">
+      <div
+        ref={sectionRef}
+        className="content-container grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10"
+      >
         {STAT_ITEMS.map((item) => {
           const Icon = item.icon
 
           return (
-            <div
-              key={item.label}
-              className="rounded-2xl border border-outline-variant/30 bg-surface-lowest px-6 py-8 text-center"
-            >
-              <div
-                className={`mx-auto mb-3 flex h-8 w-8 items-center justify-center rounded-full ${ICON_TONE_CLASS[item.tone]}`}
-              >
-                <Icon aria-hidden="true" className="text-sm" />
+            <div key={item.label} className="text-center">
+              <Icon
+                aria-hidden="true"
+                className="mx-auto mb-5 size-10 text-on-surface"
+                strokeWidth={1.5}
+              />
+              <div className="apx-font-headline text-4xl font-semibold leading-none text-on-surface md:text-5xl">
+                <AnimatedStatValue
+                  target={item.target}
+                  suffix={item.suffix}
+                  start={shouldAnimate}
+                />
               </div>
-              <div className="apx-font-headline text-5xl font-extrabold leading-none text-on-surface">
-                {item.value}
-              </div>
-              <p className="mt-2 text-[10px] font-bold uppercase tracking-[0.15em] text-on-surface-variant">
+              <p className="mt-4 text-base font-medium text-on-surface-variant md:text-lg">
                 {item.label}
               </p>
             </div>
@@ -50,5 +95,59 @@ export default function AboutStatsSection() {
         })}
       </div>
     </section>
+  )
+}
+
+function AnimatedStatValue({
+  target,
+  suffix,
+  start,
+}: {
+  target: number
+  suffix: StatItem["suffix"]
+  start: boolean
+}) {
+  const [value, setValue] = useState(0)
+
+  useEffect(() => {
+    if (!start) {
+      return
+    }
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches
+
+    if (prefersReducedMotion) {
+      setValue(target)
+      return
+    }
+
+    let animationFrameId = 0
+    const duration = 1200
+    const startedAt = performance.now()
+
+    const updateValue = (currentTime: number) => {
+      const elapsed = currentTime - startedAt
+      const progress = Math.min(elapsed / duration, 1)
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+      setValue(Math.round(target * easedProgress))
+
+      if (progress < 1) {
+        animationFrameId = requestAnimationFrame(updateValue)
+      }
+    }
+
+    animationFrameId = requestAnimationFrame(updateValue)
+
+    return () => cancelAnimationFrame(animationFrameId)
+  }, [start, target])
+
+  return (
+    <>
+      {value}
+      {suffix}
+    </>
   )
 }
