@@ -84,7 +84,7 @@ export default function ContactContentSection() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-stretch lg:gap-16">
           <div className="flex flex-col gap-10 lg:col-span-5">
             <div className="shrink-0">
-              <h2 className="apx-font-headline mb-8 text-[36px] font-semibold text-on-surface">
+              <h2 className="apx-font-headline mb-8 text-2xl sm:text-3xl font-semibold text-on-surface">
                 Corporate Headquarters
               </h2>
               <div className="space-y-8">
@@ -132,7 +132,7 @@ export default function ContactContentSection() {
               className="h-full rounded-2xl border border-outline-variant/15 bg-white p-6 sm:p-10"
             >
               <div className="mb-8">
-                <h2 className="apx-font-headline text-4xl font-semibold text-on-surface md:text-[42px]">
+                <h2 className="apx-font-headline sm:text-3xl text-2xl font-semibold text-on-surface">
                   Send an Inquiry
                 </h2>
                 <p className="mt-3 max-w-xl text-sm leading-6 text-on-surface-variant md:text-base">
@@ -174,6 +174,7 @@ export default function ContactContentSection() {
                     <div className="relative">
                       <select
                         aria-label="Country"
+                        defaultValue="India"
                         className={`${FIELD_CLASS} appearance-none pr-12`}
                       >
                         {COUNTRIES.map((country) => (
