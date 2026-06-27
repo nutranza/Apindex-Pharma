@@ -97,14 +97,14 @@ export default function CategoriesSection() {
             return (
               <div
                 key={card.title}
-                className={`flex min-h-[152px] gap-5 border-outline-variant/60 px-2 py-5 sm:min-h-[195px] sm:p-6 ${getCategoryBorderClass(index)}`}
+                className={`flex min-h-[140px] gap-5 border-outline-variant/60 px-2 py-5 sm:min-h-[195px] sm:p-6 ${getCategoryBorderClass(index)}`}
               >
                 <div
-                  className={`flex size-10 shrink-0 items-center justify-center rounded-full ring-8 ${ICON_CLASS}`}
+                  className={`flex lg:size-10 size-8 shrink-0 items-center justify-center rounded-full ring-8 ${ICON_CLASS}`}
                 >
                   <Icon
                     aria-hidden="true"
-                    className="text-2xl"
+                    className="lg:text-2xl text-xl"
                   />
                 </div>
                 <div className="min-w-0">

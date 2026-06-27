@@ -18,32 +18,30 @@ type HeroSlide = {
 const HERO_SLIDES: HeroSlide[] = [
   {
     eyebrow: "WHO-GMP Certified Manufacturing",
-    title: "Your Trusted",
-    accent: "Partner",
-    suffix: "in Global Healthcare",
-    imageUrl: "/team-labs.avif",
+    title: "Science-Led",
+    accent: "Pharma",
+    suffix: "Partnerships",
+    imageUrl: "/slide1.jpg",
     imageAlt:
-      "Pharmaceutical laboratory team working inside a modern healthcare facility",
+      "Pharmaceutical professionals working in a modern laboratory environment",
   },
   {
     eyebrow: "Contract and Third Party Manufacturing",
-    title: "Scalable",
-    accent: "Pharma",
-    suffix: "Manufacturing",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAqn5mGy4tBW7R-mFwByWYGx2rc1xuPI8beh1p8OKwZb1nhKY9ANVEOWgYA97BhbNqskkNwVBPGjRk5paTpQSFnonLojpwaXbtJAmUl8Ui4zynW85S7UMzIUAdOVgYRU9ALRRaYWKL4v7PQkgjxKH5GfoDjEWGFQWYJ0_MP8ZVVo2u0pIVOBf5c5Oty3TXeJG3YDF7eO21qn2JTMnRRM1N-Dc9FvSF3zNQhKIoOWJatBRZDKZU8TnTqRrr4QyBdgxhfqyRbYSYbgZI",
+    title: "Precision",
+    accent: "Manufacturing",
+    suffix: "at Scale",
+    imageUrl: "/slide3.jpg",
     imageAlt:
       "Modern pharmaceutical manufacturing facility with production equipment",
   },
   {
     eyebrow: "Export Ready Pharmaceutical Supply",
-    title: "Quality That",
-    accent: "Travels",
-    suffix: "Across Markets",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCAToZADVB4xM043eYneGVipKDmGjt3ph4cimJUXczxXks53ENiKA298Jr7Q3IsHTX8QPiBebYPsAjW-2R4e1lT1XBaFsKdQSYG9Dh5VKyHWZilO-h-r2fwsxA2ISz24B6DASZ-uA-GDG3nq5fs3_6RNht9AInM30W52QgIxlkFsKGLsmiBu5RdULYLhL8JfJ0Q33ayp_tgiAAA2hHYi-B9QUnozF0TUQrGnne4DzE5GdT5D71uKueghBgYsaNMVU7NaNDszMJTL-o",
+    title: "Quality-Driven",
+    accent: "Research",
+    suffix: "for Better Care",
+    imageUrl: "/slide2.jpg",
     imageAlt:
-      "Automated pharmaceutical production line in a clean manufacturing environment",
+      "Pharmaceutical researcher working with a microscope in a clean laboratory",
     imagePosition: "object-center",
   },
 ]
@@ -120,16 +118,15 @@ export default function HeroSection() {
                   alt={slide.imageAlt}
                   className={`h-full w-full object-cover ${slide.imagePosition ?? ""}`}
                 />
-                <div className="absolute inset-0 bg-[#0d1117]/48" />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.86)_0%,rgba(13,17,23,0.62)_42%,rgba(13,17,23,0.2)_100%)]" />
+                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.64)_0%,rgba(13,17,23,0.38)_42%,rgba(13,17,23,0.08)_100%)]" />
               </div>
 
               <div className="relative z-10 flex h-full items-center">
                 <div className="w-full max-w-3xl px-6 text-left sm:px-10 md:px-14 lg:pl-20">
-                  <p className="mb-4 text-xs font-bold uppercase text-primary-container sm:text-sm">
+                  {/* <p className="mb-4 text-xs font-bold uppercase text-primary-container sm:text-sm">
                     {slide.eyebrow}
-                  </p>
-                  <h1 className="max-w-3xl text-4xl font-extrabold uppercase leading-[1.08] text-white sm:text-5xl md:text-6xl lg:text-7xl">
+                  </p> */}
+                  <h1 className="max-w-xl text-4xl font-semibold text-white drop-shadow-[0_3px_16px_rgba(0,0,0,0.32)] sm:text-5xl md:text-6xl">
                     {slide.title}{" "}
                     <span className="text-primary-container">
                       {slide.accent}
@@ -151,7 +148,7 @@ export default function HeroSection() {
           onClick={scrollPrev}
           className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center text-white/85 focus-visible:outline-none"
         >
-          <ChevronLeftIcon className="h-9 w-9" strokeWidth={3} />
+          <ChevronLeftIcon className="size-8" strokeWidth={2.5} />
         </button>
         <button
           type="button"
@@ -159,11 +156,11 @@ export default function HeroSection() {
           onClick={scrollNext}
           className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center text-white/85 focus-visible:outline-none"
         >
-          <ChevronRightIcon className="h-9 w-9" strokeWidth={3} />
+          <ChevronRightIcon className="size-8" strokeWidth={2.5} />
         </button>
       </div>
 
-      <div className="absolute bottom-8 left-1/2 z-20 flex -translate-x-1/2 items-center gap-3">
+      <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2">
         {scrollSnaps.map((_, index) => (
           <button
             key={index}

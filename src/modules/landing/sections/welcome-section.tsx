@@ -1,8 +1,5 @@
 import Image from "next/image"
 
-const WELCOME_IMAGE_URL =
-  "https://lh3.googleusercontent.com/aida-public/AB6AXuAqn5mGy4tBW7R-mFwByWYGx2rc1xuPI8beh1p8OKwZb1nhKY9ANVEOWgYA97BhbNqskkNwVBPGjRk5paTpQSFnonLojpwaXbtJAmUl8Ui4zynW85S7UMzIUAdOVgYRU9ALRRaYWKL4v7PQkgjxKH5GfoDjEWGFQWYJ0_MP8ZVVo2u0pIVOBf5c5Oty3TXeJG3YDF7eO21qn2JTMnRRM1N-Dc9FvSF3zNQhKIoOWJatBRZDKZU8TnTqRrr4QyBdgxhfqyRbYSYbgZI"
-
 const TRUST_POINTS = [
   { value: "WHO-GMP", label: "Certified" },
   { value: "1500+", label: "Products" },
@@ -54,7 +51,7 @@ export default function WelcomeSection() {
             <Image
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
-              src={WELCOME_IMAGE_URL}
+              src="about-company.jpg"
               alt="Apindex Pharmaceutical modern manufacturing facility production line"
               className="object-cover"
             />

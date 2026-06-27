@@ -1,5 +1,9 @@
 import type { LucideIcon } from "lucide-react"
-import { Globe, Settings2, ShieldCheck } from "lucide-react"
+import {
+  FlaskConical,
+  Globe2,
+  ShieldCheck,
+} from "lucide-react"
 
 type FeatureItem = {
   icon: LucideIcon
@@ -9,19 +13,22 @@ type FeatureItem = {
 
 const FEATURES: FeatureItem[] = [
   {
-    icon: Settings2,
-    title: "Advanced R&D",
-    description: "Innovative formulations developed by our in-house R&D team using evidence-based research and advanced testing.",
+    icon: FlaskConical,
+    title: "Advanced Formulation",
+    description:
+      "Research-led product development supported by testing discipline,and practical manufacturing insight for dependable scale-up.",
   },
   {
     icon: ShieldCheck,
-    title: "WHO-GMP Quality",
-    description: "All facilities are WHO-GMP certified with rigorous multi-stage quality control at every production step for consistent product safety.",
+    title: "Quality-Led Production",
+    description:
+      "WHO-GMP aligned processes,and documented checks designed to maintain consistent product safety across every production stage.",
   },
   {
-    icon: Globe,
-    title: "End-to-End Logistics",
-    description: "Reliable delivery across 86+ countries via air, sea, and land with precise tracking, export documentation, and coordinated support.",
+    icon: Globe2,
+    title: "Export-Ready Support",
+    description:
+      "Coordinated documentation,and supply planning that helps partners serve regulated and emerging healthcare markets with confidence.",
   },
 ]
 
@@ -29,35 +36,37 @@ export default function WhyChooseUsSection() {
   return (
     <section
       id="why-choose-us"
-      className="bg-white py-16 lg:py-24"
+      className="bg-white py-14 lg:py-20"
     >
       <div className="content-container">
-        <div className="mb-12 max-w-3xl lg:mb-14">
+        <div className="mb-12 max-w-3xl">
           <h2 className="section-heading">
             Why Choose{" "}
             <span className="text-primary">Apindex?</span>
           </h2>
-          <p className="mt-5 section-description max-w-2xl">
-            Precision is the hallmark of pharmaceutical leadership. A company
-            matured to deliver global solutions with modern manufacturing and
-            uncompromising quality standards.
+          <p className="mt-5 max-w-2xl section-description">
+            A dependable pharmaceutical manufacturing partner for quality-led
+            production, export readiness, and long-term supply confidence.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-3 lg:gap-14">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:gap-14">
           {FEATURES.map((item) => {
             const Icon = item.icon
             return (
-              <div key={item.title} className="text-center space-y-4">
+              <div
+                key={item.title}
+                className="max-w-sm"
+              >
                 <Icon
                   aria-hidden="true"
-                  className="mx-auto size-10 text-on-surface"
+                  className="size-12 text-on-surface-variant"
                   strokeWidth={1.5}
                 />
-                <h3 className="text-lg font-extrabold leading-tight text-on-surface">
+                <h3 className="mt-5 text-lg font-extrabold leading-tight text-on-surface">
                   {item.title}
                 </h3>
-                <p className="text-sm text-on-surface-variant sm:text-base">
+                <p className="mt-3 text-sm leading-6 text-on-surface-variant">
                   {item.description}
                 </p>
               </div>
