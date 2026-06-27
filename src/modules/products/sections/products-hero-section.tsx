@@ -14,7 +14,7 @@ export default function ProductsHeroSection({
     <section className="relative overflow-hidden border-b border-outline-variant/20 bg-surface py-10">
       <div className="relative content-container grid gap-10 lg:grid-cols-[minmax(0,1fr)_550px] lg:items-center xl:grid-cols-[minmax(0,1fr)_650px]">
         <div className="max-w-3xl">
-          <h1 className="apx-font-headline max-w-3xl text-4xl font-extrabold leading-tight text-on-surface sm:text-5xl lg:text-6xl">
+          <h1 className="apx-font-headline max-w-3xl text-4xl font-semibold leading-tight text-on-surface sm:text-5xl lg:text-6xl">
             Explore Our{" "}
             <span className="text-primary">Product Portfolio</span>
           </h1>

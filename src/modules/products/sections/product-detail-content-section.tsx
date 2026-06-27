@@ -17,10 +17,10 @@ export default function ProductDetailContentSection({
     : getProductDescriptionParagraphs(product)
 
   return (
-    <section className="content-container pb-20 pt-6 lg:pb-24">
+    <section className="content-container mb-5">
       <div className="max-w-4xl">
         <div className="mb-8">
-          <h2 className="apx-font-headline text-3xl font-extrabold text-on-surface md:text-4xl">
+          <h2 className="apx-font-headline text-2xl font-semibold text-on-surface md:text-4xl">
             Product Information
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-on-surface-variant md:text-base">
@@ -35,7 +35,7 @@ export default function ProductDetailContentSection({
             dangerouslySetInnerHTML={{ __html: descriptionHtml }}
           />
         ) : (
-          <div className="space-y-4 text-base leading-8 text-on-surface-variant md:text-lg">
+          <div className="space-y-4 font-medium text-base leading-8 text-on-surface-variant md:text-lg">
             {descriptionParagraphs!.map((paragraph, index) => (
               <p key={`${product.id}-paragraph-${index + 1}`}>{paragraph}</p>
             ))}

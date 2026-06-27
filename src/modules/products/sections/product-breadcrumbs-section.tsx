@@ -12,19 +12,19 @@ export default function ProductBreadcrumbsSection({
 }: ProductBreadcrumbsSectionProps) {
   return (
     <section className="content-container pt-5 md:pt-6">
-      <nav className="flex flex-wrap items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant md:text-[11px]">
-        <Link href="/" className="transition-colors hover:text-primary">
+      <nav className="flex flex-wrap items-center gap-2 text-sm font-semibold text-on-surface-variant">
+        <Link href="/" className="transition-colors">
           Home
         </Link>
         <HiOutlineChevronRight className="text-sm" />
         <Link
           href="/products"
-          className="transition-colors hover:text-primary"
+          className="transition-colors"
         >
           Products
         </Link>
         <HiOutlineChevronRight className="text-sm" />
-        <span className="text-on-surface">{product.name}</span>
+        <span className="text-on-surface font-bold">{product.name}</span>
       </nav>
     </section>
   )

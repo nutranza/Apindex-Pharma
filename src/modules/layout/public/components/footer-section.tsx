@@ -42,7 +42,7 @@ export default function FooterSection() {
   return (
     <footer className="apx-font-body border-t border-gray-200/60 bg-white text-on-surface">
       <div className="content-container">
-        <div className="pt-12 lg:pt-14">
+        <div className="mt-10">
           <div className="grid gap-12 pb-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr] lg:gap-16">
             <div className="max-w-md">
               <Image
@@ -122,7 +122,7 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <h4 className="apx-font-headline text-base font-extrabold text-on-surface">
+      <h4 className="apx-font-headline text-base font-semibold text-on-surface">
         {title}
       </h4>
       <ul className="mt-4 space-y-3">
