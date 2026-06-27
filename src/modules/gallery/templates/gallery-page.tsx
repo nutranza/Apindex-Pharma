@@ -1,22 +1,15 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import { FaChevronLeft, FaChevronRight, FaTimes } from "react-icons/fa"
 import { MdOutlineScience } from "react-icons/md"
 
 import type { PublicCatalogResult } from "@/lib/data/public-catalog"
-import SectionBadge from "@/modules/common/components/section-badge"
-import { getProductIcon } from "@/modules/products/lib/catalog-ui"
-
-const CATALOG_DOSAGE_OPTIONS = [
-  "Tablets",
-  "Capsules",
-  "Injections",
-  "Drops",
-  "Creams",
-  "Syrups",
-]
+import {
+  getProductBadge,
+  getProductIcon,
+} from "@/modules/products/lib/catalog-ui"
 
 type GalleryPageTemplateProps = {
   catalog: PublicCatalogResult
@@ -25,21 +18,9 @@ type GalleryPageTemplateProps = {
 export default function GalleryPageTemplate({
   catalog,
 }: GalleryPageTemplateProps) {
-  const [filter, setFilter] = useState("Select All")
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
 
-  // Frontend filtering
-  let displayProducts = catalog.products
-  if (filter !== "Select All" && filter !== "All Dosage Forms") {
-    displayProducts = displayProducts.filter((p) => {
-      const badge = (
-        p.collections[0]?.title ||
-        p.categories[0]?.name ||
-        ""
-      ).toLowerCase()
-      return badge.includes(filter.toLowerCase().replace(/s$/, ""))
-    })
-  }
+  const displayProducts = catalog.products
 
   const handlePrev = (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -93,84 +74,70 @@ export default function GalleryPageTemplate({
 
   return (
     <div className="apx-landing apx-font-body min-h-screen bg-surface text-on-surface">
-      <main className="!pb-0 pt-[104px] mix-blend-normal">
-        <div className="content-container py-8">
+      <main className="!pb-0 pt-16 mix-blend-normal">
+        <div className="content-container py-12 lg:py-16">
           {/* Header Section */}
-          <div className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <SectionBadge tone="primary" className="mb-3">
-                Product Showcase
-              </SectionBadge>
-              <h1 className="apx-font-headline text-3xl font-bold tracking-tight text-on-surface md:text-4xl">
-                Product <span className="text-secondary">Gallery</span>
+          <div className="mb-10 max-w-3xl">
+            <div className="max-w-3xl">
+              <h1 className="apx-font-headline text-4xl font-semibold leading-tight text-on-surface md:text-5xl">
+                Product <span className="text-primary">Gallery</span>
               </h1>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label
-                htmlFor="gallery-filter"
-                className="text-sm font-semibold text-on-surface"
-              >
-                Filter
-              </label>
-              <select
-                id="gallery-filter"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="rounded-xl border border-outline-variant bg-surface-lowest px-3 py-1.5 text-sm font-medium text-on-surface outline-none hover:border-outline-variant focus:border-secondary focus:ring-1 focus:ring-secondary"
-              >
-                <option value="Select All">Select All</option>
-                {CATALOG_DOSAGE_OPTIONS.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
+              <p className="mt-4 max-w-2xl text-base leading-7 text-on-surface-variant">
+                Explore Apindex pharmaceutical products through a clean visual
+                showcase of formulations, dosage forms, and export-ready
+                product packaging.
+              </p>
             </div>
           </div>
 
           {/* Grid Section */}
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {displayProducts.map((product, index) => {
               const FallbackIconComponent = getProductIcon(product)
+              const productBadge = getProductBadge(product)
 
               return (
-                <div
+                <button
                   key={product.id}
+                  type="button"
                   onClick={() => setSelectedIndex(index)}
-                  className="group flex cursor-pointer flex-col justify-between overflow-hidden rounded-2xl bg-surface-lowest ambient-shadow transition-all hover:-translate-y-1 hover:shadow-lg"
+                  className="group flex cursor-pointer flex-col overflow-hidden rounded-2xl bg-white text-left"
+                  aria-label={`View ${product.name} image`}
                 >
-                  <div className="relative flex aspect-[4/3] w-full items-center justify-center bg-surface-lowest p-6">
+                  <div className="relative flex aspect-[5/3.6] w-full items-center justify-center bg-surface-lowest">
                     {product.image_url ? (
                       <Image
                         src={product.image_url}
                         alt={product.name}
                         fill
-                        className="object-contain p-6 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+                        className="object-contain p-6 mix-blend-multiply"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
                       />
                     ) : (
-                      <FallbackIconComponent className="h-28 w-28 text-on-surface-variant/20 transition-colors group-hover:text-secondary/40" />
+                      <FallbackIconComponent className="h-20 w-20 text-on-surface-variant/20" />
                     )}
                   </div>
 
-                  <div className="flex flex-1 flex-col justify-end bg-surface-lowest p-5 text-center">
-                    <h3 className="apx-font-headline text-base font-bold leading-[1.3] text-on-surface line-clamp-2">
+                  <div className="flex min-h-[92px] flex-1 flex-col justify-between p-4">
+                    <span className="text-sm font-semibold text-primary">
+                      {productBadge}
+                    </span>
+                    <h3 className="apx-font-headline mt-2 text-base font-bold leading-snug text-on-surface line-clamp-2">
                       {product.name}
                     </h3>
                   </div>
-                </div>
+                </button>
               )
             })}
           </div>
 
           {displayProducts.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-outline-variant/50 bg-surface-low py-24 text-center">
+            <div className="rounded-2xl bg-surface-low py-20 text-center">
               <h3 className="text-xl font-bold text-on-surface">
                 No images found
               </h3>
               <p className="mt-2 font-medium text-on-surface-variant">
-                Try selecting a different filter.
+                Product images will appear here once available.
               </p>
             </div>
           )}
@@ -193,10 +160,10 @@ export default function GalleryPageTemplate({
             </span>
             <button
               onClick={handleClose}
-              className="rounded-full p-2 transition-colors hover:bg-white/20"
+              className="rounded-full p-2.5 transition-colors hover:bg-white/20"
               aria-label="Close lightbox"
             >
-              <FaTimes className="text-3xl" />
+              <FaTimes className="text-xl" />
             </button>
           </div>
 
