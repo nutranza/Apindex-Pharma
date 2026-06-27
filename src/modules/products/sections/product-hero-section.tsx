@@ -65,7 +65,7 @@ export default function ProductHeroSection({ product }: ProductHeroSectionProps)
     <section className="content-container grid grid-cols-1 gap-8 bg-white pb-10 pt-6 lg:grid-cols-12 lg:items-center lg:gap-12 lg:pb-16 lg:pt-8">
       <div className="max-w-[460px] lg:col-span-5 xl:max-w-[500px]">
         <div className="relative overflow-hidden rounded-2xl bg-white">
-          <div className="relative aspect-[1.05/1] overflow-hidden rounded-2xl bg-white">
+          <div className="relative aspect-[1.05/1] border border-gray-200/60 shadow-sm overflow-hidden rounded-2xl bg-white">
             {product.image_url ? (
               <Image
                 src={product.image_url}
@@ -85,49 +85,51 @@ export default function ProductHeroSection({ product }: ProductHeroSectionProps)
       </div>
 
       <div className="lg:col-span-7 xl:col-span-7">
-        <h1 className="apx-font-headline max-w-2xl text-4xl font-extrabold leading-[1.02] text-on-surface md:text-[2.75rem] lg:text-[3rem]">
-          {headline.primary}
-          {headline.accent ? (
-            <>
-              <br />
-              <span className="text-primary-container">{headline.accent}</span>
-            </>
-          ) : null}
-        </h1>
+        <div className="rounded-2xl bg-surface-lowest">
+          <h1 className="apx-font-headline max-w-2xl text-3xl font-semibold leading-[1.02] text-on-surface md:text-[2.0rem]">
+            {headline.primary}
+            {headline.accent ? (
+              <>
+                <br />
+                <span className="text-primary-container">{headline.accent}</span>
+              </>
+            ) : null}
+          </h1>
 
-        {specItems.length > 0 && (
-          <div className="mt-6 grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
-            {specItems.map((item) => (
-              <div
-                key={item.label}
-                className="rounded-xl border border-outline-variant/25 bg-white px-4 py-3"
-              >
-                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-on-surface-variant">
-                  {item.label}
-                </p>
-                {item.highlighted ? (
-                  <div className="mt-1 flex items-center gap-2 text-sm font-bold text-secondary">
-                    <FaCircleCheck className="text-base" />
-                    <span>{item.value}</span>
-                  </div>
-                ) : (
-                  <p className="mt-1 text-sm font-semibold text-on-surface">
-                    {item.value}
+          {specItems.length > 0 && (
+            <div className="mt-6 grid max-w-xl grid-cols-1 gap-3 sm:grid-cols-2">
+              {specItems.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-xl border bg-white px-4 py-3"
+                >
+                  <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-on-surface-variant">
+                    {item.label}
                   </p>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+                  {item.highlighted ? (
+                    <div className="mt-1 flex items-center gap-2 text-sm font-bold text-secondary">
+                      <FaCircleCheck className="text-base" />
+                      <span>{item.value}</span>
+                    </div>
+                  ) : (
+                    <p className="mt-1 text-sm font-semibold text-on-surface">
+                      {item.value}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
-        <div className="mt-7 flex flex-wrap gap-4">
-          <a
-            href="/contact"
-            className="inline-flex items-center gap-3 rounded-xl bg-primary px-6 py-3.5 text-xs font-bold uppercase tracking-[0.04em] text-white transition-colors hover:bg-primary-container"
-          >
-            <span>Inquire About This Product</span>
-            <HiOutlineArrowRight className="text-lg" />
-          </a>
+          <div className="mt-7 flex flex-wrap gap-4">
+            <a
+              href="/contact"
+              className="inline-flex items-center gap-3 rounded-xl bg-primary px-6 py-3.5 text-xs font-semibold tracking-[0.04em] text-white transition-colors hover:bg-primary-container"
+            >
+              <span>Inquire About This Product</span>
+              <HiOutlineArrowRight className="text-lg" />
+            </a>
+          </div>
         </div>
       </div>
     </section>

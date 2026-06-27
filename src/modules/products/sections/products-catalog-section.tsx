@@ -125,14 +125,14 @@ export default function ProductsCatalogSection({
               return (
                 <article
                   key={product.id}
-                  className="group grid gap-4 py-6 md:grid-cols-[minmax(0,1fr)_160px_140px] md:items-center md:gap-8"
+                  className="group grid gap-4 py-4 md:grid-cols-[minmax(0,1fr)_160px_140px] md:items-center md:gap-8"
                 >
-                  <div className="flex min-w-0 items-center gap-4">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-primary">
-                      <ProductIcon className="text-xl" />
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className="flex sm:size-10 size-8 shrink-0 items-center justify-center rounded-full bg-primary-fixed text-primary">
+                      <ProductIcon className="sm:text-xl text-base" />
                     </div>
                     <div className="min-w-0">
-                      <h3 className="apx-font-headline text-xl font-semibold text-on-surface md:text-xl">
+                      <h3 className="apx-font-headline text-base font-semibold text-on-surface md:text-xl">
                         <Link
                           href={buildProductDetailHref(product.handle)}
                           className="text-on-surface"
@@ -155,7 +155,7 @@ export default function ProductsCatalogSection({
                       className="inline-flex items-center group gap-2 text-sm font-semibold text-on-surface"
                     >
                       <span>View Product</span>
-                      <HiArrowUpRight className="text-lg transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1.5" />
+                      <HiArrowUpRight className="text-base transition-transform duration-300 group-hover:-translate-y-1 group-hover:translate-x-1.5" />
                     </Link>
                   </div>
                 </article>
@@ -163,25 +163,25 @@ export default function ProductsCatalogSection({
             })}
           </div>
         ) : (
-          <div className="px-4 py-20 text-center">
-            <h3 className="apx-font-headline text-2xl font-semibold text-on-surface">
+          <div className="px-4 sm:py-20 py-10 text-center">
+            <h3 className="apx-font-headline sm:text-2xl text-lg font-semibold text-on-surface">
               No products found
             </h3>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-6 text-on-surface-variant">
+            <p className="mx-auto mt-5 max-w-2xl sm:text-base text-sm leading-6 text-on-surface-variant">
               Adjust your search or therapeutic category filter to review the available
               pharmaceutical catalogue entries.
             </p>
             <div className="mt-7 flex flex-wrap justify-center gap-3">
               <Link
                 href="/products"
-                className="rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-container"
+                className="rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-primary-container"
                 onClick={() => setSelectedCategoryHandle(null)}
               >
                 Clear filters
               </Link>
               <a
                 href={catalogRequestHref}
-                className="rounded-xl border border-primary/20 bg-surface-lowest px-5 py-3 text-sm font-semibold text-primary transition-colors hover:border-primary"
+                className="rounded-xl border border-primary/20 bg-surface-lowest px-6 py-3 text-sm font-semibold text-primary transition-colors hover:border-primary"
               >
                 Request catalog
               </a>
