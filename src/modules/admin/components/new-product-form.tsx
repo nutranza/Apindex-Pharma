@@ -12,7 +12,7 @@ import { cn } from "@lib/util/cn"
 import { getYoutubeId, getYoutubeEmbedUrl } from "@/lib/util/youtube"
 import { PhotoIcon } from "@heroicons/react/24/outline"
 import { COLOR_SWATCH_MAP, STANDARD_COLORS } from "@/lib/constants/colors"
-import CategoryCheckboxList from "./category-checkbox-list"
+import ProductCategorySelector from "./product-category-selector"
 import MediaGallery from "./media-manager"
 import ProductPharmaDetailsFields from "./product-pharma-details-fields"
 import { slugify } from "@/lib/util/slug"
@@ -704,10 +704,9 @@ export default function NewProductForm({ collections, categories }: NewProductFo
                 <Tag className="w-4 h-4 text-black" />
                 <label className="block text-xs font-black text-black uppercase tracking-widest">Categories</label>
               </div>
-              <CategoryCheckboxList
+              <ProductCategorySelector
                 categories={categories}
-                selectedIds={[]}
-                name="category_ids"
+                selectedCategoryIds={[]}
               />
             </div>
 

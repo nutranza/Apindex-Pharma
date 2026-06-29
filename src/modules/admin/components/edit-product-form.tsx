@@ -5,7 +5,7 @@ import { updateProduct } from "@/lib/data/admin"
 import AdminCard from "./admin-card"
 import { SubmitButton } from "./submit-button"
 import RichTextEditor from "./rich-text-editor"
-import CategoryCheckboxList from "./category-checkbox-list"
+import ProductCategorySelector from "./product-category-selector"
 import CollectionCheckboxList from "./collection-checkbox-list"
 import AdminBadge from "./admin-badge"
 import ProductVariantEditor from "./product-variant-editor"
@@ -90,6 +90,13 @@ export default function EditProductForm({
     () => getProductPharmaDetails(product.metadata),
     [product.metadata]
   )
+  const selectedSubcategory =
+    product.metadata &&
+      typeof product.metadata === "object" &&
+      !Array.isArray(product.metadata) &&
+      typeof product.metadata.product_subcategory === "string"
+      ? product.metadata.product_subcategory
+      : null
 
   return (
     <form action={updateProduct}>
@@ -429,10 +436,10 @@ export default function EditProductForm({
                   <Tag className="w-4 h-4 text-black" />
                   <label className="block text-xs font-black text-black uppercase tracking-widest">Categories</label>
                 </div>
-                <CategoryCheckboxList
+                <ProductCategorySelector
                   categories={categories}
-                  selectedIds={selectedCategoryIds}
-                  name="category_ids"
+                  selectedCategoryIds={selectedCategoryIds}
+                  selectedSubcategory={selectedSubcategory}
                 />
               </div>
 

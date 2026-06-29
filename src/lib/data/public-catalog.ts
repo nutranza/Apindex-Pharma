@@ -1,21 +1,13 @@
 import { cache } from "react"
 
+import { CATALOG_DOSAGE_OPTIONS } from "@/lib/constants/product-dosage"
 import type { Category, Collection } from "@/lib/supabase/types"
 import { createClient } from "@/lib/supabase/server"
 import { fixUrl } from "@/lib/util/images"
 import { ACTIVE_PRODUCT_STATUS } from "@/lib/util/product-visibility"
 
 export const PRODUCT_CATALOG_PAGE_SIZE = 6
-
-export const CATALOG_DOSAGE_OPTIONS = [
-  "All Dosage Forms",
-  "Tablets",
-  "Capsules",
-  "Injections",
-  "Drops",
-  "Creams",
-  "Syrups",
-] as const
+export { CATALOG_DOSAGE_OPTIONS }
 
 export type CatalogCategory = Pick<Category, "id" | "name" | "handle" | "image_url">
 export type CatalogCollection = Pick<Collection, "id" | "title" | "handle" | "image_url">
@@ -30,6 +22,7 @@ type PublicCatalogProductRow = {
   short_description: string | null
   image_url: string | null
   images: CatalogImage[] | null
+  metadata: Record<string, unknown> | null
   created_at: string
 }
 
@@ -48,6 +41,7 @@ export type PublicCatalogProduct = PublicCatalogProductRow & {
   collections: CatalogCollection[]
   images: string[]
   image_url: string | null
+  subcategory: string | null
 }
 
 export type PublicCatalogResult = {
@@ -180,7 +174,7 @@ export const listPublicCatalogProducts = cache(
     }
 
     const baseSelect =
-      "id, handle, name, description, short_description, image_url, images, created_at"
+      "id, handle, name, description, short_description, image_url, images, metadata, created_at"
     const selectWithCategory = `${baseSelect}, product_categories!inner(category_id)`
 
     let productsQuery = selectedCategory
@@ -228,7 +222,9 @@ export const listPublicCatalogProducts = cache(
     const categoryLinksPromise = productIds.length
       ? supabase
           .from("product_categories")
-          .select("product_id, category:categories(id, name, handle, image_url)")
+          .select(
+            "product_id, category:categories(id, name, handle, image_url)"
+          )
           .in("product_id", productIds)
       : Promise.resolve({ data: [], error: null })
 
@@ -295,6 +291,10 @@ export const listPublicCatalogProducts = cache(
         ...product,
         image_url: images[0] ?? fixUrl(product.image_url),
         images,
+        subcategory:
+          typeof product.metadata?.product_subcategory === "string"
+            ? product.metadata.product_subcategory
+            : null,
         categories: categoryMap.get(product.id) ?? [],
         collections: collectionMap.get(product.id) ?? [],
       }

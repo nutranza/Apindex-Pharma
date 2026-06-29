@@ -1,5 +1,6 @@
 import { cache } from "react"
 
+import { listPublicCatalogCategories } from "@/lib/data/public-catalog"
 import { getProductByHandle } from "@/lib/data/products"
 import { createClient } from "@/lib/supabase/server"
 import type { Category, Collection, Product } from "@/lib/supabase/types"
@@ -34,6 +35,7 @@ export type PublicProductDetail = Pick<
 > & {
   images: string[]
   categories: ProductDetailCategory[]
+  catalogCategories: ProductDetailCategory[]
   collections: ProductDetailCollection[]
   pharmaDetails: ProductPharmaDetails | null
   noIndex: boolean
@@ -82,7 +84,11 @@ export const getPublicProductDetailByHandle = cache(
     }
 
     const supabase = await createClient()
-    const [categoryLinksResult, collectionLinksResult] = await Promise.all([
+    const [
+      categoryLinksResult,
+      collectionLinksResult,
+      catalogCategories,
+    ] = await Promise.all([
       supabase
         .from("product_categories")
         .select("category:categories(id, name, handle, image_url)")
@@ -91,6 +97,7 @@ export const getPublicProductDetailByHandle = cache(
         .from("product_collections")
         .select("collection:collections(id, title, handle, image_url)")
         .eq("product_id", product.id),
+      listPublicCatalogCategories(),
     ])
 
     if (categoryLinksResult.error) {
@@ -142,6 +149,7 @@ export const getPublicProductDetailByHandle = cache(
       created_at: product.created_at,
       updated_at: product.updated_at,
       categories,
+      catalogCategories,
       collections,
       pharmaDetails: getProductPharmaDetails(product.metadata),
       noIndex: resolveNoIndex(seoMetadata),

@@ -12,8 +12,10 @@ export default async function EditCategory({ params }: { params: Promise<{ id: s
     if (!category) notFound()
 
     // Fetch all products and currently selected ones
-    const { products } = await getAdminProducts({ limit: -1 })
-    const selectedProductIds = await getCategoryProducts(id)
+    const [{ products }, selectedProductIds] = await Promise.all([
+        getAdminProducts({ limit: -1 }),
+        getCategoryProducts(id),
+    ])
 
     return (
         <div className="space-y-8">
