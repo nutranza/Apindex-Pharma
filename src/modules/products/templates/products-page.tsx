@@ -1,7 +1,6 @@
 import type { PublicCatalogResult } from "@/lib/data/public-catalog"
 import ProductsCatalogSection from "@/modules/products/sections/products-catalog-section"
 import ProductsHeroSection from "@/modules/products/sections/products-hero-section"
-import ProductsValidationSection from "@/modules/products/sections/products-validation-section"
 
 type ProductsPageTemplateProps = {
   catalog: PublicCatalogResult
@@ -20,9 +19,8 @@ export default function ProductsPageTemplate({
           catalog={catalog}
           initialCategoryHandle={initialCategoryHandle}
         />
-        <ProductsValidationSection />
+        {/* <ProductsValidationSection /> */}
       </main>
     </div>
   )
 }
-

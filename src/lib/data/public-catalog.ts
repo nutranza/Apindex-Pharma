@@ -1,21 +1,14 @@
 import { cache } from "react"
 
+import { CATALOG_DOSAGE_OPTIONS } from "@/lib/constants/product-dosage"
 import type { Category, Collection } from "@/lib/supabase/types"
 import { createClient } from "@/lib/supabase/server"
 import { fixUrl } from "@/lib/util/images"
 import { ACTIVE_PRODUCT_STATUS } from "@/lib/util/product-visibility"
 
 export const PRODUCT_CATALOG_PAGE_SIZE = 6
-
-export const CATALOG_DOSAGE_OPTIONS = [
-  "All Dosage Forms",
-  "Tablets",
-  "Capsules",
-  "Injections",
-  "Drops",
-  "Creams",
-  "Syrups",
-] as const
+const PRODUCT_CATALOG_QUERY_CHUNK_SIZE = 1000
+export { CATALOG_DOSAGE_OPTIONS }
 
 export type CatalogCategory = Pick<Category, "id" | "name" | "handle" | "image_url">
 export type CatalogCollection = Pick<Collection, "id" | "title" | "handle" | "image_url">
@@ -30,6 +23,7 @@ type PublicCatalogProductRow = {
   short_description: string | null
   image_url: string | null
   images: CatalogImage[] | null
+  metadata: Record<string, unknown> | null
   created_at: string
 }
 
@@ -43,11 +37,17 @@ type ProductCollectionLinkRow = {
   collection: CatalogCollection | CatalogCollection[] | null
 }
 
+type RelatedLinksResult<T> = {
+  data: T[]
+  error: { message: string } | null
+}
+
 export type PublicCatalogProduct = PublicCatalogProductRow & {
   categories: CatalogCategory[]
   collections: CatalogCollection[]
   images: string[]
   image_url: string | null
+  subcategory: string | null
 }
 
 export type PublicCatalogResult = {
@@ -125,6 +125,64 @@ function normalizeRelatedRows<T>(value: T | T[] | null): T[] {
   return value ? [value] : []
 }
 
+function chunkArray<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = []
+  for (let index = 0; index < items.length; index += size) {
+    chunks.push(items.slice(index, index + size))
+  }
+  return chunks
+}
+
+async function fetchProductCategoryLinks(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  productIds: string[]
+): Promise<RelatedLinksResult<ProductCategoryLinkRow>> {
+  if (productIds.length === 0) {
+    return { data: [], error: null }
+  }
+
+  const data: ProductCategoryLinkRow[] = []
+  for (const ids of chunkArray(productIds, 100)) {
+    const result = await supabase
+      .from("product_categories")
+      .select("product_id, category:categories(id, name, handle, image_url)")
+      .in("product_id", ids)
+
+    if (result.error) {
+      return { data, error: { message: result.error.message } }
+    }
+
+    data.push(...((result.data ?? []) as ProductCategoryLinkRow[]))
+  }
+
+  return { data, error: null }
+}
+
+async function fetchProductCollectionLinks(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  productIds: string[]
+): Promise<RelatedLinksResult<ProductCollectionLinkRow>> {
+  if (productIds.length === 0) {
+    return { data: [], error: null }
+  }
+
+  const data: ProductCollectionLinkRow[] = []
+  for (const ids of chunkArray(productIds, 100)) {
+    const result = await supabase
+      .from("product_collections")
+      .select("product_id, collection:collections(id, title, handle, image_url)")
+      .in("product_id", ids)
+
+    if (result.error) {
+      return { data, error: { message: result.error.message } }
+    }
+
+    data.push(...((result.data ?? []) as ProductCollectionLinkRow[]))
+  }
+
+  return { data, error: null }
+}
+
 function createEmptyCatalogResult(
   categories: CatalogCategory[],
   selectedCategory: CatalogCategory | null,
@@ -180,70 +238,86 @@ export const listPublicCatalogProducts = cache(
     }
 
     const baseSelect =
-      "id, handle, name, description, short_description, image_url, images, created_at"
+      "id, handle, name, description, short_description, image_url, images, metadata, created_at"
     const selectWithCategory = `${baseSelect}, product_categories!inner(category_id)`
 
-    let productsQuery = selectedCategory
-      ? supabase
-          .from("products")
-          .select(selectWithCategory, { count: "exact" })
-      : supabase.from("products").select(baseSelect, { count: "exact" })
+    const createProductsQuery = (includeCount: boolean) => {
+      const selectOptions = includeCount ? { count: "exact" as const } : undefined
+      let productsQuery = selectedCategory
+        ? supabase
+            .from("products")
+            .select(selectWithCategory, selectOptions)
+        : supabase.from("products").select(baseSelect, selectOptions)
 
-    productsQuery = productsQuery.eq("status", ACTIVE_PRODUCT_STATUS)
+      productsQuery = productsQuery.eq("status", ACTIVE_PRODUCT_STATUS)
 
-    if (selectedCategory) {
-      productsQuery = productsQuery.eq(
-        "product_categories.category_id",
-        selectedCategory.id
-      )
-    }
+      if (selectedCategory) {
+        productsQuery = productsQuery.eq(
+          "product_categories.category_id",
+          selectedCategory.id
+        )
+      }
 
-    if (query) {
-      const pattern = buildSearchPattern(query)
-      productsQuery = productsQuery.or(
-        [
-          `name.ilike.${pattern}`,
-          `handle.ilike.${pattern}`,
-          `short_description.ilike.${pattern}`,
-          `description.ilike.${pattern}`,
-        ].join(",")
-      )
+      if (query) {
+        const pattern = buildSearchPattern(query)
+        productsQuery = productsQuery.or(
+          [
+            `name.ilike.${pattern}`,
+            `handle.ilike.${pattern}`,
+            `short_description.ilike.${pattern}`,
+            `description.ilike.${pattern}`,
+          ].join(",")
+        )
+      }
+
+      return productsQuery.order("created_at", { ascending: false })
     }
 
     const from = (page - 1) * pageSize
     const to = from + pageSize - 1
+    const productRows: PublicCatalogProductRow[] = []
+    let total = 0
 
-    const { data, count, error } = await productsQuery
-      .order("created_at", { ascending: false })
-      .range(from, to)
+    for (
+      let rangeStart = from;
+      rangeStart <= to;
+      rangeStart += PRODUCT_CATALOG_QUERY_CHUNK_SIZE
+    ) {
+      const rangeEnd = Math.min(
+        rangeStart + PRODUCT_CATALOG_QUERY_CHUNK_SIZE - 1,
+        to
+      )
+      const { data, count, error } = await createProductsQuery(
+        productRows.length === 0
+      ).range(rangeStart, rangeEnd)
 
-    if (error) {
-      console.error("Error fetching public catalog products:", error.message)
-      return createEmptyCatalogResult(categories, selectedCategory, query, pageSize)
+      if (error) {
+        console.error("Error fetching public catalog products:", error.message)
+        return createEmptyCatalogResult(
+          categories,
+          selectedCategory,
+          query,
+          pageSize
+        )
+      }
+
+      if (typeof count === "number") {
+        total = count
+      }
+
+      const currentRows = (data ?? []) as PublicCatalogProductRow[]
+      productRows.push(...currentRows)
+
+      if (currentRows.length < rangeEnd - rangeStart + 1) {
+        break
+      }
     }
 
-    const productRows = (data ?? []) as PublicCatalogProductRow[]
     const productIds = productRows.map((product) => product.id)
 
-    const categoryLinksPromise = productIds.length
-      ? supabase
-          .from("product_categories")
-          .select("product_id, category:categories(id, name, handle, image_url)")
-          .in("product_id", productIds)
-      : Promise.resolve({ data: [], error: null })
-
-    const collectionLinksPromise = productIds.length
-      ? supabase
-          .from("product_collections")
-          .select(
-            "product_id, collection:collections(id, title, handle, image_url)"
-          )
-          .in("product_id", productIds)
-      : Promise.resolve({ data: [], error: null })
-
     const [categoryLinksResult, collectionLinksResult] = await Promise.all([
-      categoryLinksPromise,
-      collectionLinksPromise,
+      fetchProductCategoryLinks(supabase, productIds),
+      fetchProductCollectionLinks(supabase, productIds),
     ])
 
     if (categoryLinksResult.error) {
@@ -295,12 +369,15 @@ export const listPublicCatalogProducts = cache(
         ...product,
         image_url: images[0] ?? fixUrl(product.image_url),
         images,
+        subcategory:
+          typeof product.metadata?.product_subcategory === "string"
+            ? product.metadata.product_subcategory
+            : null,
         categories: categoryMap.get(product.id) ?? [],
         collections: collectionMap.get(product.id) ?? [],
       }
     })
 
-    const total = count ?? 0
     const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
     return {

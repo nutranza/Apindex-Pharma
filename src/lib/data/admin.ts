@@ -932,6 +932,8 @@ export async function createProduct(
     ? parseFloat(formData.get("compare_at_price") as string)
     : null
   const pharmaDetails = buildProductPharmaDetailsFromFormData(formData)
+  const productSubcategory =
+    (formData.get("product_subcategory") as string | null)?.trim() || null
 
   const product = {
     name: formData.get("name") as string,
@@ -952,6 +954,7 @@ export async function createProduct(
     metadata: mergeProductPharmaDetailsMetadata(
       {
         compare_at_price: compareAtPrice,
+        product_subcategory: productSubcategory,
       },
       pharmaDetails
     ),
@@ -1106,10 +1109,13 @@ export async function updateProduct(formData: FormData) {
   const imageUrlChanged = newImageUrl !== currentProduct?.image_url
   const updatedHandle = formData.get("handle") as string
   const pharmaDetails = buildProductPharmaDetailsFromFormData(formData)
+  const productSubcategory =
+    (formData.get("product_subcategory") as string | null)?.trim() || null
 
   const metadata = mergeProductPharmaDetailsMetadata(
     {
       ...currentMetadata,
+      product_subcategory: productSubcategory,
       compare_at_price: formData.get("compare_at_price")
         ? parseFloat(formData.get("compare_at_price") as string)
         : typeof currentMetadata.compare_at_price === "number"
