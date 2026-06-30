@@ -1,8 +1,9 @@
+import { unstable_cache } from "next/cache"
 import { cache } from "react"
 
 import { CATALOG_DOSAGE_OPTIONS } from "@/lib/constants/product-dosage"
 import type { Category, Collection } from "@/lib/supabase/types"
-import { createClient } from "@/lib/supabase/server"
+import { createPublicServerClient } from "@/lib/supabase/public-server"
 import { fixUrl } from "@/lib/util/images"
 import { ACTIVE_PRODUCT_STATUS } from "@/lib/util/product-visibility"
 
@@ -19,27 +20,15 @@ type PublicCatalogProductRow = {
   id: string
   handle: string
   name: string
-  description: string | null
-  short_description: string | null
-  image_url: string | null
-  images: CatalogImage[] | null
+  description?: string | null
+  short_description?: string | null
+  image_url?: string | null
+  images?: CatalogImage[] | null
   metadata: Record<string, unknown> | null
   created_at: string
-}
-
-type ProductCategoryLinkRow = {
-  product_id: string
-  category: CatalogCategory | CatalogCategory[] | null
-}
-
-type ProductCollectionLinkRow = {
-  product_id: string
-  collection: CatalogCollection | CatalogCollection[] | null
-}
-
-type RelatedLinksResult<T> = {
-  data: T[]
-  error: { message: string } | null
+  product_categories?: Array<{
+    category: CatalogCategory | CatalogCategory[] | null
+  }> | null
 }
 
 export type PublicCatalogProduct = PublicCatalogProductRow & {
@@ -66,6 +55,7 @@ type ListPublicCatalogProductsOptions = {
   pageSize?: number
   query?: string
   categoryHandle?: string
+  mode?: "listing" | "media"
 }
 
 function normalizePage(page: number | undefined): number {
@@ -77,8 +67,8 @@ function normalizePage(page: number | undefined): number {
 }
 
 function buildNormalizedImages(
-  imageUrl: string | null,
-  images: CatalogImage[] | null
+  imageUrl: string | null | undefined,
+  images: CatalogImage[] | null | undefined
 ): string[] {
   const rawImages: string[] = []
 
@@ -125,64 +115,6 @@ function normalizeRelatedRows<T>(value: T | T[] | null): T[] {
   return value ? [value] : []
 }
 
-function chunkArray<T>(items: T[], size: number): T[][] {
-  const chunks: T[][] = []
-  for (let index = 0; index < items.length; index += size) {
-    chunks.push(items.slice(index, index + size))
-  }
-  return chunks
-}
-
-async function fetchProductCategoryLinks(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  productIds: string[]
-): Promise<RelatedLinksResult<ProductCategoryLinkRow>> {
-  if (productIds.length === 0) {
-    return { data: [], error: null }
-  }
-
-  const data: ProductCategoryLinkRow[] = []
-  for (const ids of chunkArray(productIds, 100)) {
-    const result = await supabase
-      .from("product_categories")
-      .select("product_id, category:categories(id, name, handle, image_url)")
-      .in("product_id", ids)
-
-    if (result.error) {
-      return { data, error: { message: result.error.message } }
-    }
-
-    data.push(...((result.data ?? []) as ProductCategoryLinkRow[]))
-  }
-
-  return { data, error: null }
-}
-
-async function fetchProductCollectionLinks(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  productIds: string[]
-): Promise<RelatedLinksResult<ProductCollectionLinkRow>> {
-  if (productIds.length === 0) {
-    return { data: [], error: null }
-  }
-
-  const data: ProductCollectionLinkRow[] = []
-  for (const ids of chunkArray(productIds, 100)) {
-    const result = await supabase
-      .from("product_collections")
-      .select("product_id, collection:collections(id, title, handle, image_url)")
-      .in("product_id", ids)
-
-    if (result.error) {
-      return { data, error: { message: result.error.message } }
-    }
-
-    data.push(...((result.data ?? []) as ProductCollectionLinkRow[]))
-  }
-
-  return { data, error: null }
-}
-
 function createEmptyCatalogResult(
   categories: CatalogCategory[],
   selectedCategory: CatalogCategory | null,
@@ -201,9 +133,9 @@ function createEmptyCatalogResult(
   }
 }
 
-export const listPublicCatalogCategories = cache(
-  async function listPublicCatalogCategories(): Promise<CatalogCategory[]> {
-    const supabase = await createClient()
+const listPublicCatalogCategoriesCached = unstable_cache(
+  async function listPublicCatalogCategoriesCached(): Promise<CatalogCategory[]> {
+    const supabase = createPublicServerClient()
     const { data, error } = await supabase
       .from("categories")
       .select("id, name, handle, image_url")
@@ -215,31 +147,44 @@ export const listPublicCatalogCategories = cache(
     }
 
     return (data ?? []) as CatalogCategory[]
+  },
+  ["public-catalog-categories"],
+  { revalidate: 300 }
+)
+
+export const listPublicCatalogCategories = cache(
+  async function listPublicCatalogCategories(): Promise<CatalogCategory[]> {
+    return listPublicCatalogCategoriesCached()
   }
 )
 
-export const listPublicCatalogProducts = cache(
-  async function listPublicCatalogProducts(
-    options: ListPublicCatalogProductsOptions = {}
+const listPublicCatalogProductsCached = unstable_cache(
+  async function listPublicCatalogProductsCached(
+    page: number,
+    pageSize: number,
+    query: string,
+    categoryHandle: string,
+    mode: "listing" | "media"
   ): Promise<PublicCatalogResult> {
-    const supabase = await createClient()
-    const categories = await listPublicCatalogCategories()
+    const supabase = createPublicServerClient()
+    const categories = await listPublicCatalogCategoriesCached()
 
-    const pageSize = options.pageSize ?? PRODUCT_CATALOG_PAGE_SIZE
-    const page = normalizePage(options.page)
-    const query = normalizeSearchQuery(options.query)
-    const selectedCategory = options.categoryHandle
-      ? categories.find((category) => category.handle === options.categoryHandle) ??
-        null
+    const selectedCategory = categoryHandle
+      ? categories.find((category) => category.handle === categoryHandle) ?? null
       : null
 
-    if (options.categoryHandle && !selectedCategory) {
+    if (categoryHandle && !selectedCategory) {
       return createEmptyCatalogResult(categories, null, query, pageSize)
     }
 
     const baseSelect =
-      "id, handle, name, description, short_description, image_url, images, metadata, created_at"
-    const selectWithCategory = `${baseSelect}, product_categories!inner(category_id)`
+      mode === "media"
+        ? "id, handle, name, image_url, images, metadata, created_at, product_categories(category:categories(id, name, handle, image_url))"
+        : "id, handle, name, metadata, created_at, product_categories(category:categories(id, name, handle, image_url))"
+    const selectWithCategory =
+      mode === "media"
+        ? "id, handle, name, image_url, images, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
+        : "id, handle, name, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
 
     const createProductsQuery = (includeCount: boolean) => {
       const selectOptions = includeCount ? { count: "exact" as const } : undefined
@@ -261,12 +206,7 @@ export const listPublicCatalogProducts = cache(
       if (query) {
         const pattern = buildSearchPattern(query)
         productsQuery = productsQuery.or(
-          [
-            `name.ilike.${pattern}`,
-            `handle.ilike.${pattern}`,
-            `short_description.ilike.${pattern}`,
-            `description.ilike.${pattern}`,
-          ].join(",")
+          [`name.ilike.${pattern}`, `handle.ilike.${pattern}`].join(",")
         )
       }
 
@@ -305,7 +245,7 @@ export const listPublicCatalogProducts = cache(
         total = count
       }
 
-      const currentRows = (data ?? []) as PublicCatalogProductRow[]
+      const currentRows = (data ?? []) as unknown as PublicCatalogProductRow[]
       productRows.push(...currentRows)
 
       if (currentRows.length < rangeEnd - rangeStart + 1) {
@@ -313,68 +253,26 @@ export const listPublicCatalogProducts = cache(
       }
     }
 
-    const productIds = productRows.map((product) => product.id)
-
-    const [categoryLinksResult, collectionLinksResult] = await Promise.all([
-      fetchProductCategoryLinks(supabase, productIds),
-      fetchProductCollectionLinks(supabase, productIds),
-    ])
-
-    if (categoryLinksResult.error) {
-      console.error(
-        "Error fetching public catalog product categories:",
-        categoryLinksResult.error.message
-      )
-    }
-
-    if (collectionLinksResult.error) {
-      console.error(
-        "Error fetching public catalog product collections:",
-        collectionLinksResult.error.message
-      )
-    }
-
-    const categoryMap = new Map<string, CatalogCategory[]>()
-    ;((categoryLinksResult.data ?? []) as ProductCategoryLinkRow[]).forEach(
-      (link) => {
-        const normalizedCategories = normalizeRelatedRows(link.category)
-        if (normalizedCategories.length === 0) {
-          return
-        }
-
-        const currentCategories = categoryMap.get(link.product_id) ?? []
-        currentCategories.push(...normalizedCategories)
-        categoryMap.set(link.product_id, currentCategories)
-      }
-    )
-
-    const collectionMap = new Map<string, CatalogCollection[]>()
-    ;((collectionLinksResult.data ?? []) as ProductCollectionLinkRow[]).forEach(
-      (link) => {
-        const normalizedCollections = normalizeRelatedRows(link.collection)
-        if (normalizedCollections.length === 0) {
-          return
-        }
-
-        const currentCollections = collectionMap.get(link.product_id) ?? []
-        currentCollections.push(...normalizedCollections)
-        collectionMap.set(link.product_id, currentCollections)
-      }
-    )
-
     const products = productRows.map((product) => {
+      const { product_categories: productCategories, ...catalogProduct } =
+        product
       const images = buildNormalizedImages(product.image_url, product.images)
+      const categories = (productCategories ?? [])
+        .flatMap((link) => normalizeRelatedRows(link.category))
+        .filter((category, index, collection) => {
+          return collection.findIndex((item) => item.id === category.id) === index
+        })
 
       return {
-        ...product,
+        ...catalogProduct,
         image_url: images[0] ?? fixUrl(product.image_url),
         images,
         subcategory:
           typeof product.metadata?.product_subcategory === "string"
             ? product.metadata.product_subcategory
             : null,
-        categories: categoryMap.get(product.id) ?? [],
-        collections: collectionMap.get(product.id) ?? [],
+        categories,
+        collections: [],
       }
     })
 
@@ -390,5 +288,27 @@ export const listPublicCatalogProducts = cache(
       selectedCategory,
       query,
     }
+  },
+  ["public-catalog-products"],
+  { revalidate: 300 }
+)
+
+export const listPublicCatalogProducts = cache(
+  async function listPublicCatalogProducts(
+    options: ListPublicCatalogProductsOptions = {}
+  ): Promise<PublicCatalogResult> {
+    const pageSize = options.pageSize ?? PRODUCT_CATALOG_PAGE_SIZE
+    const page = normalizePage(options.page)
+    const query = normalizeSearchQuery(options.query)
+    const categoryHandle = options.categoryHandle ?? ""
+    const mode = options.mode ?? "listing"
+
+    return listPublicCatalogProductsCached(
+      page,
+      pageSize,
+      query,
+      categoryHandle,
+      mode
+    )
   }
 )
