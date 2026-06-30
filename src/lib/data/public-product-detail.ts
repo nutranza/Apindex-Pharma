@@ -1,10 +1,11 @@
+import { unstable_cache } from "next/cache"
 import { cache } from "react"
 
 import { listPublicCatalogCategories } from "@/lib/data/public-catalog"
-import { getProductByHandle } from "@/lib/data/products"
-import { createClient } from "@/lib/supabase/server"
+import { createPublicServerClient } from "@/lib/supabase/public-server"
 import type { Category, Collection, Product } from "@/lib/supabase/types"
 import { getProductPharmaDetails, type ProductPharmaDetails } from "@/lib/util/product-pharma"
+import { ACTIVE_PRODUCT_STATUS } from "@/lib/util/product-visibility"
 
 type ProductDetailCategory = Pick<Category, "id" | "name" | "handle" | "image_url">
 type ProductDetailCollection = Pick<Collection, "id" | "title" | "handle" | "image_url">
@@ -18,6 +19,23 @@ type ProductCollectionLinkRow = {
 }
 
 type ProductSeoMetadata = Record<string, unknown>
+type ProductDetailRow = Pick<
+  Product,
+  | "id"
+  | "handle"
+  | "name"
+  | "description"
+  | "short_description"
+  | "image_url"
+  | "images"
+  | "metadata"
+  | "seo_title"
+  | "seo_description"
+  | "seo_metadata"
+  | "video_url"
+  | "created_at"
+  | "updated_at"
+>
 
 export type PublicProductDetail = Pick<
   Product,
@@ -69,7 +87,7 @@ function resolveNoIndex(metadata: ProductSeoMetadata | null | undefined): boolea
   return metadata?.no_index === true
 }
 
-function normalizeProductImages(product: Product): string[] {
+function normalizeProductImages(product: ProductDetailRow): string[] {
   const images = Array.isArray(product.images) ? product.images : []
   const imageUrls = images
     .map((image) => {
@@ -95,8 +113,8 @@ function normalizeProductImages(product: Product): string[] {
   )
 }
 
-export const getPublicProductDetailByHandle = cache(
-  async function getPublicProductDetailByHandle(
+const getPublicProductDetailByHandleCached = unstable_cache(
+  async function getPublicProductDetailByHandleCached(
     handle: string
   ): Promise<PublicProductDetail | null> {
     const normalizedHandle = handle.trim()
@@ -104,12 +122,20 @@ export const getPublicProductDetailByHandle = cache(
       return null
     }
 
-    const product = await getProductByHandle(normalizedHandle)
-    if (!product) {
+    const supabase = createPublicServerClient()
+    const { data: product, error: productError } = await supabase
+      .from("products")
+      .select(
+        "id, handle, name, description, short_description, image_url, images, metadata, seo_title, seo_description, seo_metadata, video_url, created_at, updated_at"
+      )
+      .eq("status", ACTIVE_PRODUCT_STATUS)
+      .eq("handle", normalizedHandle)
+      .maybeSingle()
+
+    if (productError || !product) {
       return null
     }
 
-    const supabase = await createClient()
     const [
       categoryLinksResult,
       collectionLinksResult,
@@ -180,5 +206,15 @@ export const getPublicProductDetailByHandle = cache(
       ogTitle: getSeoMetadataValue(seoMetadata, "og_title"),
       ogDescription: getSeoMetadataValue(seoMetadata, "og_description"),
     }
+  },
+  ["public-product-detail"],
+  { revalidate: 300 }
+)
+
+export const getPublicProductDetailByHandle = cache(
+  async function getPublicProductDetailByHandle(
+    handle: string
+  ): Promise<PublicProductDetail | null> {
+    return getPublicProductDetailByHandleCached(handle)
   }
 )

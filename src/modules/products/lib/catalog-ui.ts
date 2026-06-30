@@ -25,7 +25,7 @@ export const VALIDATED_EXCELLENCE_IMAGE_URL =
 
 const CONTACT_EMAIL = "contact@apindexpharma.com"
 
-function stripHtmlTags(value: string | null): string {
+function stripHtmlTags(value: string | null | undefined): string {
   if (!value) {
     return ""
   }

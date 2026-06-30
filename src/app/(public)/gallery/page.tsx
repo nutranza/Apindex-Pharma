@@ -18,6 +18,7 @@ export default async function GalleryPage({
   const catalog = await listPublicCatalogProducts({
     page: Number.isNaN(page) ? 1 : page,
     pageSize: 36, // Load more images for gallery view
+    mode: "media",
   })
 
   return <GalleryPageTemplate catalog={catalog} />
