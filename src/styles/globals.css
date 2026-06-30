@@ -348,21 +348,21 @@ body {
 
   .rich-text-block {
     max-width: none;
-    line-height: 1.65;
+    line-height: 1.58;
   }
 
   .rich-text-block p {
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.65rem;
   }
 
   .rich-text-block ul,
   .rich-text-block ol {
     padding-left: 1.25rem;
-    margin: 0.5rem 0 0.75rem;
+    margin: 0.35rem 0 0.7rem;
   }
 
   .rich-text-block li {
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
   }
 
   .rich-text-block ul {
@@ -395,9 +395,13 @@ body {
     font-size: 1.125rem;
     font-weight: 700;
     line-height: 1.4;
-    margin-top: 1rem;
-    margin-bottom: 0.5rem;
+    margin-top: 0.95rem;
+    margin-bottom: 0.4rem;
     color: var(--apx-on-surface);
+  }
+
+  .rich-text-block h3:first-child {
+    margin-top: 0;
   }
 
   .rich-text-block strong,

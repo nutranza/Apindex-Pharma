@@ -34,6 +34,26 @@ function stripHtmlTags(value: string | null): string {
     .trim()
 }
 
+function isMeaningfulProductDescription(
+  description: string,
+  productName: string
+): boolean {
+  const normalizedDescription = description.trim().toLowerCase()
+  const normalizedProductName = productName.trim().toLowerCase()
+  const footerPlaceholders = new Set([
+    "address",
+    "get in touch",
+    "additional links",
+    "global certifications",
+  ])
+
+  return (
+    Boolean(normalizedDescription) &&
+    normalizedDescription !== normalizedProductName &&
+    !footerPlaceholders.has(normalizedDescription)
+  )
+}
+
 function buildEnquiryHref(subject: string, body: string): string {
   const searchParams = new URLSearchParams({
     subject,
@@ -96,8 +116,8 @@ export function getProductDescriptionParagraphs(
   product: PublicProductDetail
 ): string[] {
   const cleanedDescription = stripHtmlTags(product.description)
-  if (!cleanedDescription) {
-    return [getProductSummary(product)]
+  if (!isMeaningfulProductDescription(cleanedDescription, product.name)) {
+    return []
   }
 
   return cleanedDescription
@@ -135,7 +155,10 @@ export function getProductDescriptionHtml(
   product: PublicProductDetail
 ): string | null {
   const rawDescription = product.description?.trim()
-  if (!rawDescription) {
+  if (
+    !rawDescription ||
+    !isMeaningfulProductDescription(stripHtmlTags(rawDescription), product.name)
+  ) {
     return null
   }
   return sanitizeDescriptionHtml(rawDescription)

@@ -18,7 +18,7 @@ export default async function ProductsPage({
 
   const catalog = await listPublicCatalogProducts({
     page: 1,
-    pageSize: 1000,
+    pageSize: 2000,
     query: resolvedSearchParams.q,
   })
 

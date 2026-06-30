@@ -1,8 +1,7 @@
-import Image from "next/image"
 import Link from "next/link"
-import { GiMedicines } from "react-icons/gi"
 
 import type { PublicProductDetail } from "@/lib/data/public-product-detail"
+import ProductImageGallery from "@/modules/products/components/product-image-gallery"
 import {
   buildProductDetailEnquiryHref,
   buildProductHeadline,
@@ -35,6 +34,9 @@ function buildDetailRows(product: PublicProductDetail): DetailRow[] {
     details?.availableStrength
       ? { label: "Available Strength", value: details.availableStrength }
       : null,
+    details?.availableCombination
+      ? { label: "Available Combination", value: details.availableCombination }
+      : null,
     details?.packing ? { label: "Packing", value: details.packing } : null,
     details?.packInsertLeaflet !== null &&
     details?.packInsertLeaflet !== undefined
@@ -61,7 +63,13 @@ export default function ProductDetailContentSection({
   const descriptionParagraphs = descriptionHtml
     ? null
     : getProductDescriptionParagraphs(product)
+  const hasDescription =
+    Boolean(descriptionHtml) ||
+    Boolean(descriptionParagraphs && descriptionParagraphs.length > 0)
   const selectedCategoryHandle = product.categories[0]?.handle ?? null
+  const galleryImages = Array.from(
+    new Set([product.image_url, ...product.images].filter(Boolean))
+  ) as string[]
 
   return (
     <section className="content-container py-10 lg:py-14">
@@ -109,24 +117,10 @@ export default function ProductDetailContentSection({
 
         <div className="min-w-0">
           <div className="grid gap-8 lg:grid-cols-[minmax(300px,0.95fr)_minmax(320px,1fr)] xl:gap-10">
-            <div className="flex min-h-[320px] items-center justify-center border border-gray-200 bg-white p-6 sm:min-h-[380px]">
-              {product.image_url ? (
-                <div className="relative h-full min-h-[260px] w-full">
-                  <Image
-                    src={product.image_url}
-                    alt={`${product.name} packaging`}
-                    fill
-                    unoptimized
-                    sizes="(min-width: 1024px) 38vw, 100vw"
-                    className="object-contain"
-                  />
-                </div>
-              ) : (
-                <div className="flex h-full min-h-[260px] w-full items-center justify-center text-primary">
-                  <GiMedicines className="text-7xl" />
-                </div>
-              )}
-            </div>
+            <ProductImageGallery
+              productName={product.name}
+              images={galleryImages}
+            />
 
             <div className="min-w-0">
               <h1 className="apx-font-headline text-2xl font-semibold leading-tight text-secondary md:text-3xl">
@@ -160,26 +154,28 @@ export default function ProductDetailContentSection({
             </div>
           </div>
 
-          <div className="mt-10 max-w-5xl">
-            <h2 className="mb-4 text-2xl font-semibold text-secondary">
-              Description
-            </h2>
+          {hasDescription ? (
+            <div className="mt-10 max-w-5xl">
+              <h2 className="mb-4 text-2xl font-semibold text-secondary">
+                Description
+              </h2>
 
-            {descriptionHtml ? (
-              <div
-                className="rich-text-block max-w-none text-sm leading-7 text-on-surface"
-                dangerouslySetInnerHTML={{ __html: descriptionHtml }}
-              />
-            ) : (
-              <div className="space-y-4 text-sm leading-7 text-on-surface">
-                {descriptionParagraphs!.map((paragraph, index) => (
-                  <p key={`${product.id}-paragraph-${index + 1}`}>
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
+              {descriptionHtml ? (
+                <div
+                  className="rich-text-block max-w-none text-sm text-on-surface"
+                  dangerouslySetInnerHTML={{ __html: descriptionHtml }}
+                />
+              ) : (
+                <div className="space-y-4 text-sm leading-7 text-on-surface">
+                  {descriptionParagraphs!.map((paragraph, index) => (
+                    <p key={`${product.id}-paragraph-${index + 1}`}>
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : null}
 
         </div>
       </div>

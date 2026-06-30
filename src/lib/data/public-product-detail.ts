@@ -69,6 +69,32 @@ function resolveNoIndex(metadata: ProductSeoMetadata | null | undefined): boolea
   return metadata?.no_index === true
 }
 
+function normalizeProductImages(product: Product): string[] {
+  const images = Array.isArray(product.images) ? product.images : []
+  const imageUrls = images
+    .map((image) => {
+      if (typeof image === "string") {
+        return image
+      }
+
+      if (
+        image &&
+        typeof image === "object" &&
+        "url" in image &&
+        typeof image.url === "string"
+      ) {
+        return image.url
+      }
+
+      return null
+    })
+    .filter((image): image is string => Boolean(image))
+
+  return Array.from(
+    new Set([product.image_url, ...imageUrls].filter(Boolean) as string[])
+  )
+}
+
 export const getPublicProductDetailByHandle = cache(
   async function getPublicProductDetailByHandle(
     handle: string
@@ -126,9 +152,7 @@ export const getPublicProductDetailByHandle = cache(
         return items.findIndex((item) => item.id === collection.id) === index
       })
 
-    const images = Array.isArray(product.images)
-      ? product.images.filter((image): image is string => typeof image === "string")
-      : []
+    const images = normalizeProductImages(product)
 
     const seoMetadata =
       product.seo_metadata && typeof product.seo_metadata === "object" && !Array.isArray(product.seo_metadata)
@@ -141,7 +165,7 @@ export const getPublicProductDetailByHandle = cache(
       name: product.name,
       description: product.description,
       short_description: product.short_description,
-      image_url: product.image_url,
+      image_url: product.image_url ?? images[0] ?? null,
       images,
       seo_title: product.seo_title,
       seo_description: product.seo_description,

@@ -78,6 +78,12 @@ function normalizeSubcategory(value: string | null | undefined) {
   return value?.trim().toLowerCase() ?? ""
 }
 
+function buildSubcategorySectionId(label: string) {
+  return `product-subcategory-${normalizeSubcategory(label)
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")}`
+}
+
 const DOSAGE_ORDER = DOSAGE_LABELS.map((label) => normalizeSubcategory(label))
 
 function getProductSubcategory(product: CatalogProduct) {
@@ -132,9 +138,6 @@ export default function ProductsCatalogSection({
   const [selectedCategoryHandle, setSelectedCategoryHandle] = useState<
     string | null
   >(initialCategoryExists ? initialCategoryHandle : null)
-  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(
-    null
-  )
 
   const selectedCategory =
     catalog.categories.find(
@@ -150,24 +153,24 @@ export default function ProductsCatalogSection({
         )
       : catalog.products
 
-    if (selectedSubcategory) {
-      const selectedValue = normalizeSubcategory(selectedSubcategory)
-      products = products.filter(
-        (product) => normalizeSubcategory(product.subcategory) === selectedValue
-      )
-    }
-
     return products
-  }, [catalog.products, selectedCategoryHandle, selectedSubcategory])
+  }, [catalog.products, selectedCategoryHandle])
 
   const productGroups = useMemo(
     () => buildProductGroups(visibleProducts),
     [visibleProducts]
   )
   const selectedLabel =
-    selectedSubcategory ??
-    selectedCategory?.name ??
-    "All therapeutic categories"
+    selectedCategory?.name ?? "All therapeutic categories"
+
+  function scrollToSubcategory(label: string) {
+    const target = document.getElementById(buildSubcategorySectionId(label))
+    target?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    })
+  }
 
   return (
     <section className="bg-white py-14 lg:py-20">
@@ -182,7 +185,6 @@ export default function ProductsCatalogSection({
                 type="button"
                 onClick={() => {
                   setSelectedCategoryHandle(null)
-                  setSelectedSubcategory(null)
                 }}
                 className={`block w-full border-t border-gray-200 px-5 py-3 text-left text-sm transition-colors ${
                   !selectedCategoryHandle
@@ -202,7 +204,6 @@ export default function ProductsCatalogSection({
                     type="button"
                     onClick={() => {
                       setSelectedCategoryHandle(category.handle)
-                      setSelectedSubcategory(null)
                     }}
                     className={`block w-full border-t border-gray-200 px-5 py-3 text-left text-sm transition-colors ${
                       isSelected
@@ -225,18 +226,13 @@ export default function ProductsCatalogSection({
                 )
               ).map((tile) => {
                 const Icon = tile.icon
-                const isSelected = tile.label === selectedSubcategory
 
                 return (
                   <button
                     key={tile.label}
                     type="button"
-                    onClick={() =>
-                      setSelectedSubcategory(isSelected ? null : tile.label)
-                    }
-                    className={`flex min-h-[100px] flex-col items-center justify-center gap-2 px-3 py-4 text-center text-white ${tile.className} ${
-                      isSelected ? "ring-4 ring-secondary-container" : ""
-                    }`}
+                    onClick={() => scrollToSubcategory(tile.label)}
+                    className={`flex min-h-[100px] flex-col items-center justify-center gap-2 px-3 py-4 text-center text-white transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-secondary-container ${tile.className}`}
                   >
                     <Icon className="text-3xl" />
                     <span className="text-sm font-semibold leading-tight">
@@ -263,7 +259,11 @@ export default function ProductsCatalogSection({
                   const productRows = chunkProducts(group.products, 4)
 
                   return (
-                    <div key={normalizeSubcategory(group.label)}>
+                    <div
+                      key={normalizeSubcategory(group.label)}
+                      id={buildSubcategorySectionId(group.label)}
+                      className="scroll-mt-28"
+                    >
                       <h4 className="mb-3 text-xl font-semibold text-primary">
                         {group.label}
                       </h4>

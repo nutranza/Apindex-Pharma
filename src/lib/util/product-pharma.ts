@@ -1,6 +1,7 @@
 export type ProductPharmaDetails = {
   tradeName: string | null
   availableStrength: string | null
+  availableCombination: string | null
   packing: string | null
   packInsertLeaflet: boolean | null
   therapeuticUse: string | null
@@ -11,6 +12,7 @@ export type ProductPharmaDetails = {
 export type ProductPharmaDetailsFormDefaults = {
   tradeName: string
   availableStrength: string
+  availableCombination: string
   packing: string
   packInsertLeaflet: "" | "yes" | "no"
   therapeuticUse: string
@@ -37,6 +39,7 @@ function hasPharmaDetailsContent(details: ProductPharmaDetails): boolean {
   return Boolean(
     details.tradeName ||
       details.availableStrength ||
+      details.availableCombination ||
       details.packing ||
       details.packInsertLeaflet !== null ||
       details.therapeuticUse ||
@@ -84,6 +87,7 @@ export function parseProductPharmaDetails(value: unknown): ProductPharmaDetails 
   const details: ProductPharmaDetails = {
     tradeName: toNullableTrimmedString(value.trade_name),
     availableStrength: toNullableTrimmedString(value.available_strength),
+    availableCombination: toNullableTrimmedString(value.available_combination),
     packing: toNullableTrimmedString(value.packing),
     packInsertLeaflet: parsePackInsertLeaflet(value.pack_insert_leaflet),
     therapeuticUse: toNullableTrimmedString(value.therapeutic_use),
@@ -108,6 +112,7 @@ export function buildProductPharmaDetailsFormDefaults(
   return {
     tradeName: details?.tradeName ?? "",
     availableStrength: details?.availableStrength ?? "",
+    availableCombination: details?.availableCombination ?? "",
     packing: details?.packing ?? "",
     packInsertLeaflet:
       details?.packInsertLeaflet === true
@@ -126,6 +131,7 @@ export function buildProductPharmaDetailsFromFormData(
 ): ProductPharmaDetails | null {
   const tradeName = getTrimmedFormValue(formData, "pharma_trade_name")
   const availableStrength = getTrimmedFormValue(formData, "pharma_available_strength")
+  const availableCombination = getTrimmedFormValue(formData, "pharma_available_combination")
   const packing = getTrimmedFormValue(formData, "pharma_packing")
   const packInsertLeafletValue = getTrimmedFormValue(formData, "pharma_pack_insert_leaflet")
   const therapeuticUse = getTrimmedFormValue(formData, "pharma_therapeutic_use")
@@ -135,6 +141,7 @@ export function buildProductPharmaDetailsFromFormData(
   const details: ProductPharmaDetails = {
     tradeName: tradeName || null,
     availableStrength: availableStrength || null,
+    availableCombination: availableCombination || null,
     packing: packing || null,
     packInsertLeaflet: parsePackInsertLeaflet(packInsertLeafletValue),
     therapeuticUse: therapeuticUse || null,
@@ -155,6 +162,7 @@ export function mergeProductPharmaDetailsMetadata(
     nextMetadata.pharma_details = {
       trade_name: details.tradeName,
       available_strength: details.availableStrength,
+      available_combination: details.availableCombination,
       packing: details.packing,
       pack_insert_leaflet: details.packInsertLeaflet,
       therapeutic_use: details.therapeuticUse,
