@@ -5,11 +5,13 @@ import ProductsHeroSection from "@/modules/products/sections/products-hero-secti
 type ProductsPageTemplateProps = {
   catalog: PublicCatalogResult
   initialCategoryHandle?: string | null
+  initialSubcategoryLabel?: string | null
 }
 
 export default function ProductsPageTemplate({
   catalog,
   initialCategoryHandle = null,
+  initialSubcategoryLabel = null,
 }: ProductsPageTemplateProps) {
   return (
     <div className="apx-landing apx-font-body min-h-screen bg-surface text-on-surface">
@@ -18,6 +20,7 @@ export default function ProductsPageTemplate({
         <ProductsCatalogSection
           catalog={catalog}
           initialCategoryHandle={initialCategoryHandle}
+          initialSubcategoryLabel={initialSubcategoryLabel}
         />
         {/* <ProductsValidationSection /> */}
       </main>

@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useState } from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline"
 import useEmblaCarousel from "embla-carousel-react"
-import Image from "next/image"
 
 type HeroSlide = {
   eyebrow: string
@@ -12,15 +11,15 @@ type HeroSlide = {
   suffix: string
   imageUrl: string
   imageAlt: string
-  imagePosition?: string
+  backgroundPosition?: string
 }
 
 const HERO_SLIDES: HeroSlide[] = [
   {
     eyebrow: "WHO-GMP Certified Manufacturing",
-    title: "Science-Led",
+    title: "Trusted For",
     accent: "Pharma",
-    suffix: "Partnerships",
+    suffix: "Manufacturing",
     imageUrl: "/slide1.jpg",
     imageAlt:
       "Pharmaceutical professionals working in a modern laboratory environment",
@@ -29,7 +28,7 @@ const HERO_SLIDES: HeroSlide[] = [
     eyebrow: "Contract and Third Party Manufacturing",
     title: "Precision",
     accent: "Manufacturing",
-    suffix: "at Scale",
+    suffix: "at Global Scale",
     imageUrl: "/slide3.jpg",
     imageAlt:
       "Modern pharmaceutical manufacturing facility with production equipment",
@@ -38,11 +37,11 @@ const HERO_SLIDES: HeroSlide[] = [
     eyebrow: "Export Ready Pharmaceutical Supply",
     title: "Quality-Driven",
     accent: "Research",
-    suffix: "for Better Care",
+    suffix: "for Safer Care",
     imageUrl: "/slide2.jpg",
     imageAlt:
       "Pharmaceutical researcher working with a microscope in a clean laboratory",
-    imagePosition: "object-center",
+    backgroundPosition: "center",
   },
 ]
 
@@ -104,25 +103,20 @@ export default function HeroSection() {
         className="overflow-hidden h-[550px] lg:h-[650px]"
       >
         <div className="flex h-full touch-pan-y">
-          {HERO_SLIDES.map((slide, index) => (
+          {HERO_SLIDES.map((slide) => (
             <div
               key={slide.eyebrow}
-              className="relative min-w-0 flex-[0_0_100%] overflow-hidden"
+              aria-label={slide.imageAlt}
+              className="relative min-w-0 flex-[0_0_100%] overflow-hidden bg-cover bg-center bg-no-repeat"
+              style={{
+                backgroundImage: `url(${slide.imageUrl})`,
+                backgroundPosition: slide.backgroundPosition ?? "center",
+              }}
             >
-              <div className="absolute inset-0 z-0">
-                <Image
-                  fill
-                  priority={index === 0}
-                  sizes="100vw"
-                  src={slide.imageUrl}
-                  alt={slide.imageAlt}
-                  className={`h-full w-full object-cover ${slide.imagePosition ?? ""}`}
-                />
-                <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.64)_0%,rgba(13,17,23,0.38)_42%,rgba(13,17,23,0.08)_100%)]" />
-              </div>
+              <div className="absolute inset-0 z-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.68)_0%,rgba(13,17,23,0.42)_42%,rgba(13,17,23,0.08)_100%)]" />
 
               <div className="relative z-10 flex h-full items-center">
-                <div className="w-full max-w-3xl px-6 text-left sm:px-10 md:px-14 lg:pl-20">
+                <div className="content-container text-left">
                   {/* <p className="mb-4 text-xs font-bold uppercase text-primary-container sm:text-sm">
                     {slide.eyebrow}
                   </p> */}
@@ -170,7 +164,7 @@ export default function HeroSection() {
             onClick={() => scrollTo(index)}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               selectedIndex === index
-                ? "w-10 bg-primary-container"
+                ? "w-6 bg-primary-container"
                 : "w-4 bg-white/45 hover:bg-white/80"
             }`}
           />

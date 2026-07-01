@@ -1,3 +1,4 @@
+import Link from "next/link"
 import type { IconType } from "react-icons"
 import {
   FaCapsules,
@@ -5,13 +6,14 @@ import {
   FaSyringe,
   FaTablets,
 } from "react-icons/fa"
-import { MdApps, MdOutlineMedication, MdSanitizer } from "react-icons/md"
+import { MdApps, MdSanitizer } from "react-icons/md"
 import { TbMedicineSyrup } from "react-icons/tb"
 
 type CategoryCard = {
   icon: IconType
   title: string
   description: string
+  filterLabel: string
 }
 
 const CATEGORY_CARDS: CategoryCard[] = [
@@ -19,55 +21,60 @@ const CATEGORY_CARDS: CategoryCard[] = [
     icon: FaTablets,
     title: "Tablet",
     description: "Solid oral dosage forms for precise daily therapy.",
+    filterLabel: "Tablet",
   },
   {
     icon: FaCapsules,
     title: "Capsule",
     description: "Encapsulated formulations for controlled delivery.",
+    filterLabel: "Capsule",
   },
   {
     icon: FaSyringe,
     title: "Injection",
     description: "Sterile injectable products for clinical requirements.",
+    filterLabel: "Injection",
   },
   {
     icon: FaEyeDropper,
     title: "Eye / Ear Drops",
     description: "Focused liquid care for ophthalmic and otic use.",
+    filterLabel: "Eye / Ear Drops",
   },
   {
     icon: MdSanitizer,
     title: "Creams",
     description: "Topical preparations built for smooth application.",
-  },
-  {
-    icon: MdOutlineMedication,
-    title: "Ointments / Gels",
-    description: "Semi-solid topical formats for targeted treatment.",
+    filterLabel: "Creams",
   },
   {
     icon: TbMedicineSyrup,
     title: "Suspension / Syrup",
     description: "Palatable liquid medicines for flexible dosing.",
+    filterLabel: "Suspension / Syrup",
   },
   {
     icon: MdApps,
     title: "Other Dosage Forms",
     description: "Additional formulations for specialized needs.",
+    filterLabel: "Other",
   },
 ]
 
 const ICON_CLASS = "bg-primary-fixed text-primary ring-primary/10"
 
 function getCategoryBorderClass(index: number) {
+  const lastMobileRowStart = CATEGORY_CARDS.length - 1
+  const lastTabletRowStart = Math.floor((CATEGORY_CARDS.length - 1) / 2) * 2
+  const lastDesktopRowStart = Math.floor((CATEGORY_CARDS.length - 1) / 4) * 4
   const isSecondColumn = index % 2 === 1
   const isDesktopLastColumn = index % 4 === 3
-  const isMobileLast = index === CATEGORY_CARDS.length - 1
-  const isTabletLastRow = index >= CATEGORY_CARDS.length - 2
-  const isDesktopLastRow = index >= CATEGORY_CARDS.length - 4
+  const isMobileLastRow = index >= lastMobileRowStart
+  const isTabletLastRow = index >= lastTabletRowStart
+  const isDesktopLastRow = index >= lastDesktopRowStart
 
   return [
-    !isMobileLast ? "border-b" : "",
+    !isMobileLastRow ? "border-b" : "",
     !isSecondColumn ? "sm:border-r" : "",
     !isTabletLastRow ? "sm:border-b" : "sm:border-b-0",
     !isDesktopLastColumn ? "lg:border-r" : "lg:border-r-0",
@@ -86,8 +93,8 @@ export default function CategoriesSection() {
             Product{" "}
             <span className="text-primary">Categories</span>
           </h2>
-          <p className="section-description max-w-md md:justify-self-end md:text-right">
-            Engineered for every therapeutic need and patient requirement.
+          <p className="section-description capitalize max-w-md md:justify-self-end md:text-right">
+            Explore dosage formats designed for institutional, export, and clinical supply needs.
           </p>
         </div>
 
@@ -95,16 +102,19 @@ export default function CategoriesSection() {
           {CATEGORY_CARDS.map((card, index) => {
             const Icon = card.icon
             return (
-              <div
+              <Link
                 key={card.title}
-                className={`flex min-h-[140px] gap-5 border-outline-variant/60 px-2 py-5 sm:min-h-[195px] sm:p-6 ${getCategoryBorderClass(index)}`}
+                href={`/products?subcategory=${encodeURIComponent(
+                  card.filterLabel
+                )}`}
+                className={`group flex min-h-[140px] gap-5 border-outline-variant/60 px-2 py-5 transition-colors hover:bg-primary-fixed/35 focus:outline-none sm:min-h-[195px] sm:p-6 ${getCategoryBorderClass(index)}`}
               >
                 <div
-                  className={`flex lg:size-10 size-8 shrink-0 items-center justify-center rounded-full ring-8 ${ICON_CLASS}`}
+                  className={`flex lg:size-12 size-8 shrink-0 items-center justify-center rounded-full ${ICON_CLASS}`}
                 >
                   <Icon
                     aria-hidden="true"
-                    className="lg:text-2xl text-xl"
+                    className="lg:text-xl text-lg"
                   />
                 </div>
                 <div className="min-w-0">
@@ -115,9 +125,13 @@ export default function CategoriesSection() {
                     {card.description}
                   </p>
                 </div>
-              </div>
+              </Link>
             )
           })}
+          <div
+            aria-hidden="true"
+            className="hidden min-h-[195px] border-outline-variant/60 lg:block"
+          />
         </div>
       </div>
     </section>

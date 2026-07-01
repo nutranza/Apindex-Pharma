@@ -17,25 +17,25 @@ const SERVICE_CARDS: ServiceCard[] = [
     icon: LuFactory,
     title: "Contract Manufacturing",
     description:
-      "Dedicated facilities for high-volume pharmaceutical production with consistent process control.",
+      "Scalable production support for pharmaceutical brands with consistent process control and quality oversight.",
   },
   {
     icon: LuMicroscope,
-    title: "3rd Party Manufacturing",
+    title: "Third-Party Manufacturing",
     description:
-      "Private-label and partner manufacturing support backed by WHO-GMP aligned execution.",
+      "Private-label and partner manufacturing solutions backed by WHO-GMP aligned execution.",
   },
   {
     icon: LuPillBottle,
     title: "Generic Products",
     description:
-      "Accessible generic formulations developed for dependable supply and broad healthcare reach.",
+      "Cost-effective generic formulations developed for dependable supply and wider healthcare access.",
   },
   {
     icon: LuClipboardCheck,
     title: "Institutional Tenders",
     description:
-      "Reliable procurement support for government, hospital, and healthcare organization demand.",
+      "Reliable procurement support for government, hospital, and institutional healthcare requirements.",
   },
 ]
 
@@ -49,9 +49,9 @@ export default function ServicesSection() {
             <span className="text-primary">Capabilities</span>
           </h2>
           <p className="section-description mt-4 max-w-2xl">
-            Flexible manufacturing support for pharmaceutical brands,
-            institutions, and global healthcare partners with a focus on
-            quality, scale, and reliable supply.
+            End-to-end manufacturing support for pharmaceutical brands,
+            institutions, and global healthcare partners, built around quality,
+            scale, and reliable supply.
           </p>
         </div>
 
