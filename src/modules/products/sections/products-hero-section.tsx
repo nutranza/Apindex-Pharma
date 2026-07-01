@@ -10,6 +10,12 @@ type ProductsHeroSectionProps = {
 export default function ProductsHeroSection({
   catalog,
 }: ProductsHeroSectionProps) {
+  const searchAction = catalog.selectedCategory
+    ? `/categories/${encodeURIComponent(
+        catalog.selectedCategory.handle
+      )}`
+    : "/products"
+
   return (
     <section className="relative overflow-hidden border-b border-outline-variant/20 bg-surface py-10">
       <div className="relative content-container grid gap-10 lg:grid-cols-[minmax(0,1fr)_550px] lg:items-center xl:grid-cols-[minmax(0,1fr)_650px]">
@@ -23,10 +29,7 @@ export default function ProductsHeroSection({
             dosage forms, and export-ready pharmaceutical supply solutions.
           </p>
 
-          <form action="/products" method="get" className="mt-8 max-w-xl">
-            {catalog.selectedCategory ? (
-              <input type="hidden" name="category" value={catalog.selectedCategory.handle} />
-            ) : null}
+          <form action={searchAction} method="get" className="mt-8 max-w-xl">
             <div className="flex flex-col gap-3 rounded-2xl border border-outline-variant/25 bg-white p-2 sm:flex-row sm:items-center">
               <div className="flex min-w-0 flex-1 items-center gap-3 px-3 sm:px-4">
                 <HiOutlineMagnifyingGlass className="shrink-0 text-xl text-on-surface-variant" />

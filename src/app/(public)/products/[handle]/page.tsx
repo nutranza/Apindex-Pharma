@@ -5,6 +5,8 @@ import { getPublicProductDetailByHandle } from "@/lib/data/public-product-detail
 import { getProductSummary } from "@/modules/products/lib/product-detail-ui"
 import ProductDetailPageTemplate from "@/modules/products/templates/product-detail-page"
 
+export const revalidate = 300
+
 type ProductDetailPageProps = {
   params: Promise<{ handle: string }>
 }

@@ -99,7 +99,7 @@ export default function ProductDetailContentSection({
               return (
                 <Link
                   key={category.id}
-                  href={`/products?category=${encodeURIComponent(
+                  href={`/categories/${encodeURIComponent(
                     category.handle
                   )}`}
                   className={`block border-t border-gray-200 px-5 py-3 text-sm transition-colors ${
