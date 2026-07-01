@@ -125,7 +125,7 @@ function revalidateStorefrontProductPaths(
   revalidatePath("/categories")
   revalidatePath("/products/[handle]", "page")
   revalidatePath("/collections/[handle]", "page")
-  revalidatePath("/categories/[...category]", "page")
+  revalidatePath("/categories/[handle]", "page")
   revalidateTag("products", "max")
 
   uniqueHandles.forEach((handle) => {
@@ -661,6 +661,9 @@ export async function createCategory(formData: FormData) {
 
   revalidatePath("/admin/categories", "page")
   revalidatePath("/categories", "page")
+  revalidatePath("/categories/[handle]", "page")
+  revalidatePath(`/categories/${category.handle}`)
+  revalidatePath("/products", "page")
   revalidateTag("categories", "max")
   redirect("/admin/categories")
 }
@@ -678,6 +681,12 @@ export async function updateCategory(formData: FormData) {
     description: formData.get("description") as string,
     image_url: formData.get("image_url") as string | null,
   }
+
+  const { data: currentCategory } = await supabase
+    .from("categories")
+    .select("handle")
+    .eq("id", id)
+    .single()
 
   const { error } = await supabase
     .from("categories")
@@ -708,6 +717,12 @@ export async function updateCategory(formData: FormData) {
   revalidatePath("/admin/categories", "page")
   revalidatePath(`/admin/categories/${id}`, "page")
   revalidatePath("/categories", "page")
+  revalidatePath("/categories/[handle]", "page")
+  if (currentCategory?.handle) {
+    revalidatePath(`/categories/${currentCategory.handle}`)
+  }
+  revalidatePath(`/categories/${updates.handle}`)
+  revalidatePath("/products", "page")
   revalidateTag("categories", "max")
   redirect("/admin/categories")
 }
@@ -749,8 +764,21 @@ export async function deleteCategory(id: string) {
   await ensureAdmin()
   await requirePermission(PERMISSIONS.CATEGORIES_DELETE)
   const supabase = await createClient()
+  const { data: category } = await supabase
+    .from("categories")
+    .select("handle")
+    .eq("id", id)
+    .single()
+
   await supabase.from("categories").delete().eq("id", id)
   revalidatePath("/admin/categories")
+  revalidatePath("/categories", "page")
+  revalidatePath("/categories/[handle]", "page")
+  if (category?.handle) {
+    revalidatePath(`/categories/${category.handle}`)
+  }
+  revalidatePath("/products", "page")
+  revalidateTag("categories", "max")
 }
 
 // --- Products ---

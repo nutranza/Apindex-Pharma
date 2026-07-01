@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { GiMedicines } from "react-icons/gi"
 import { LuDroplets, LuPill, LuSyringe } from "react-icons/lu"
 import { MdOutlineScience } from "react-icons/md"
@@ -10,6 +10,7 @@ import { TbBottleFilled, TbTopologyStar3 } from "react-icons/tb"
 import { CATALOG_DOSAGE_OPTIONS } from "@/lib/constants/product-dosage"
 import type { PublicCatalogResult } from "@/lib/data/public-catalog"
 import { buildProductDetailHref } from "@/modules/products/lib/product-detail-ui"
+import { HiCheck } from "react-icons/hi2"
 
 type ProductsCatalogSectionProps = {
   catalog: PublicCatalogResult
@@ -132,12 +133,34 @@ export default function ProductsCatalogSection({
   catalog,
   initialCategoryHandle = null,
 }: ProductsCatalogSectionProps) {
-  const initialCategoryExists = catalog.categories.some(
-    (category) => category.handle === initialCategoryHandle
-  )
-  const [selectedCategoryHandle, setSelectedCategoryHandle] = useState<
+  const [selectedSubcategoryLabel, setSelectedSubcategoryLabel] = useState<
     string | null
-  >(initialCategoryExists ? initialCategoryHandle : null)
+  >(null)
+  const selectedCategoryHandle =
+    catalog.selectedCategory?.handle ?? initialCategoryHandle
+
+  useEffect(() => {
+    setSelectedSubcategoryLabel(null)
+  }, [selectedCategoryHandle])
+
+  useEffect(() => {
+    if (!selectedCategoryHandle) {
+      return
+    }
+
+    const cleanUrl = `${window.location.pathname}${window.location.search}`
+    if (window.location.hash) {
+      window.history.replaceState(null, "", cleanUrl)
+    }
+
+    const target = document.getElementById("product-catalog")
+    if (target) {
+      window.scrollTo({
+        top: target.getBoundingClientRect().top + window.scrollY - 96,
+        behavior: "auto",
+      })
+    }
+  }, [selectedCategoryHandle])
 
   const selectedCategory =
     catalog.categories.find(
@@ -145,47 +168,52 @@ export default function ProductsCatalogSection({
     ) ?? null
 
   const visibleProducts = useMemo(() => {
-    let products = selectedCategoryHandle
-      ? catalog.products.filter((product) =>
-          product.categories.some(
-            (category) => category.handle === selectedCategoryHandle
-          )
-        )
-      : catalog.products
+    if (!selectedSubcategoryLabel) {
+      return catalog.products
+    }
 
-    return products
-  }, [catalog.products, selectedCategoryHandle])
+    const selectedSubcategory = normalizeSubcategory(selectedSubcategoryLabel)
+
+    return catalog.products.filter(
+      (product) =>
+        normalizeSubcategory(getProductSubcategory(product)) ===
+        selectedSubcategory
+    )
+  }, [catalog.products, selectedSubcategoryLabel])
 
   const productGroups = useMemo(
     () => buildProductGroups(visibleProducts),
     [visibleProducts]
   )
   const selectedLabel =
-    selectedCategory?.name ?? "All therapeutic categories"
+    selectedSubcategoryLabel ??
+    selectedCategory?.name ??
+    "All therapeutic categories"
 
   function scrollToSubcategory(label: string) {
-    const target = document.getElementById(buildSubcategorySectionId(label))
-    target?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-      inline: "nearest",
+    setSelectedSubcategoryLabel(label)
+
+    window.requestAnimationFrame(() => {
+      const target = document.getElementById("product-catalog-results")
+      target?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest",
+      })
     })
   }
 
   return (
-    <section className="bg-white py-14 lg:py-20">
+    <section id="product-catalog" className="scroll-mt-24 bg-white py-14 lg:py-20">
       <div className="content-container">
         <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-          <aside className="overflow-hidden border border-gray-200 bg-white">
+          <aside className="overflow-hidden border border-gray-200 bg-white h-fit">
             <h2 className="bg-gray-50 px-5 py-6 text-center text-2xl font-semibold text-primary">
               Category
             </h2>
             <nav aria-label="Therapeutic categories">
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedCategoryHandle(null)
-                }}
+              <Link
+                href="/products"
                 className={`block w-full border-t border-gray-200 px-5 py-3 text-left text-sm transition-colors ${
                   !selectedCategoryHandle
                     ? "bg-secondary text-white"
@@ -193,18 +221,17 @@ export default function ProductsCatalogSection({
                 }`}
               >
                 All
-              </button>
+              </Link>
 
               {catalog.categories.map((category) => {
                 const isSelected = category.handle === selectedCategoryHandle
 
                 return (
-                  <button
+                  <Link
                     key={category.id}
-                    type="button"
-                    onClick={() => {
-                      setSelectedCategoryHandle(category.handle)
-                    }}
+                    href={`/categories/${encodeURIComponent(
+                      category.handle
+                    )}`}
                     className={`block w-full border-t border-gray-200 px-5 py-3 text-left text-sm transition-colors ${
                       isSelected
                         ? "bg-secondary text-white"
@@ -212,7 +239,7 @@ export default function ProductsCatalogSection({
                     }`}
                   >
                     {category.name}
-                  </button>
+                  </Link>
                 )
               })}
             </nav>
@@ -226,14 +253,27 @@ export default function ProductsCatalogSection({
                 )
               ).map((tile) => {
                 const Icon = tile.icon
+                const isSelected =
+                  normalizeSubcategory(selectedSubcategoryLabel) ===
+                  normalizeSubcategory(tile.label)
 
                 return (
                   <button
                     key={tile.label}
                     type="button"
                     onClick={() => scrollToSubcategory(tile.label)}
-                    className={`flex min-h-[100px] flex-col items-center justify-center gap-2 px-3 py-4 text-center text-white transition-transform hover:-translate-y-0.5 focus:outline-none focus-visible:ring-4 focus-visible:ring-secondary-container ${tile.className}`}
+                    aria-pressed={isSelected}
+                    className={`relative flex flex-col items-center justify-center gap-2 px-3 py-4 text-center text-white transition-transform focus:outline-none ${tile.className} ${
+                      isSelected
+                        ? "shadow-[inset_0_0_0_3px_rgba(255,255,255,0.96),0_0_0_4px_#64b51f,0_10px_22px_rgba(28,25,23,0.14)]"
+                        : ""
+                    }`}
                   >
+                    {isSelected ? (
+                      <span className="absolute right-3 top-3 inline-flex size-5 items-center justify-center bg-secondary text-white shadow-sm ring-2 rounded ring-white">
+                        <HiCheck className="size-3.5" />
+                      </span>
+                    ) : null}
                     <Icon className="text-3xl" />
                     <span className="text-sm font-semibold leading-tight">
                       {tile.label}
@@ -243,14 +283,28 @@ export default function ProductsCatalogSection({
               })}
             </div>
 
-            <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <div
+              id="product-catalog-results"
+              className="mb-4 scroll-mt-28 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+            >
               <h3 className="text-2xl font-semibold text-secondary">
                 {selectedCategory?.name ?? "All Products"}
               </h3>
-              <p className="text-sm text-on-surface-variant">
-                Showing {visibleProducts.length} result
-                {visibleProducts.length === 1 ? "" : "s"} in {selectedLabel}
-              </p>
+              <div className="flex flex-wrap items-center gap-3 sm:justify-end">
+                <p className="text-sm text-on-surface-variant">
+                  Showing {visibleProducts.length} result
+                  {visibleProducts.length === 1 ? "" : "s"} in {selectedLabel}
+                </p>
+                {selectedSubcategoryLabel ? (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedSubcategoryLabel(null)}
+                    className="inline-flex min-h-[36px] items-center justify-center border border-secondary bg-secondary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-on-secondary-container focus:outline-none focus-visible:ring-4 focus-visible:ring-secondary-container"
+                  >
+                    Clear Filter
+                  </button>
+                ) : null}
+              </div>
             </div>
 
             {productGroups.length > 0 ? (

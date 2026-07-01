@@ -272,6 +272,10 @@ export async function POST(request: NextRequest) {
         revalidatePath("/admin/categories")
         revalidatePath("/store")
         revalidatePath("/")
+        revalidatePath("/products")
+        revalidatePath("/categories")
+        revalidatePath("/categories/[handle]", "page")
+        revalidatePath("/products/[handle]", "page")
 
         console.log("[Migration] Complete!", stats)
 

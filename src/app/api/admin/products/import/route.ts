@@ -235,6 +235,10 @@ export async function POST(request: NextRequest) {
 
         revalidatePath("/admin/products")
         revalidatePath("/")
+        revalidatePath("/products")
+        revalidatePath("/categories")
+        revalidatePath("/categories/[handle]", "page")
+        revalidatePath("/products/[handle]", "page")
 
         return NextResponse.json({
             success: true,
