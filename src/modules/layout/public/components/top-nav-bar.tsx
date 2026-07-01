@@ -97,9 +97,9 @@ export default function TopNavBar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className="group apx-font-headline inline-flex items-center py-2 text-sm font-semibold uppercase text-on-surface focus-visible:outline-none lg:text-base"
+                className="group apx-font-headline inline-flex items-center py-2 text-sm font-medium uppercase text-on-surface focus-visible:outline-none lg:text-base"
               >
-                <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-1 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
+                <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
                   {item.label}
                 </span>
               </Link>
@@ -138,7 +138,7 @@ export default function TopNavBar() {
 
           <div
             id="apindex-mobile-navigation"
-            className="absolute right-0 top-0 flex h-full w-[min(80vw,360px)] animate-fade-in-right flex-col bg-white shadow-[-18px_0_36px_rgba(86,67,54,0.16)]"
+            className="absolute left-0 top-0 flex h-full w-[min(80vw,360px)] animate-fade-in-left flex-col bg-white shadow-[18px_0_36px_rgba(86,67,54,0.16)]"
           >
             <div className="flex h-20 items-center justify-between border-b border-gray-200/80 px-6">
               <Image
@@ -167,7 +167,7 @@ export default function TopNavBar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="group apx-font-headline rounded-lg px-4 py-3 text-base font-bold uppercase text-on-surface focus-visible:outline-none"
                 >
-                  <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-1 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
+                  <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
                     {item.label}
                   </span>
                 </Link>

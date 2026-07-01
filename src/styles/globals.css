@@ -184,11 +184,15 @@ body {
 
 @layer components {
   .content-container {
-    @apply max-w-[1440px] w-full mx-auto px-4;
+    @apply max-w-[1280px] w-full mx-auto px-4;
   }
 
   .animate-slide-down {
     animation: slideDown 0.3s ease-out;
+  }
+
+  .animate-fade-in-left {
+    animation: fade-in-left 0.28s ease-out both;
   }
 
   .animate-bounce-subtle {
@@ -273,6 +277,18 @@ body {
     to {
       transform: translateY(0);
       opacity: 1;
+    }
+  }
+
+  @keyframes fade-in-left {
+    from {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
   }
 

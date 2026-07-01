@@ -16,19 +16,19 @@ const FEATURES: FeatureItem[] = [
     icon: FlaskConical,
     title: "Advanced Formulation",
     description:
-      "Research-led product development supported by testing discipline,and practical manufacturing insight for dependable scale-up.",
+      "Research-led formulation development supported by testing discipline, practical manufacturing insight, and dependable scale-up planning.",
   },
   {
     icon: ShieldCheck,
     title: "Quality-Led Production",
     description:
-      "WHO-GMP aligned processes,and documented checks designed to maintain consistent product safety across every production stage.",
+      "WHO-GMP aligned processes and documented checks designed to maintain consistent product safety across every production stage.",
   },
   {
     icon: Globe2,
     title: "Export-Ready Support",
     description:
-      "Coordinated documentation,and supply planning that helps partners serve regulated and emerging healthcare markets with confidence.",
+      "Coordinated documentation, regulatory support, and supply planning to help partners serve regulated and emerging healthcare markets.",
   },
 ]
 

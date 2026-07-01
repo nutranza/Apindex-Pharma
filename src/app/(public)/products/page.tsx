@@ -15,14 +15,32 @@ export const metadata: Metadata = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; category?: string; page?: string }>
+  searchParams: Promise<{
+    q?: string
+    category?: string
+    page?: string
+    subcategory?: string
+  }>
 }) {
   const resolvedSearchParams = await searchParams
   const categoryHandle = resolvedSearchParams.category?.trim()
 
   if (categoryHandle) {
     const query = resolvedSearchParams.q?.trim()
-    const queryString = query ? `?q=${encodeURIComponent(query)}` : ""
+    const subcategory = resolvedSearchParams.subcategory?.trim()
+    const redirectSearchParams = new URLSearchParams()
+
+    if (query) {
+      redirectSearchParams.set("q", query)
+    }
+
+    if (subcategory) {
+      redirectSearchParams.set("subcategory", subcategory)
+    }
+
+    const queryString = redirectSearchParams.toString()
+      ? `?${redirectSearchParams.toString()}`
+      : ""
 
     redirect(
       `/categories/${encodeURIComponent(
@@ -37,5 +55,10 @@ export default async function ProductsPage({
     query: resolvedSearchParams.q,
   })
 
-  return <ProductsPageTemplate catalog={catalog} />
+  return (
+    <ProductsPageTemplate
+      catalog={catalog}
+      initialSubcategoryLabel={resolvedSearchParams.subcategory?.trim() || null}
+    />
+  )
 }

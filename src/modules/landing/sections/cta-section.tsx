@@ -5,19 +5,19 @@ export default function CtaSection() {
   return (
     <section className="bg-white py-14 lg:py-16">
       <div className="content-container">
-        <div className="mx-auto max-w-5xl rounded-2xl bg-surface-low px-4 py-14 text-center text-on-surface">
+        <div className="mx-auto max-w-5xl rounded-2xl border border-primary/15 bg-primary-fixed px-4 py-14 text-center text-on-surface shadow-[0_24px_70px_rgba(232,150,29,0.12)]">
           <div className="mx-auto max-w-3xl">
             <p className="mb-4 text-sm font-extrabold text-primary">
               Partner with Apindex
             </p>
             <h2 className="apx-font-headline flex flex-col capitalize items-center gap-2 text-3xl font-extrabold leading-none text-on-surface sm:gap-3 sm:text-4xl lg:text-5xl">
               <span>Scale with</span>
-              <span className="text-primary">trusted pharma support</span>
+              <span className="text-primary">trusted pharmaceutical support</span>
             </h2>
 
             <p className="mx-auto mt-5 max-w-2xl text-base font-medium leading-8 text-on-surface-variant sm:text-lg">
               Partner with Apindex for WHO-GMP aligned manufacturing,
-              third-party production, and export-ready supply support.
+              third-party production, and export-ready pharmaceutical supply.
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

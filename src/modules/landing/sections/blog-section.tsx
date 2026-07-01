@@ -16,7 +16,7 @@ type BlogPost = {
 const BLOG_POSTS: BlogPost[] = [
   {
     category: "Manufacturing",
-    title: "Third Party Manufacturing for Pharma Brands",
+    title: "Third-Party Manufacturing for Pharma Brands",
     excerpt:
       "How trusted manufacturing partnerships help pharma brands scale quality products without building their own plant.",
     imageUrl:

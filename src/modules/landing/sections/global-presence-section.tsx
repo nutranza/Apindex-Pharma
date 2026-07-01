@@ -2,7 +2,7 @@ import Image from "next/image"
 
 const GLOBAL_STATS = [
   { value: "86+", label: "Countries Served" },
-  { value: "1250+", label: "Intl. Clients" },
+  { value: "1250+", label: "Global Clients" },
   { value: "600+", label: "Sterile Products" },
   { value: "900+", label: "Non-Sterile Products" },
 ]
@@ -46,8 +46,8 @@ export default function GlobalPresenceSection() {
             </span>
           </h2>
           <p className="mx-auto max-w-lg text-base leading-relaxed text-zinc-400 sm:text-lg">
-            Exporting excellence to every corner of the world, ensuring health
-            is a universal right.
+            Delivering trusted pharmaceutical products across global markets
+            with consistent quality, compliance, and supply reliability.
           </p>
         </div>
 

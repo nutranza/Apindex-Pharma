@@ -11,7 +11,7 @@ export const revalidate = 300
 
 type CategoryPageProps = {
   params: Promise<{ handle: string }>
-  searchParams: Promise<{ q?: string }>
+  searchParams: Promise<{ q?: string; subcategory?: string }>
 }
 
 export async function generateStaticParams() {
@@ -69,6 +69,7 @@ export default async function CategoryPage({
     <ProductsPageTemplate
       catalog={catalog}
       initialCategoryHandle={catalog.selectedCategory.handle}
+      initialSubcategoryLabel={resolvedSearchParams.subcategory?.trim() || null}
     />
   )
 }

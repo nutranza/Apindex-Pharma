@@ -15,6 +15,7 @@ import { HiCheck } from "react-icons/hi2"
 type ProductsCatalogSectionProps = {
   catalog: PublicCatalogResult
   initialCategoryHandle?: string | null
+  initialSubcategoryLabel?: string | null
 }
 
 const DOSAGE_TILES = [
@@ -132,19 +133,29 @@ function buildProductGroups(products: CatalogProduct[]): ProductGroup[] {
 export default function ProductsCatalogSection({
   catalog,
   initialCategoryHandle = null,
+  initialSubcategoryLabel = null,
 }: ProductsCatalogSectionProps) {
   const [selectedSubcategoryLabel, setSelectedSubcategoryLabel] = useState<
     string | null
-  >(null)
+  >(initialSubcategoryLabel)
   const selectedCategoryHandle =
     catalog.selectedCategory?.handle ?? initialCategoryHandle
 
   useEffect(() => {
-    setSelectedSubcategoryLabel(null)
-  }, [selectedCategoryHandle])
+    const nextSubcategory = initialSubcategoryLabel?.trim() || null
+    const hasMatchingSubcategory = nextSubcategory
+      ? catalog.products.some(
+          (product) =>
+            normalizeSubcategory(getProductSubcategory(product)) ===
+            normalizeSubcategory(nextSubcategory)
+        )
+      : false
+
+    setSelectedSubcategoryLabel(hasMatchingSubcategory ? nextSubcategory : null)
+  }, [catalog.products, initialSubcategoryLabel, selectedCategoryHandle])
 
   useEffect(() => {
-    if (!selectedCategoryHandle) {
+    if (!selectedCategoryHandle && !initialSubcategoryLabel) {
       return
     }
 
@@ -160,7 +171,7 @@ export default function ProductsCatalogSection({
         behavior: "auto",
       })
     }
-  }, [selectedCategoryHandle])
+  }, [initialSubcategoryLabel, selectedCategoryHandle])
 
   const selectedCategory =
     catalog.categories.find(
