@@ -15,11 +15,11 @@ const STAT_ITEMS: StatItem[] = [
   {
     target: 15,
     suffix: "+",
-    label: "Years Experience",
+    label: "Years of Experience",
     icon: Factory,
   },
   {
-    target: 1800,
+    target: 1500,
     suffix: "+",
     label: "Products",
     icon: FlaskConical,
@@ -27,13 +27,13 @@ const STAT_ITEMS: StatItem[] = [
   {
     target: 86,
     suffix: "+",
-    label: "Countries",
+    label: "Countries Served",
     icon: Globe2,
   },
   {
     target: 100,
     suffix: "%",
-    label: "Quality Focus",
+    label: "Quality Commitment",
     icon: BadgeCheck,
   },
 ]
@@ -77,7 +77,7 @@ export default function AboutStatsSection() {
             <div key={item.label} className="text-center">
               <Icon
                 aria-hidden="true"
-                className="mx-auto mb-5 size-10 text-on-surface"
+                className="mx-auto mb-5 size-10 text-primary"
                 strokeWidth={1.5}
               />
               <div className="apx-font-headline text-4xl font-semibold leading-none text-on-surface md:text-5xl">

@@ -26,7 +26,7 @@ export default function ProductsHeroSection({
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-on-surface-variant md:text-lg">
             Browse quality-focused formulations across therapeutic categories,
-            dosage forms, and export-ready pharmaceutical supply solutions.
+            dosage forms, and export-ready pharmaceutical products.
           </p>
 
           <form action={searchAction} method="get" className="mt-8 max-w-xl">
@@ -37,7 +37,7 @@ export default function ProductsHeroSection({
                   type="search"
                   name="q"
                   defaultValue={catalog.query}
-                  placeholder="Search by product name, molecule, or therapeutic category..."
+                  placeholder="Search products, molecules, or categories..."
                   className="h-12 min-w-0 w-full border-none bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant/60"
                 />
               </div>

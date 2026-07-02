@@ -9,10 +9,10 @@ export default function ContactHeroSection() {
           priority
           sizes="100vw"
           src="/contect-hero.jpg"
-          alt="Pharmaceutical laboratory glassware and research environment"
+          alt="Apindex pharmaceutical support team coordinating product and partnership inquiries"
           className="object-cover object-[60%_0%]"
         />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.64)_0%,rgba(13,17,23,0.38)_42%,rgba(13,17,23,0.08)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.72)_0%,rgba(13,17,23,0.44)_42%,rgba(13,17,23,0.08)_100%)]" />
       </div>
 
       <div className="relative z-10 h-[550px] lg:h-[650px]">
@@ -26,8 +26,8 @@ export default function ContactHeroSection() {
             </h1>
             <p className="mt-5 max-w-2xl text-base font-medium leading-6 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.32)] sm:text-lg">
               Connect with our team for pharmaceutical manufacturing
-              partnerships, product enquiries, export support, and quality-led
-              supply discussions across global markets.
+              partnerships, product inquiries, export support, and
+              quality-focused supply discussions across global markets.
             </p>
           </div>
         </div>

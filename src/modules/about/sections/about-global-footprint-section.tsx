@@ -17,51 +17,51 @@ const MARKET_POINTS: MarketPoint[] = [
   {
     id: "india",
     label: "India",
-    markets: "Manufacturing base",
+    markets: "Manufacturing Base",
     description:
       "Integrated production planning, quality systems, and export documentation are coordinated from India.",
-    x: 66,
-    y: 51,
+    x: 66.0,
+    y: 53.8,
     tone: "primary",
   },
   {
     id: "africa",
     label: "Africa",
-    markets: "Kenya, Nigeria, Ghana",
+    markets: "Regional Healthcare Supply",
     description:
       "Reliable supply support for high-growth healthcare markets that need consistent batches and dependable records.",
-    x: 51,
-    y: 56,
+    x: 56.1,
+    y: 61.8,
     tone: "secondary",
   },
   {
     id: "southeast-asia",
     label: "Southeast Asia",
-    markets: "Vietnam, Philippines, Malaysia",
+    markets: "Distributor Supply Support",
     description:
       "Responsive manufacturing alignment for distributors serving fast-moving regional demand.",
-    x: 76,
-    y: 57,
+    x: 76.5,
+    y: 42.5,
     tone: "secondary",
   },
   {
     id: "europe",
     label: "Europe",
-    markets: "United Kingdom, Germany, France",
+    markets: "Regulated Market Readiness",
     description:
       "Structured export readiness and documentation discipline for tightly regulated procurement environments.",
-    x: 52,
-    y: 35,
+    x: 54,
+    y: 34.8,
     tone: "primary",
   },
   {
     id: "latin-america",
     label: "Latin America",
-    markets: "Brazil, Peru, Chile",
+    markets: "Partner-Led Supply Programs",
     description:
       "Partner-focused supply planning for programs that require traceable quality and stable delivery cycles.",
-    x: 31,
-    y: 63,
+    x: 25.2,
+    y: 67,
     tone: "primary",
   },
 ]
@@ -83,7 +83,7 @@ export default function AboutGlobalFootprintSection() {
           <h2 className="section-heading">Global <span className="text-primary">Footprint</span></h2>
           <p className="mt-3 section-description">
             Connecting pharmaceutical partners with export-ready manufacturing,
-            clear documentation, and dependable supply across selected global
+            clear documentation, and dependable supply across global healthcare
             markets.
           </p>
         </div>
@@ -132,7 +132,10 @@ export default function AboutGlobalFootprintSection() {
               )
             })}
 
-            <div className="absolute bottom-4 left-4 right-4 z-20 rounded-xl bg-white/95 p-4 backdrop-blur-sm sm:bottom-6 sm:left-auto sm:right-6 sm:w-[360px]">
+            <div
+              key={activePoint.id}
+              className="absolute bottom-4 left-4 right-4 z-20 rounded-xl bg-white/95 p-4 shadow-[0_18px_45px_rgba(27,28,28,0.12)] backdrop-blur-sm animate-global-market-card sm:bottom-6 sm:left-auto sm:right-6 sm:w-[360px]"
+            >
               <p className="text-sm font-bold text-primary">
                 {activePoint.label}
               </p>

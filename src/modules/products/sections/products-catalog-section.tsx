@@ -66,16 +66,6 @@ type ProductGroup = {
   products: CatalogProduct[]
 }
 
-function chunkProducts<T>(items: T[], size: number): T[][] {
-  const rows: T[][] = []
-
-  for (let index = 0; index < items.length; index += size) {
-    rows.push(items.slice(index, index + size))
-  }
-
-  return rows
-}
-
 function normalizeSubcategory(value: string | null | undefined) {
   return value?.trim().toLowerCase() ?? ""
 }
@@ -321,8 +311,6 @@ export default function ProductsCatalogSection({
             {productGroups.length > 0 ? (
               <div className="space-y-8">
                 {productGroups.map((group) => {
-                  const productRows = chunkProducts(group.products, 4)
-
                   return (
                     <div
                       key={normalizeSubcategory(group.label)}
@@ -333,32 +321,15 @@ export default function ProductsCatalogSection({
                         {group.label}
                       </h4>
 
-                      <div className="overflow-hidden border border-gray-200">
-                        {productRows.map((row, rowIndex) => (
-                          <div
-                            key={row.map((product) => product.id).join("-")}
-                            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+                        {group.products.map((product) => (
+                          <Link
+                            key={product.id}
+                            href={buildProductDetailHref(product.handle)}
+                            className="-ml-px -mt-px flex min-h-[56px] items-center justify-center border border-gray-200 px-4 py-3 text-center text-sm leading-6 text-on-surface transition-colors hover:bg-gray-50"
                           >
-                            {row.map((product) => (
-                              <Link
-                                key={product.id}
-                                href={buildProductDetailHref(product.handle)}
-                                className="flex min-h-[56px] items-center justify-center border-b border-r border-gray-200 px-4 py-3 text-center text-sm leading-6 text-on-surface transition-colors hover:bg-gray-50"
-                              >
-                                {product.name}
-                              </Link>
-                            ))}
-                            {rowIndex === productRows.length - 1
-                              ? Array.from({ length: 4 - row.length }).map(
-                                  (_, index) => (
-                                    <div
-                                      key={`empty-${index}`}
-                                      className="hidden min-h-[56px] border-b border-r border-gray-200 lg:block"
-                                    />
-                                  )
-                                )
-                              : null}
-                          </div>
+                            {product.name}
+                          </Link>
                         ))}
                       </div>
                     </div>

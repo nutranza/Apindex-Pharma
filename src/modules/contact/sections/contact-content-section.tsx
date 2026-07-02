@@ -2,16 +2,18 @@ import { ChevronDown, Mail, MapPin, Phone, Send } from "lucide-react"
 import type { ReactNode } from "react"
 
 const GOOGLE_MAP_EMBED_URL =
-  "https://www.google.com/maps?q=1200%20Innovation%20Drive%2C%20Cambridge%2C%20MA%2002142%2C%20USA&z=14&hl=en&gl=US&output=embed"
+  "https://www.google.com/maps?q=Surat%2C%20Gujarat%2C%20India&z=12&hl=en&gl=IN&output=embed"
+
+const CONTACT_EMAIL = "contact@apindexpharma.com"
 
 const CONTACT_ITEMS = [
   {
-    label: "Global HQ",
+    label: "Corporate Office",
     value: (
       <>
-        1200 Innovation Drive, Biotech Plaza
+        Surat, Gujarat
         <br />
-        Cambridge, MA 02142, USA
+        India
       </>
     ),
     icon: MapPin,
@@ -20,17 +22,17 @@ const CONTACT_ITEMS = [
   },
   {
     label: "Direct Line",
-    value: "+1 (555) 890-2100",
+    value: "+91 2345678900",
     icon: Phone,
     tone: "secondary",
-    subtext: "Mon - Fri, 9am - 6pm EST",
+    subtext: "Mon - Sat, 10am - 6pm IST",
   },
   {
     label: "Inquiries",
-    value: "precision@apindex.com",
+    value: CONTACT_EMAIL,
     icon: Mail,
     tone: "primary",
-    subtext: "General & Media Relations",
+    subtext: "Product, partnership, and export inquiries",
   },
 ] as const
 
@@ -85,7 +87,7 @@ export default function ContactContentSection() {
           <div className="flex flex-col gap-10 lg:col-span-5">
             <div className="shrink-0">
               <h2 className="apx-font-headline mb-8 text-2xl sm:text-3xl font-semibold text-on-surface">
-                Corporate Headquarters
+                Corporate Office
               </h2>
               <div className="space-y-8">
                 {CONTACT_ITEMS.map((item) => {
@@ -117,7 +119,7 @@ export default function ContactContentSection() {
 
             <div className="ambient-shadow relative min-h-72 flex-1 overflow-hidden rounded-2xl bg-surface-high">
               <iframe
-                title="Apindex Cambridge Headquarters Map"
+                title="Apindex Corporate Office Map"
                 src={GOOGLE_MAP_EMBED_URL}
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -141,21 +143,28 @@ export default function ContactContentSection() {
                 </p>
               </div>
 
-              <form className="space-y-5">
+              <form
+                action={`mailto:${CONTACT_EMAIL}`}
+                method="post"
+                encType="text/plain"
+                className="space-y-5"
+              >
                 <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
                   <Field label="Full Name">
                     <input
                       aria-label="Full Name"
+                      name="full_name"
                       type="text"
-                      placeholder="Dr. Sarah Chen"
+                      placeholder="Your name"
                       className={FIELD_CLASS}
                     />
                   </Field>
                   <Field label="Work Email">
                     <input
                       aria-label="Work Email"
+                      name="work_email"
                       type="email"
-                      placeholder="chen@medical-inst.org"
+                      placeholder="name@company.com"
                       className={FIELD_CLASS}
                     />
                   </Field>
@@ -165,8 +174,9 @@ export default function ContactContentSection() {
                   <Field label="Phone Number">
                     <input
                       aria-label="Phone Number"
+                      name="phone_number"
                       type="tel"
-                      placeholder="+1 (000) 000-0000"
+                      placeholder="+91 00000 00000"
                       className={FIELD_CLASS}
                     />
                   </Field>
@@ -174,6 +184,7 @@ export default function ContactContentSection() {
                     <div className="relative">
                       <select
                         aria-label="Country"
+                        name="country"
                         defaultValue="India"
                         className={`${FIELD_CLASS} appearance-none pr-12`}
                       >
@@ -189,8 +200,9 @@ export default function ContactContentSection() {
                 <Field label="Message">
                   <textarea
                     aria-label="Message"
+                    name="message"
                     rows={5}
-                    placeholder="Please describe the nature of your clinical or business inquiry..."
+                    placeholder="Tell us about your product, partnership, or export requirement..."
                     className={`${FIELD_CLASS} resize-none`}
                   />
                 </Field>

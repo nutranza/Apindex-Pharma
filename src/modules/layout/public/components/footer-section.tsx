@@ -84,7 +84,7 @@ export default function FooterSection() {
                       key={item.label}
                       aria-label={item.label}
                       role="img"
-                      className="inline-flex text-xl text-on-surface transition-colors hover:text-primary"
+                      className="inline-flex size-9 items-center justify-center rounded-full bg-surface-high text-lg text-on-surface transition-colors hover:bg-primary hover:text-white"
                     >
                       <Icon aria-hidden="true" />
                     </span>
