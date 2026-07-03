@@ -11,13 +11,13 @@ import Link from "next/link"
 import {
   UserPlusIcon,
   Cog6ToothIcon,
-  TrashIcon,
   UserGroupIcon,
 } from "@heroicons/react/24/outline"
 import { ProtectedAction } from "@/lib/permissions/components/protected-action"
 import { PERMISSIONS } from "@/lib/permissions"
 import { formatIST } from "@/lib/util/date"
 import { AdminTableWrapper } from "@modules/admin/components/admin-table-wrapper"
+import RemoveStaffAccessButton from "./remove-staff-access-button"
 
 export default async function AdminTeam({
   searchParams,
@@ -171,15 +171,17 @@ export default async function AdminTeam({
                         permission={PERMISSIONS.TEAM_MANAGE}
                         hideWhenDisabled
                       >
-                        <form action={removeStaffAccess.bind(null, member.id)}>
-                          <button
-                            type="submit"
-                            className="text-gray-400 hover:text-red-600 transition-colors p-1"
-                            title="Remove access"
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
-                        </form>
+                        <RemoveStaffAccessButton
+                          userId={member.id}
+                          staffName={
+                            resolvePersonDisplayName(
+                              member.first_name,
+                              member.last_name,
+                              member.display_contact
+                            )
+                          }
+                          removeAction={removeStaffAccess}
+                        />
                       </ProtectedAction>
                     </td>
                   </tr>
@@ -223,4 +225,12 @@ export default async function AdminTeam({
       </div>
     </div>
   )
+}
+
+function resolvePersonDisplayName(
+  firstName: string | null,
+  lastName: string | null,
+  fallback: string
+) {
+  return `${firstName || ""} ${lastName || ""}`.trim() || fallback
 }
