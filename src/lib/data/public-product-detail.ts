@@ -14,10 +14,6 @@ type ProductCategoryLinkRow = {
   category: ProductDetailCategory | ProductDetailCategory[] | null
 }
 
-type ProductCollectionLinkRow = {
-  collection: ProductDetailCollection | ProductDetailCollection[] | null
-}
-
 type ProductSeoMetadata = Record<string, unknown>
 type ProductDetailRow = Pick<
   Product,
@@ -138,16 +134,11 @@ const getPublicProductDetailByHandleCached = unstable_cache(
 
     const [
       categoryLinksResult,
-      collectionLinksResult,
       catalogCategories,
     ] = await Promise.all([
       supabase
         .from("product_categories")
         .select("category:categories(id, name, handle, image_url)")
-        .eq("product_id", product.id),
-      supabase
-        .from("product_collections")
-        .select("collection:collections(id, title, handle, image_url)")
         .eq("product_id", product.id),
       listPublicCatalogCategories(),
     ])
@@ -159,23 +150,10 @@ const getPublicProductDetailByHandleCached = unstable_cache(
       )
     }
 
-    if (collectionLinksResult.error) {
-      console.error(
-        "Error fetching public product collections:",
-        collectionLinksResult.error.message
-      )
-    }
-
     const categories = ((categoryLinksResult.data ?? []) as ProductCategoryLinkRow[])
       .flatMap((link) => normalizeRelatedRows(link.category))
       .filter((category, index, collection) => {
         return collection.findIndex((item) => item.id === category.id) === index
-      })
-
-    const collections = ((collectionLinksResult.data ?? []) as ProductCollectionLinkRow[])
-      .flatMap((link) => normalizeRelatedRows(link.collection))
-      .filter((collection, index, items) => {
-        return items.findIndex((item) => item.id === collection.id) === index
       })
 
     const images = normalizeProductImages(product)
@@ -200,7 +178,7 @@ const getPublicProductDetailByHandleCached = unstable_cache(
       updated_at: product.updated_at,
       categories,
       catalogCategories,
-      collections,
+      collections: [],
       pharmaDetails: getProductPharmaDetails(product.metadata),
       noIndex: resolveNoIndex(seoMetadata),
       ogTitle: getSeoMetadataValue(seoMetadata, "og_title"),

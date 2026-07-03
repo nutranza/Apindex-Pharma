@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 
-import { listPublicCatalogProducts } from "@/lib/data/public-catalog"
+import { listPublicCatalogListing } from "@/lib/data/public-catalog"
 import ProductsPageTemplate from "@/modules/products/templates/products-page"
 
 export const revalidate = 300
@@ -49,7 +49,7 @@ export default async function ProductsPage({
     )
   }
 
-  const catalog = await listPublicCatalogProducts({
+  const catalog = await listPublicCatalogListing({
     page: 1,
     pageSize: 2000,
     query: resolvedSearchParams.q,
