@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 
 import {
   listPublicCatalogCategories,
-  listPublicCatalogProducts,
+  listPublicCatalogListing,
 } from "@/lib/data/public-catalog"
 import ProductsPageTemplate from "@/modules/products/templates/products-page"
 
@@ -54,7 +54,7 @@ export default async function CategoryPage({
     searchParams,
   ])
 
-  const catalog = await listPublicCatalogProducts({
+  const catalog = await listPublicCatalogListing({
     page: 1,
     pageSize: 2000,
     query: resolvedSearchParams.q,

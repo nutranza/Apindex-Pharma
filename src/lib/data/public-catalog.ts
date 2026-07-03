@@ -56,6 +56,7 @@ type ListPublicCatalogProductsOptions = {
   query?: string
   categoryHandle?: string
   mode?: "listing" | "media"
+  includeCount?: boolean
 }
 
 function normalizePage(page: number | undefined): number {
@@ -164,7 +165,8 @@ const listPublicCatalogProductsCached = unstable_cache(
     pageSize: number,
     query: string,
     categoryHandle: string,
-    mode: "listing" | "media"
+    mode: "listing" | "media",
+    includeCount: boolean
   ): Promise<PublicCatalogResult> {
     const supabase = createPublicServerClient()
     const categories = await listPublicCatalogCategoriesCached()
@@ -186,8 +188,10 @@ const listPublicCatalogProductsCached = unstable_cache(
         ? "id, handle, name, image_url, images, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
         : "id, handle, name, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
 
-    const createProductsQuery = (includeCount: boolean) => {
-      const selectOptions = includeCount ? { count: "exact" as const } : undefined
+    const createProductsQuery = (shouldIncludeCount: boolean) => {
+      const selectOptions = shouldIncludeCount
+        ? { count: "exact" as const }
+        : undefined
       let productsQuery = selectedCategory
         ? supabase
             .from("products")
@@ -228,7 +232,7 @@ const listPublicCatalogProductsCached = unstable_cache(
         to
       )
       const { data, count, error } = await createProductsQuery(
-        productRows.length === 0
+        includeCount && productRows.length === 0
       ).range(rangeStart, rangeEnd)
 
       if (error) {
@@ -276,6 +280,10 @@ const listPublicCatalogProductsCached = unstable_cache(
       }
     })
 
+    if (!includeCount) {
+      total = productRows.length
+    }
+
     const totalPages = Math.max(1, Math.ceil(total / pageSize))
 
     return {
@@ -302,13 +310,27 @@ export const listPublicCatalogProducts = cache(
     const query = normalizeSearchQuery(options.query)
     const categoryHandle = options.categoryHandle ?? ""
     const mode = options.mode ?? "listing"
+    const includeCount = options.includeCount ?? true
 
     return listPublicCatalogProductsCached(
       page,
       pageSize,
       query,
       categoryHandle,
-      mode
+      mode,
+      includeCount
     )
+  }
+)
+
+export const listPublicCatalogListing = cache(
+  async function listPublicCatalogListing(
+    options: Omit<ListPublicCatalogProductsOptions, "mode" | "includeCount"> = {}
+  ): Promise<PublicCatalogResult> {
+    return listPublicCatalogProducts({
+      ...options,
+      mode: "listing",
+      includeCount: false,
+    })
   }
 )

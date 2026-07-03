@@ -17,7 +17,7 @@ export default function SubmitButton() {
             {pending && (
                 <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
             )}
-            {pending ? "Adding..." : "Add to Team"}
+            {pending ? "Creating..." : "Create Admin"}
         </button>
     )
 }
