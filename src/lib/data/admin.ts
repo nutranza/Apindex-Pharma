@@ -155,7 +155,16 @@ export type PromoteToStaffInput = {
   contactEmail: string
 }
 
+export type CreateAdminUserInput = {
+  email: string
+  password: string
+  roleId: string
+  firstName: string
+  lastName: string
+}
+
 const SIMPLE_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const MIN_ADMIN_PASSWORD_LENGTH = 8
 
 function resolveEmailBackedValue(row: EmailBackedRow): string {
   return getCustomerFacingEmail(row.contact_email, row.email) || ""
@@ -3496,6 +3505,128 @@ export async function inviteStaffMember(email: string, roleId: string) {
 
   revalidatePath("/admin/team")
   return { success: true }
+}
+
+export async function createAdminUserWithPassword({
+  email,
+  password,
+  roleId,
+  firstName,
+  lastName,
+}: CreateAdminUserInput) {
+  await requirePermission(PERMISSIONS.TEAM_MANAGE)
+
+  const normalizedEmail = normalizeAdminContactEmail(email)
+  const normalizedPassword = password.trim()
+  const normalizedRoleId = roleId.trim()
+  const normalizedFirstName = firstName.trim()
+  const normalizedLastName = lastName.trim()
+
+  if (!normalizedFirstName || !normalizedLastName) {
+    throw new Error("First name and last name are required")
+  }
+
+  if (!normalizedRoleId) {
+    throw new Error("Select an admin role")
+  }
+
+  if (normalizedPassword.length < MIN_ADMIN_PASSWORD_LENGTH) {
+    throw new Error(
+      `Password must be at least ${MIN_ADMIN_PASSWORD_LENGTH} characters`
+    )
+  }
+
+  const supabaseAdmin = await createAdminClient()
+
+  const { data: role, error: roleError } = await supabaseAdmin
+    .from("admin_roles")
+    .select("id")
+    .eq("id", normalizedRoleId)
+    .maybeSingle()
+
+  if (roleError || !role) {
+    throw new Error("Selected admin role was not found")
+  }
+
+  const { data: existingEmailProfile, error: existingEmailProfileError } =
+    await supabaseAdmin
+      .from("profiles")
+      .select("id")
+      .eq("email", normalizedEmail)
+      .limit(1)
+      .maybeSingle()
+
+  if (existingEmailProfileError) {
+    throw new Error(existingEmailProfileError.message)
+  }
+
+  const {
+    data: existingContactEmailProfile,
+    error: existingContactEmailProfileError,
+  } = await supabaseAdmin
+    .from("profiles")
+    .select("id")
+    .eq("contact_email", normalizedEmail)
+    .limit(1)
+    .maybeSingle()
+
+  if (existingContactEmailProfileError) {
+    throw new Error(existingContactEmailProfileError.message)
+  }
+
+  if (existingEmailProfile || existingContactEmailProfile) {
+    throw new Error("A user with this email already exists")
+  }
+
+  const { data: createdUser, error: createError } =
+    await supabaseAdmin.auth.admin.createUser({
+      email: normalizedEmail,
+      password: normalizedPassword,
+      email_confirm: true,
+      user_metadata: {
+        first_name: normalizedFirstName,
+        last_name: normalizedLastName,
+        full_name: `${normalizedFirstName} ${normalizedLastName}`.trim(),
+        role: "admin",
+        admin_role_id: normalizedRoleId,
+      },
+    })
+
+  if (createError || !createdUser.user) {
+    throw new Error(createError?.message || "Failed to create admin user")
+  }
+
+  const { error: profileError } = await supabaseAdmin.from("profiles").upsert(
+    {
+      id: createdUser.user.id,
+      email: normalizedEmail,
+      contact_email: normalizedEmail,
+      first_name: normalizedFirstName,
+      last_name: normalizedLastName,
+      role: "admin",
+      admin_role_id: normalizedRoleId,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "id" }
+  )
+
+  if (profileError) {
+    const { error: cleanupError } = await supabaseAdmin.auth.admin.deleteUser(
+      createdUser.user.id
+    )
+
+    if (cleanupError) {
+      console.warn(
+        "Failed to clean up auth user after profile sync failed:",
+        cleanupError
+      )
+    }
+
+    throw new Error(profileError.message)
+  }
+
+  revalidatePath("/admin/team")
+  revalidatePath("/admin", "layout")
 }
 
 export async function updateStaffRole(userId: string, roleId: string) {

@@ -2,21 +2,32 @@
 
 import { Suspense } from "react"
 
-import PhoneLogin from "@modules/account/components/phone-login"
+import EmailPasswordLogin from "@modules/account/components/email-password-login"
 import AuthShell from "@modules/account/components/auth-shell"
 
 type LoginTemplateProps = {
   next?: string
   returnUrl?: string
+  error?: string
+  authError?: string
 }
 
-const LoginTemplateContent = ({ next, returnUrl }: LoginTemplateProps) => {
+const LoginTemplateContent = ({
+  next,
+  returnUrl,
+  error,
+  authError,
+}: LoginTemplateProps) => {
   return (
     <AuthShell
       title="Welcome to Apindex"
-      subtitle="Enter your WhatsApp number to continue"
+      subtitle="Enter your admin email ID and password to continue"
     >
-      <PhoneLogin next={next} returnUrl={returnUrl} />
+      <EmailPasswordLogin
+        next={next}
+        returnUrl={returnUrl}
+        initialError={error || authError}
+      />
     </AuthShell>
   )
 }
