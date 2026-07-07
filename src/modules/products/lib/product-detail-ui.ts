@@ -1,6 +1,6 @@
 import type { PublicProductDetail } from "@/lib/data/public-product-detail"
 
-const CONTACT_EMAIL = "contact@apindexpharma.com"
+const CONTACT_EMAIL = "info@apindexpharma.com"
 const DEFAULT_PRODUCT_SUMMARY =
   "Further product information is available for institutional and export enquiries."
 

@@ -23,7 +23,7 @@ export const PRODUCTS_HERO_IMAGE_URL =
 export const VALIDATED_EXCELLENCE_IMAGE_URL =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuAbO5BFTZN1hjOhGJtfoS0x13EgbEfgXOPVNoZZyY1zpCfpDuRCPHrqTgFwjLOrJrYVwVA1dWefxc0Ce_twA-btoUMc7aAXaJVMDjg5QcMYvcxN1e_JqcK-ys7LPgmUMUl-9d5w1zUQL23sPLl_k5T265O1djtRDRfvWdmj5ApcyLsde4GsdjF14tbT5ZCIYHElUDXwUT7XiVCZlKV9hV7Px9xYsfl2nLilniLAFK7PXx1anxeCB_Xl_TE3TYCAJIDY2fyYqOgJ2hw"
 
-const CONTACT_EMAIL = "contact@apindexpharma.com"
+const CONTACT_EMAIL = "info@apindexpharma.com"
 
 function stripHtmlTags(value: string | null | undefined): string {
   if (!value) {

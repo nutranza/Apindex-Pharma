@@ -2,8 +2,8 @@ import Image from "next/image"
 
 const TRUST_POINTS = [
   { value: "WHO-GMP", label: "Certified" },
-  { value: "1500+", label: "Products" },
-  { value: "86+", label: "Countries" },
+  { value: "500+", label: "Products" },
+  { value: "25+", label: "Countries" },
 ]
 
 export default function WelcomeSection() {
@@ -27,8 +27,8 @@ export default function WelcomeSection() {
                 reliability, innovation, and uncompromising quality.
               </p>
               <p>
-                Our portfolio of 1500+ products spans diverse therapeutic
-                categories and reaches 86+ countries through modern
+                Our portfolio of 500+ products spans diverse therapeutic
+                categories and reaches 25+ countries through modern
                 manufacturing and research-driven formulations.
               </p>
             </div>

@@ -1,10 +1,10 @@
 import Image from "next/image"
 
 const GLOBAL_STATS = [
-  { value: "86+", label: "Countries Served" },
-  { value: "1250+", label: "Global Clients" },
-  { value: "600+", label: "Sterile Products" },
-  { value: "900+", label: "Non-Sterile Products" },
+  { value: "25+", label: "Countries Served" },
+  { value: "1000+", label: "Global Clients" },
+  { value: "400+", label: "Sterile Products" },
+  { value: "500+", label: "Non-Sterile Products" },
 ]
 
 export default function GlobalPresenceSection() {

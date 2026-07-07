@@ -13,19 +13,19 @@ type StatItem = {
 
 const STAT_ITEMS: StatItem[] = [
   {
-    target: 15,
+    target: 10,
     suffix: "+",
     label: "Years of Experience",
     icon: Factory,
   },
   {
-    target: 1500,
+    target: 500,
     suffix: "+",
     label: "Products",
     icon: FlaskConical,
   },
   {
-    target: 86,
+    target: 25,
     suffix: "+",
     label: "Countries Served",
     icon: Globe2,

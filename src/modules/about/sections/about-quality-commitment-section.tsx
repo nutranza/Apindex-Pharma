@@ -50,7 +50,7 @@ const STORY_SECTIONS: StorySection[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAmz7qGu1kSrO-j3LIFD3Oa_y98cJvLNgoaHSAkIg8ZR3tV6tTNlRJ4a20-nGSdkftbgdVnE63J0IzvHQSJ8UhUMtLDQu6ARjwMd5A3IhnMR4VIionc2I_47BNCiJK94YICDLLwOP1ux1rGpKCzg2cLC6BuPYdiPYIUtGuPWAa_tz58efwHzyQQYOeUk2YJLdZT3N7Y-HA4rvnPRJmZWfrdjEpot1fIYB5cy4wQXl9nLBCuHUGvLWqaKE7p6fAaQj1x3qYWmgxM5-4",
     imageAlt:
       "Professional portrait representing Apindex pharmaceutical leadership and trust",
-    attributionName: "Jayesh Dhameliya",
+    attributionName: "Ashish Chovatiya",
     attributionTitle: "Founder, Apindex Pharmaceuticals Pvt. Ltd.",
   },
 ]

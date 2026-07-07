@@ -61,18 +61,18 @@ export default function FooterSection() {
 
               <div className="mt-5 space-y-3">
                 <a
-                  href="mailto:contact@apindexpharma.com"
+                  href="mailto:info@apindexpharma.com"
                   className="flex w-fit items-center gap-4 text-sm text-on-surface-variant transition-colors hover:text-primary"
                 >
                   <MdMail aria-hidden="true" className="text-xl" />
-                  <span>contact@apindexpharma.com</span>
+                  <span>info@apindexpharma.com</span>
                 </a>
                 <a
                   href="tel:+912345678900"
                   className="flex w-fit items-center gap-4 text-sm text-on-surface-variant transition-colors hover:text-primary"
                 >
                   <MdCall aria-hidden="true" className="text-xl" />
-                  <span>+91 2345678900</span>
+                  <span>+91 7698743840</span>
                 </a>
               </div>
 
