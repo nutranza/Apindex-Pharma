@@ -13,6 +13,13 @@ interface RoleFormProps {
     onSubmit: (_formData: FormData) => Promise<void>
 }
 
+const ENABLED_PERMISSION_GROUPS = new Set([
+    "Products",
+    "Collections",
+    "Categories",
+    "Team",
+])
+
 export default function RoleForm({ initialData, onSubmit }: RoleFormProps) {
     const [isPending, startTransition] = useTransition()
 
@@ -56,7 +63,9 @@ export default function RoleForm({ initialData, onSubmit }: RoleFormProps) {
                         Permissions
                     </label>
                     <div className="space-y-4">
-                        {Object.entries(PERMISSION_GROUPS).map(([group, permissions]: [string, readonly string[]]) => (
+                        {Object.entries(PERMISSION_GROUPS)
+                            .filter(([group]) => ENABLED_PERMISSION_GROUPS.has(group))
+                            .map(([group, permissions]: [string, readonly string[]]) => (
                             <div key={group} className="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
                                 <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">
                                     {group}

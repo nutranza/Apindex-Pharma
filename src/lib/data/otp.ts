@@ -607,7 +607,7 @@ export async function verifyOtp(
   revalidateTag("customers", "max")
 
   if (isAdmin) {
-    redirect(requestedAdminRedirectPath || "/admin")
+    redirect(requestedAdminRedirectPath || "/admin/products")
   }
 
   redirect("/login?error=admin_only")

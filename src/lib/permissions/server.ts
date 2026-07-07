@@ -49,7 +49,7 @@ export async function checkPermission(required: Permission): Promise<boolean> {
  */
 export async function requirePermission(
     required: Permission,
-    redirectTo: string = "/admin"
+    redirectTo: string = "/admin/products"
 ): Promise<void> {
     const hasAccess = await checkPermission(required)
 

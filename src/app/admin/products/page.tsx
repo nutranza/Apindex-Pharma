@@ -142,9 +142,6 @@ export default async function AdminProducts({
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Inventory
-                </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider w-[50px]"></th>
               </tr>
             </thead>
@@ -199,17 +196,6 @@ export default async function AdminProducts({
                       >
                         <span className="capitalize">{product.status}</span>
                       </AdminBadge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <span
-                        className={
-                          product.stock_count > 0
-                            ? "text-gray-600"
-                            : "text-red-600 font-medium"
-                        }
-                      >
-                        {product.stock_count} in stock
-                      </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end gap-1 relative z-20">

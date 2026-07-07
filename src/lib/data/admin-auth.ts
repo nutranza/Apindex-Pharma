@@ -6,8 +6,26 @@ import { redirect } from "next/navigation"
 import type { ActionResult } from "@/lib/types/action-result"
 import { createClient } from "@/lib/supabase/server"
 
-const ADMIN_LOGIN_DEFAULT_REDIRECT = "/admin"
+const ADMIN_LOGIN_DEFAULT_REDIRECT = "/admin/products"
 const SIMPLE_EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const DISABLED_ADMIN_ROUTE_PREFIXES = [
+  "/admin/orders",
+  "/admin/shipping",
+  "/admin/shipping-partners",
+  "/admin/payments",
+  "/admin/customers",
+  "/admin/club",
+  "/admin/reviews",
+  "/admin/discounts",
+  "/admin/home-settings",
+  "/admin/settings",
+]
+
+function isDisabledAdminRoute(value: string): boolean {
+  return DISABLED_ADMIN_ROUTE_PREFIXES.some(
+    (prefix) => value === prefix || value.startsWith(`${prefix}/`)
+  )
+}
 
 function sanitizeAdminRedirect(value: string | null): string {
   const trimmedValue = value?.trim()
@@ -15,7 +33,9 @@ function sanitizeAdminRedirect(value: string | null): string {
   if (
     !trimmedValue ||
     !trimmedValue.startsWith("/admin") ||
-    trimmedValue.startsWith("//")
+    trimmedValue.startsWith("//") ||
+    trimmedValue === "/admin" ||
+    isDisabledAdminRoute(trimmedValue)
   ) {
     return ADMIN_LOGIN_DEFAULT_REDIRECT
   }

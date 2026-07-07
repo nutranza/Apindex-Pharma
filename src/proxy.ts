@@ -2,6 +2,24 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 const DEFAULT_CHECKOUT_RETURN_URL = '/checkout?step=address'
+const DISABLED_ADMIN_ROUTE_PREFIXES = [
+  '/admin/orders',
+  '/admin/shipping',
+  '/admin/shipping-partners',
+  '/admin/payments',
+  '/admin/customers',
+  '/admin/club',
+  '/admin/reviews',
+  '/admin/discounts',
+  '/admin/home-settings',
+  '/admin/settings',
+]
+
+function isDisabledAdminRoute(pathname: string): boolean {
+  return DISABLED_ADMIN_ROUTE_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
+  )
+}
 
 function getCheckoutLoginReturnUrl(request: NextRequest): string {
   const cartId = request.cookies.get('toycker_cart_id')?.value?.trim()
@@ -82,7 +100,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Safety net removed as it causes issues with JS-based verification flow
+  if (isDisabledAdminRoute(request.nextUrl.pathname)) {
+    return NextResponse.rewrite(new URL('/_not-found', request.url), {
+      status: 404,
+    })
+  }
 
   return await updateSession(request)
 }

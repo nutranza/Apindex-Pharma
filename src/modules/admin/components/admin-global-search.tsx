@@ -12,8 +12,6 @@ import {
     TagIcon,
     XMarkIcon,
     PlusIcon,
-    ChartBarIcon,
-    AdjustmentsHorizontalIcon,
     ArrowRightIcon
 } from "@heroicons/react/24/outline"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
@@ -35,9 +33,6 @@ const typeIcons = {
 
 const quickActions = [
     { id: "add-product", title: "Add New Product", subtitle: "Create a new product listing", url: "/admin/products/new", icon: PlusIcon, color: "text-emerald-500", bg: "bg-emerald-50" },
-    { id: "view-orders", title: "View All Orders", subtitle: "Manage your store sales", url: "/admin/orders", icon: ReceiptPercentIcon, color: "text-blue-500", bg: "bg-blue-50" },
-    { id: "dashboard", title: "Analytics Dashboard", subtitle: "View store performance", url: "/admin", icon: ChartBarIcon, color: "text-purple-500", bg: "bg-purple-50" },
-    { id: "settings", title: "Store Settings", subtitle: "Configurations and roles", url: "/admin/settings", icon: AdjustmentsHorizontalIcon, color: "text-gray-500", bg: "bg-gray-50" },
 ]
 
 export function AdminGlobalSearch() {
@@ -105,7 +100,7 @@ export function AdminGlobalSearch() {
                 className="w-full h-11 pl-11 pr-4 text-sm bg-gray-100/80 border border-transparent rounded-xl hover:bg-gray-200/80 hover:border-gray-300/50 transition-all text-left flex items-center text-gray-500 group relative backdrop-blur-sm"
             >
                 <MagnifyingGlassIcon className="absolute left-4 h-5 w-5 text-gray-400 group-hover:text-emerald-500 transition-colors" />
-                <span className="truncate font-medium">Search anything...</span>
+                <span className="truncate font-medium">Search products, collections, categories...</span>
                 <div className="hidden sm:flex absolute right-4 gap-1 items-center">
                     <kbd className="px-2 py-0.5 text-[10px] font-bold text-gray-500 bg-white border border-gray-200 rounded-md shadow-sm">
                         ⌘
@@ -148,7 +143,7 @@ export function AdminGlobalSearch() {
                                         </div>
                                         <Combobox.Input
                                             className="h-16 w-full border-0 bg-transparent pl-14 pr-16 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-lg font-medium outline-none"
-                                            placeholder="Search products, orders, customers..."
+                                            placeholder="Search products, collections, categories..."
                                             value={query}
                                             onChange={(event) => setQuery(event.target.value)}
                                             autoFocus
