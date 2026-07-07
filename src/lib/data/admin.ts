@@ -227,7 +227,7 @@ export async function ensureAdmin() {
   } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect("/login?returnUrl=/admin")
+    redirect("/login?returnUrl=/admin/products")
   }
 
   const { data: profile } = await supabase
@@ -549,7 +549,9 @@ export async function getAdminGlobalSearch(
     })
   }
 
-  return results
+  return results.filter(
+    (result) => result.type !== "order" && result.type !== "customer"
+  )
 }
 
 // --- Categories ---

@@ -114,7 +114,7 @@ export default function ProductPharmaDetailsFields({
         </div>
       </div>
 
-      <div>
+      {/* <div>
         <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-gray-400">
           Brochure URL
         </label>
@@ -125,7 +125,8 @@ export default function ProductPharmaDetailsFields({
           className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm font-medium focus:border-black focus:ring-0"
           placeholder="https://..."
         />
-      </div>
+      </div> */}
+      
     </div>
   )
 }

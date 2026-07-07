@@ -95,19 +95,7 @@ export function AdminNotificationDropdown() {
             default: return <BellIcon className="h-4 w-4 text-gray-500" />
         }
     }
-    const getNotificationUrl = (notification: AdminNotification) => {
-        const { type, metadata } = notification
-        switch (type) {
-            case "order":
-                return `/admin/orders/${metadata.order_id || ""}`
-            case "user":
-                return `/admin/customers/${metadata.user_id || ""}`
-            case "review":
-                return `/admin/reviews`
-            default:
-                return "/admin"
-        }
-    }
+    const getNotificationUrl = (_notification: AdminNotification) => "/admin/products"
 
     const NotificationList = ({ list, close }: { list: AdminNotification[], close: () => void }) => (
         <div className="max-h-[350px] overflow-y-auto overflow-x-hidden">

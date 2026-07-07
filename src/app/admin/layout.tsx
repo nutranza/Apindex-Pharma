@@ -9,7 +9,6 @@ import { ensureAdmin, getAdminUser } from "@/lib/data/admin"
 import { getUserPermissions } from "@/lib/permissions/server"
 import { PermissionsProvider } from "@/lib/permissions/context"
 import { AdminSidebarNav } from "@modules/admin/components/admin-sidebar-nav"
-import { AdminSettingsLink } from "@modules/admin/components/admin-settings-link"
 import { AdminMobileMenu } from "@modules/admin/components/admin-mobile-menu"
 import { AdminNotificationDropdown } from "@modules/admin/components/notifications"
 import { AdminGlobalSearch } from "@modules/admin/components/admin-global-search"
@@ -86,7 +85,7 @@ export default async function AdminLayout({
         <aside className="hidden lg:flex bg-white border-r border-gray-200 flex-col sticky top-0 h-screen overflow-hidden">
           {/* Logo Section */}
           <div className="h-16 flex items-center px-6 border-b border-gray-200 shrink-0">
-            <Link href="/admin" className="flex items-center gap-3 group">
+            <Link href="/" className="flex items-center gap-3 group">
               <div className="h-9 w-9 rounded-lg flex items-center justify-center overflow-hidden transition-all">
                 <Image
                   src="/icon-512x512.png"
@@ -125,7 +124,7 @@ export default async function AdminLayout({
           {/* Bottom Section */}
           <div className="p-3 border-t border-gray-200 space-y-1 shrink-0">
             <Link
-              href="/admin"
+              href="/"
               className="group flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100 hover:text-gray-900 transition-all"
             >
               <div className="h-5 w-5 rounded-md bg-gray-100 group-hover:bg-white flex items-center justify-center">
@@ -134,7 +133,6 @@ export default async function AdminLayout({
               <span className="flex-1">Dashboard Home</span>
             </Link>
             <div className="h-px bg-gray-200 my-2" />
-            <AdminSettingsLink />
             <form action={signout}>
               <button
                 type="submit"
@@ -158,13 +156,13 @@ export default async function AdminLayout({
 
                 {/* Mobile Logo */}
                 <Link
-                  href="/admin"
+                  href="/"
                   className="lg:hidden flex items-center gap-2"
                 >
                   <div className="h-8 w-8 rounded-lg flex items-center justify-center overflow-hidden">
                     <Image
                       src="/icon-512x512.png"
-                      alt="Toycker Logo"
+                      alt="Apindex Logo"
                       width={32}
                       height={32}
                       className="w-full h-full object-cover"
@@ -172,7 +170,7 @@ export default async function AdminLayout({
                   </div>
                   <div className="flex flex-col">
                     <span className="font-semibold text-sm text-gray-900 leading-tight">
-                      Toycker
+                      Apindex
                     </span>
                     <span
                       className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md border uppercase tracking-wider w-fit mt-0.5 scale-90 origin-left ${

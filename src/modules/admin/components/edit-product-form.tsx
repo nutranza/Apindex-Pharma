@@ -247,7 +247,7 @@ export default function EditProductForm({
             <ProductPharmaDetailsFields details={pharmaDetails} />
           </AdminCard>
 
-          <AdminCard title="YouTube Video">
+          {/* <AdminCard title="YouTube Video">
             <div className="space-y-4">
               <p className="text-xs text-gray-500 mb-2">
                 Enhance your product page with a video. We support direct YouTube links.
@@ -276,9 +276,9 @@ export default function EditProductForm({
                 </div>
               )}
             </div>
-          </AdminCard>
+          </AdminCard> */}
 
-          <AdminCard title="Product Type">
+          {/* <AdminCard title="Product Type">
             <div className="grid grid-cols-2 gap-4">
               <button
                 type="button"
@@ -313,16 +313,16 @@ export default function EditProductForm({
                 </div>
               </button>
             </div>
-          </AdminCard>
+          </AdminCard> */}
 
-          {productType === "variant" && (
+          {/* {productType === "variant" && (
             <ProductVariantEditor
               productId={product.id}
               initialVariants={variants}
               productImages={product.images?.map(img => typeof img === 'string' ? img : img.url) || []}
             />
-          )}
-
+          )} */}
+{/* 
           <AdminCard title="Search Engine Optimization (SEO)">
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -411,7 +411,7 @@ export default function EditProductForm({
                 </div>
               </div>
             </div>
-          </AdminCard>
+          </AdminCard> */}
         </div>
 
         <div className="space-y-6">
@@ -455,7 +455,7 @@ export default function EditProductForm({
                 />
               </div>
 
-              <div>
+              {/* <div>
                 <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-0">
                   <Layers className="w-4 h-4 text-black" />
                   <label className="block text-xs font-black text-black uppercase tracking-widest">Frequently Bought Together</label>
@@ -466,7 +466,8 @@ export default function EditProductForm({
                   onChange={setRelatedIds}
                   name="related_product_ids"
                 />
-              </div>
+              </div> */}
+              
             </div>
           </AdminCard>
         </div>

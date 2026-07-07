@@ -21,10 +21,31 @@ export async function GET(request: NextRequest) {
   // if "next" is in search params, use it as the redirection URL
   // admin-only mode allows redirects to /admin paths only
   const requestedNext = searchParams.get("next")
+  const disabledAdminRoutePrefixes = [
+    "/admin/orders",
+    "/admin/shipping",
+    "/admin/shipping-partners",
+    "/admin/payments",
+    "/admin/customers",
+    "/admin/club",
+    "/admin/reviews",
+    "/admin/discounts",
+    "/admin/home-settings",
+    "/admin/settings",
+  ]
+  const isDisabledAdminRoute = requestedNext
+    ? disabledAdminRoutePrefixes.some(
+        (prefix) =>
+          requestedNext === prefix || requestedNext.startsWith(`${prefix}/`)
+      )
+    : false
   const next =
-    requestedNext && requestedNext.startsWith("/admin")
+    requestedNext &&
+    requestedNext.startsWith("/admin") &&
+    requestedNext !== "/admin" &&
+    !isDisabledAdminRoute
       ? requestedNext
-      : "/admin"
+      : "/admin/products"
 
   if (code || token_hash) {
     const cookieStore = await cookies()

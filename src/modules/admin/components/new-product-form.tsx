@@ -292,7 +292,7 @@ export default function NewProductForm({ collections, categories }: NewProductFo
           <ProductPharmaDetailsFields />
         </AdminCard>
 
-        <AdminCard title="YouTube Video">
+        {/* <AdminCard title="YouTube Video">
           <div className="space-y-4">
             <p className="text-xs text-gray-500 mb-2">
               Enhance your product page with a video. We support direct YouTube links.
@@ -321,8 +321,8 @@ export default function NewProductForm({ collections, categories }: NewProductFo
               </div>
             )}
           </div>
-        </AdminCard>
-
+        </AdminCard> */}
+{/* 
         <AdminCard title="Product Type">
           <div className="grid grid-cols-2 gap-4">
             <button
@@ -361,7 +361,7 @@ export default function NewProductForm({ collections, categories }: NewProductFo
               </div>
             </button>
           </div>
-        </AdminCard>
+        </AdminCard> */}
 
         {productType === "variant" && (
           <AdminCard title={`Product Variants (${variants.length})`}>
@@ -597,7 +597,7 @@ export default function NewProductForm({ collections, categories }: NewProductFo
         )
         }
 
-        <AdminCard title="Search Engine Optimization (SEO)">
+        {/* <AdminCard title="Search Engine Optimization (SEO)">
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
@@ -679,7 +679,7 @@ export default function NewProductForm({ collections, categories }: NewProductFo
               </div>
             </div>
           </div>
-        </AdminCard>
+        </AdminCard> */}
       </div >
 
       <div className="space-y-6">
@@ -711,6 +711,7 @@ export default function NewProductForm({ collections, categories }: NewProductFo
             </div>
 
             <div>
+              
               <div className="flex items-center gap-2 mb-4 pb-2 border-b border-gray-50">
                 <Layers className="w-4 h-4 text-black" />
                 <label className="block text-xs font-black text-black uppercase tracking-widest">Collections</label>
