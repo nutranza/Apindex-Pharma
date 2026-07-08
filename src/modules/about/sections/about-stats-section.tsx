@@ -13,7 +13,7 @@ type StatItem = {
 
 const STAT_ITEMS: StatItem[] = [
   {
-    target: 10,
+    target: 5,
     suffix: "+",
     label: "Years of Experience",
     icon: Factory,

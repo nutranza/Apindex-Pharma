@@ -22,14 +22,14 @@ export default function WelcomeSection() {
             <div className="mt-6 space-y-4 text-base leading-relaxed text-on-surface-variant sm:text-lg">
               <p>
                 Apindex Pharmaceutical Pvt. Ltd. is a WHO-GMP certified company
-                delivering high-quality, affordable medicines across the globe.
-                With over two decades of experience, we are trusted for
-                reliability, innovation, and uncompromising quality.
+                supporting pharmaceutical partners with finished formulations,
+                contract manufacturing coordination, and export-ready product
+                supply.
               </p>
               <p>
                 Our portfolio of 500+ products spans diverse therapeutic
-                categories and reaches 25+ countries through modern
-                manufacturing and research-driven formulations.
+                categories and reaches 25+ countries through quality-focused
+                processes, dependable sourcing, and partner-first execution.
               </p>
             </div>
 

@@ -32,7 +32,11 @@ const QUICK_LINKS: NavLink[] = [
 
 const SOCIAL_ICONS = [
   { label: "Facebook", icon: FaFacebookF },
-  { label: "LinkedIn", icon: FaLinkedinIn },
+  {
+    label: "LinkedIn",
+    icon: FaLinkedinIn,
+    href: "https://www.linkedin.com/in/ashish-chovatiya-822732231/",
+  },
   { label: "X", icon: FaXTwitter },
   { label: "Instagram", icon: FaInstagram },
   { label: "YouTube", icon: FaYoutube },
@@ -79,14 +83,29 @@ export default function FooterSection() {
               <div className="mt-5 flex items-center gap-5">
                 {SOCIAL_ICONS.map((item) => {
                   const Icon = item.icon
-                  return (
+                  const iconContent = <Icon aria-hidden="true" />
+                  const iconClassName =
+                    "inline-flex size-9 items-center justify-center rounded-full bg-surface-high text-lg text-on-surface transition-colors hover:bg-primary hover:text-white"
+
+                  return item.href ? (
+                    <a
+                      key={item.label}
+                      aria-label={item.label}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={iconClassName}
+                    >
+                      {iconContent}
+                    </a>
+                  ) : (
                     <span
                       key={item.label}
                       aria-label={item.label}
                       role="img"
-                      className="inline-flex size-9 items-center justify-center rounded-full bg-surface-high text-lg text-on-surface transition-colors hover:bg-primary hover:text-white"
+                      className={iconClassName}
                     >
-                      <Icon aria-hidden="true" />
+                      {iconContent}
                     </span>
                   )
                 })}

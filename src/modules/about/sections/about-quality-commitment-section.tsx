@@ -15,10 +15,10 @@ type StorySection = {
 const STORY_SECTIONS: StorySection[] = [
   {
     eyebrow: "Our Story",
-    title: "Commitment to Excellence",
+    title: "Built on Trust, Focused on Pharma Supply",
     descriptions: [
-      "Driven by science and disciplined execution, Apindex Pharmaceuticals builds dependable manufacturing systems for healthcare partners, institutions, and regulated supply chains across global markets.",
-      "Our focus on clear documentation, controlled processes, and consistent quality practices helps every production stage remain transparent, reliable, and export-ready.",
+      "Apindex Pharmaceuticals supports healthcare partners with finished formulations, coordinated manufacturing support, clear documentation, and export-ready supply programs.",
+      "Our approach is built on quality discipline, reliable communication, and practical execution so brands, distributors, and institutions can source pharmaceutical products with greater confidence.",
     ],
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuD2wBwbxNQrbVjfUwAbA4_lX2b5eNFLpfHpbcLTPbHXBzizt8YKT7uUMWR7_Dh1YXHm6NsVgJIv5hAPNRp77WwbBdn6ENp0h9n10xkdJF_bLkNv1X3Nbz3CMpkoA5YLGBGjjvVk0sQadHx7r-QUWm7wJrEGHzsnwl4tl5IZqdgzu453uEZJfHHA0p4UGsFF_mSxHq8S_HRTX5F8ujTCY9p_zTemplbcz32kh1-1n7K4T-KSLrFJvjqLpFvIMoF3LWrDEGHr-n0OxRw",
@@ -29,8 +29,8 @@ const STORY_SECTIONS: StorySection[] = [
     eyebrow: "Our Vision",
     title: "Built for Reliable Global Supply",
     descriptions: [
-      "We aim to be recognized for precision manufacturing, ethical execution, and reliable export readiness, helping pharmaceutical brands expand confidently across domestic and international markets.",
-      "Our long-term vision is to strengthen trust through efficient, compliant, and dependable systems that support consistent healthcare supply at scale.",
+      "We aim to be recognized for quality-focused coordination, ethical execution, and export-ready supply support, helping pharmaceutical brands expand confidently across domestic and international markets.",
+      "Our long-term vision is to strengthen trust through efficient, compliant, and dependable systems that support consistent pharmaceutical access at scale.",
     ],
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCAToZADVB4xM043eYneGVipKDmGjt3ph4cimJUXczxXks53ENiKA298Jr7Q3IsHTX8QPiBebYPsAjW-2R4e1lT1XBaFsKdQSYG9Dh5VKyHWZilO-h-r2fwsxA2ISz24B6DASZ-uA-GDG3nq5fs3_6RNht9AInM30W52QgIxlkFsKGLsmiBu5RdULYLhL8JfJ0Q33ayp_tgiAAA2hHYi-B9QUnozF0TUQrGnne4DzE5GdT5D71uKueghBgYsaNMVU7NaNDszMJTL-o",
@@ -41,10 +41,10 @@ const STORY_SECTIONS: StorySection[] = [
   },
   {
     eyebrow: "Leadership Voice",
-    title: "Quality Is a Promise",
+    title: "Quality Behind Every Partnership",
     descriptions: [
-      "Quality is not a standard we apply once; it is a promise we keep every day for the healthcare partners and patients who rely on our products and process discipline.",
-      "That promise guides how we design processes, review batches, document quality, and protect reliability from planning through final dispatch.",
+      "Quality is the discipline behind every partnership we build, from finished formulation support and documentation to dependable export-ready supply.",
+      "Our focus is to help healthcare partners source pharmaceutical products with clarity, consistency, and long-term confidence.",
     ],
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAmz7qGu1kSrO-j3LIFD3Oa_y98cJvLNgoaHSAkIg8ZR3tV6tTNlRJ4a20-nGSdkftbgdVnE63J0IzvHQSJ8UhUMtLDQu6ARjwMd5A3IhnMR4VIionc2I_47BNCiJK94YICDLLwOP1ux1rGpKCzg2cLC6BuPYdiPYIUtGuPWAa_tz58efwHzyQQYOeUk2YJLdZT3N7Y-HA4rvnPRJmZWfrdjEpot1fIYB5cy4wQXl9nLBCuHUGvLWqaKE7p6fAaQj1x3qYWmgxM5-4",

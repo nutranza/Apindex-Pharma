@@ -1,8 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 
-const INTRO_IMAGE_URL =
-  "https://images.unsplash.com/photo-1582719471384-894fbb16e074?auto=format&fit=crop&w=900&q=80"
+const INTRO_IMAGE_URL = "/about-company.jpg"
 
 export default function AboutIntroSection() {
   return (
@@ -14,34 +13,34 @@ export default function AboutIntroSection() {
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               src={INTRO_IMAGE_URL}
-              alt="Apindex team member working in a pharmaceutical laboratory"
+              alt="Pharmaceutical quality team reviewing formulation support in a laboratory"
               className="object-cover object-center"
             />
           </div>
 
           <div className="space-y-6">
             <h2 className="section-heading">
-              Pharmaceutical Precision,
+              Pharma Supply Support,
               <span className="block text-primary">
                 Built for Global Care
               </span>
             </h2>
             <p className="section-description">
-              Apindex Pharmaceuticals combines scientific discipline, WHO-GMP
-              aligned systems, and regulatory focus to support partners across
-              regulated healthcare markets.
+              Apindex Pharmaceuticals supports partners with finished
+              formulations, WHO-GMP aligned coordination, and dependable
+              documentation for regulated healthcare markets.
             </p>
             <p className="section-description">
-              From formulation planning and quality documentation to export-ready
-              production, we help brands, distributors, and institutions build
-              dependable supply programs with consistency and confidence.
+              From formulation planning and quality records to export-ready
+              supply support, we help brands, distributors, and institutions
+              build consistent pharmaceutical programs with confidence.
             </p>
             <div className="pt-2">
               <Link
                 href="/#infrastructure"
                 className="inline-flex min-h-12 items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-extrabold text-white transition-colors hover:bg-primary-container"
               >
-                Explore Manufacturing Capabilities
+                Explore Supply Support
               </Link>
             </div>
           </div>

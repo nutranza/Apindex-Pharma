@@ -15,63 +15,34 @@ type BlogPost = {
 
 const BLOG_POSTS: BlogPost[] = [
   {
-    category: "Manufacturing",
-    title: "Third-Party Manufacturing for Pharma Brands",
+    category: "Finished Formulations",
+    title: "Choosing Reliable Finished Formulation Supply",
     excerpt:
-      "How trusted manufacturing partnerships help pharma brands scale quality products without building their own plant.",
+      "What pharma partners should look for when sourcing finished formulations across therapeutic categories, dosage forms, and long-term supply needs.",
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAqn5mGy4tBW7R-mFwByWYGx2rc1xuPI8beh1p8OKwZb1nhKY9ANVEOWgYA97BhbNqskkNwVBPGjRk5paTpQSFnonLojpwaXbtJAmUl8Ui4zynW85S7UMzIUAdOVgYRU9ALRRaYWKL4v7PQkgjxKH5GfoDjEWGFQWYJ0_MP8ZVVo2u0pIVOBf5c5Oty3TXeJG3YDF7eO21qn2JTMnRRM1N-Dc9FvSF3zNQhKIoOWJatBRZDKZU8TnTqRrr4QyBdgxhfqyRbYSYbgZI",
     imageAlt:
-      "Modern pharmaceutical manufacturing room with sterile production equipment",
+      "Modern pharmaceutical facility supporting finished formulation supply",
   },
   {
-    category: "Quality",
-    title: "Why WHO-GMP Standards Matter",
+    category: "Contract Support",
+    title: "Contract Manufacturing Support for Pharma Brands",
     excerpt:
-      "A practical look at how process discipline, documentation, and controlled production support consistent medicine quality.",
+      "A practical look at how coordinated manufacturing support, quality documentation, and supply planning help brands scale without building every capability in-house.",
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuD2wBwbxNQrbVjfUwAbA4_lX2b5eNFLpfHpbcLTPbHXBzizt8YKT7uUMWR7_Dh1YXHm6NsVgJIv5hAPNRp77WwbBdn6ENp0h9n10xkdJF_bLkNv1X3Nbz3CMpkoA5YLGBGjjvVk0sQadHx7r-QUWm7wJrEGHzsnwl4tl5IZqdgzu453uEZJfHHA0p4UGsFF_mSxHq8S_HRTX5F8ujTCY9p_zTemplbcz32kh1-1n7K4T-KSLrFJvjqLpFvIMoF3LWrDEGHr-n0OxRw",
     imageAlt:
-      "Pharmaceutical researcher using a microscope in a laboratory",
+      "Pharmaceutical researcher reviewing quality and formulation support",
   },
   {
-    category: "Injectables",
-    title: "Sterile Injectable Manufacturing Essentials",
+    category: "Export Readiness",
+    title: "Why Documentation Matters in Pharma Export Supply",
     excerpt:
-      "Key considerations for sterile dosage forms, from clean environments to quality checks across the production cycle.",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCAToZADVB4xM043eYneGVipKDmGjt3ph4cimJUXczxXks53ENiKA298Jr7Q3IsHTX8QPiBebYPsAjW-2R4e1lT1XBaFsKdQSYG9Dh5VKyHWZilO-h-r2fwsxA2ISz24B6DASZ-uA-GDG3nq5fs3_6RNht9AInM30W52QgIxlkFsKGLsmiBu5RdULYLhL8JfJ0Q33ayp_tgiAAA2hHYi-B9QUnozF0TUQrGnne4DzE5GdT5D71uKueghBgYsaNMVU7NaNDszMJTL-o",
-    imageAlt:
-      "Automated pharmaceutical production line processing capsules",
-  },
-  {
-    category: "Partnership",
-    title: "Contract Manufacturing for Global Supply",
-    excerpt:
-      "How scalable production planning helps distributors, institutions, and healthcare brands serve wider markets.",
-    imageUrl: "/team-labs.avif",
-    imageAlt:
-      "Pharmaceutical laboratory team working in a modern healthcare facility",
-  },
-  {
-    category: "Export",
-    title: "Documentation for Pharmaceutical Exports",
-    excerpt:
-      "Clear export documentation and traceable quality records make international pharmaceutical supply more dependable.",
+      "Clear product records, GMP alignment, and export-ready documentation help pharmaceutical partners move finished products with greater confidence.",
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBMNz_jUhspacjupHGXN9NyESzVjiNYyW1181AkmHNdM_zJQZfvbjDM0jyXE0FSiEgHRoRJFYtNH33bKIhf0f0zrMXmSjJ64IOQDY__U5hocGlByFF78fj5a3PKxjvNGTCiV6wz72Nlw-SbAT-6yUzOM5n7ItGoEvTlRJG1op3Wfgj88bBBSEaDop0zrUt2YT5BXkpB4nCYYI7oPFVI01dsQi7UAaNUiX309pFAkOw28YjH3UbwhixwDnzTlHlOwBfDKJE8jYMYeyI",
     imageAlt:
-      "World map representing international pharmaceutical export reach",
-  },
-  {
-    category: "Access",
-    title: "Generic Medicines and Healthcare Access",
-    excerpt:
-      "Why reliable generic formulations remain essential for affordable treatment programs and broad patient reach.",
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAbO5BFTZN1hjOhGJtfoS0x13EgbEfgXOPVNoZZyY1zpCfpDuRCPHrqTgFwjLOrJrYVwVA1dWefxc0Ce_twA-btoUMc7aAXaJVMDjg5QcMYvcxN1e_JqcK-ys7LPgmUMUl-9d5w1zUQL23sPLl_k5T265O1djtRDRfvWdmj5ApcyLsde4GsdjF14tbT5ZCIYHElUDXwUT7XiVCZlKV9hV7Px9xYsfl2nLilniLAFK7PXx1anxeCB_Xl_TE3TYCAJIDY2fyYqOgJ2hw",
-    imageAlt:
-      "Validated pharmaceutical excellence represented by a modern laboratory process",
+      "World map representing export-ready pharmaceutical supply support",
   },
 ]
 
