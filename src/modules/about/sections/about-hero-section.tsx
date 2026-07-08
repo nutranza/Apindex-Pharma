@@ -25,9 +25,9 @@ export default function AboutHeroSection() {
               Pharmaceuticals
             </h1>
             <p className="mt-5 max-w-2xl text-base font-medium leading-7 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.32)] sm:text-lg">
-              A WHO-GMP aligned pharmaceutical manufacturing partner delivering
-              quality-led formulations, export-ready packaging, and dependable
-              supply support for global healthcare markets.
+              A trusted pharmaceutical partner for finished formulations,
+              contract manufacturing coordination, export-ready packaging, and
+              dependable supply support for global healthcare markets.
             </p>
           </div>
         </div>

@@ -13,13 +13,14 @@ export default function CtaSection() {
             <h2 className="apx-font-headline flex flex-col items-center gap-2 text-3xl font-bold leading-tight sm:text-4xl lg:text-[44px]">
               <span>Scale with Trusted</span>
               <span className="text-secondary">
-                Pharmaceutical Support
+                Pharma Supply Support
               </span>
             </h2>
 
             <p className="mx-auto mt-5 max-w-2xl text-base font-medium leading-7 text-on-surface-variant sm:text-lg">
-              Partner with Apindex for quality-led manufacturing, dependable
-              documentation, and export-ready pharmaceutical supply.
+              Partner with Apindex for finished formulations, contract
+              manufacturing coordination, documentation support, and
+              export-ready pharmaceutical supply.
             </p>
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

@@ -25,8 +25,8 @@ export default function ProductsHeroSection({
             <span className="text-primary">Product Portfolio</span>
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-7 text-on-surface-variant md:text-lg">
-            Browse quality-focused formulations across therapeutic categories,
-            dosage forms, and export-ready pharmaceutical products.
+            Browse finished formulations across therapeutic categories, dosage
+            forms, and export-ready pharmaceutical supply options.
           </p>
 
           <form action={searchAction} method="get" className="mt-8 max-w-xl">

@@ -3,18 +3,17 @@ import { Mail, MapPin, Phone } from "lucide-react"
 import ContactInquiryForm from "@modules/contact/components/contact-inquiry-form"
 
 const GOOGLE_MAP_EMBED_URL =
-  "https://www.google.com/maps?q=Surat%2C%20Gujarat%2C%20India&z=12&hl=en&gl=IN&output=embed"
+  "https://www.google.com/maps?q=401%2C%20Rudra%20Diamond%2C%20Near%20Zalal%20Liquid%2C%20Near%20Kiran%20Hospital%2C%20Katargam%2C%20Surat%2C%20Gujarat%2C%20India&z=17&hl=en&gl=IN&output=embed"
 
-const CONTACT_EMAIL = "contact@apindexpharma.com"
+const CONTACT_EMAIL = "info@apindexpharma.com"
 
 const CONTACT_ITEMS = [
   {
     label: "Corporate Office",
     value: (
       <>
-        Surat, Gujarat
-        <br />
-        India
+        401, Rudra Diamond, Near Zalal Liquid, Near Kiran Hospital, Katargam,
+        Surat
       </>
     ),
     icon: MapPin,
@@ -23,10 +22,10 @@ const CONTACT_ITEMS = [
   },
   {
     label: "Direct Line",
-    value: "+91 2345678900",
+    value: "+91 7698743840",
     icon: Phone,
     tone: "secondary",
-    subtext: "Mon - Sat, 10am - 6pm IST",
+    subtext: "Mon - Sun, 10am - 6pm IST",
   },
   {
     label: "Inquiries",
@@ -57,9 +56,15 @@ export default function ContactContentSection() {
                   const Icon = item.icon
 
                   return (
-                    <div key={item.label} className="group flex items-start gap-6">
+                    <div
+                      key={item.label}
+                      className="group flex items-start gap-6"
+                    >
                       <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-surface-high">
-                        <Icon className={`size-5 ${ICON_TONE_CLASS[item.tone]}`} strokeWidth={2} />
+                        <Icon
+                          className={`size-5 ${ICON_TONE_CLASS[item.tone]}`}
+                          strokeWidth={2}
+                        />
                       </div>
                       <div>
                         <h3 className="apx-font-headline mb-1 text-sm font-semibold uppercase tracking-wider text-on-surface-variant">

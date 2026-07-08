@@ -16,13 +16,13 @@ const FEATURES: FeatureItem[] = [
     icon: FlaskConical,
     title: "Advanced Formulation",
     description:
-      "Research-led formulation development supported by testing discipline, practical manufacturing insight, and dependable scale-up planning.",
+      "Research-led formulation support backed by product understanding, practical manufacturing insight, and dependable scale-up planning.",
   },
   {
     icon: ShieldCheck,
-    title: "Quality-Led Production",
+    title: "Quality-Focused Processes",
     description:
-      "WHO-GMP aligned processes and documented checks designed to maintain consistent product safety across every production stage.",
+      "WHO-GMP aligned coordination, documentation, and quality checks designed to support consistent product safety.",
   },
   {
     icon: Globe2,
@@ -45,8 +45,9 @@ export default function WhyChooseUsSection() {
             <span className="text-primary">Apindex?</span>
           </h2>
           <p className="mt-5 max-w-2xl section-description">
-            A dependable pharmaceutical manufacturing partner for quality-led
-            production, export readiness, and long-term supply confidence.
+            A dependable pharmaceutical partner for finished formulations,
+            contract manufacturing coordination, export readiness, and
+            long-term supply confidence.
           </p>
         </div>
 

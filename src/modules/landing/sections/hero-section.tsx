@@ -17,8 +17,8 @@ type HeroSlide = {
 const HERO_SLIDES: HeroSlide[] = [
   {
     eyebrow: "WHO-GMP Certified Manufacturing",
-    title: "Trusted For",
-    accent: "Pharma",
+    title: "Trusted Partner for",
+    accent: "Pharma Contract",
     suffix: "Manufacturing",
     imageUrl: "/slide1.jpg",
     imageAlt:
@@ -26,18 +26,18 @@ const HERO_SLIDES: HeroSlide[] = [
   },
   {
     eyebrow: "Contract and Third Party Manufacturing",
-    title: "Precision",
-    accent: "Manufacturing",
-    suffix: "at Global Scale",
+    title: "Scalable Support for",
+    accent: "Finished",
+    suffix: "Formulations",
     imageUrl: "/slide3.jpg",
     imageAlt:
       "Modern pharmaceutical manufacturing facility with production equipment",
   },
   {
     eyebrow: "Export Ready Pharmaceutical Supply",
-    title: "Quality-Driven",
-    accent: "Research",
-    suffix: "for Safer Care",
+    title: "Quality-Focused",
+    accent: "Formulation",
+    suffix: "Support",
     imageUrl: "/slide2.jpg",
     imageAlt:
       "Pharmaceutical researcher working with a microscope in a clean laboratory",
