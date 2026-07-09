@@ -1,3 +1,4 @@
+import AboutCompanyDocumentsSection from "@modules/about/sections/about-company-documents-section"
 import AboutGlobalFootprintSection from "@modules/about/sections/about-global-footprint-section"
 import AboutHeroSection from "@modules/about/sections/about-hero-section"
 import AboutIntroSection from "@modules/about/sections/about-intro-section"
@@ -10,6 +11,7 @@ export default function AboutPageTemplate() {
         <AboutHeroSection />
         <AboutIntroSection />
         <AboutStatsSection />
+        <AboutCompanyDocumentsSection />
         <AboutQualityCommitmentSection />
         <AboutGlobalFootprintSection />
       </main>
