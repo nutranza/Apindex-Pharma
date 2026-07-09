@@ -4,7 +4,7 @@ import AboutPageTemplate from "@modules/about/templates/about-page"
 export const metadata: Metadata = {
   title: "About",
   description:
-    "Learn about Apindex Pharmaceuticals, its global footprint, quality systems, and commitment to precision-driven healthcare manufacturing.",
+    "Learn about Apindex Pharmaceuticals, its company credentials, public licenses, global footprint, and quality systems.",
 }
 
 export default function AboutPage() {

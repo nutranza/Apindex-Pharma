@@ -16,6 +16,7 @@ type NavLink = {
 
 const COMPANY_LINKS: NavLink[] = [
   { label: "About Us", href: "/about" },
+  { label: "Certificates & Licenses", href: "/about#credentials" },
   { label: "Product Categories", href: "/#categories" },
   { label: "Manufacturing Capabilities", href: "/#infrastructure" },
   { label: "Global Presence", href: "/#global-presence" },
