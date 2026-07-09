@@ -19,15 +19,14 @@ export default function ContactHeroSection() {
         <div className="content-container flex h-full items-center">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-semibold leading-[1.08] text-white drop-shadow-[0_3px_16px_rgba(0,0,0,0.32)] sm:text-5xl md:text-6xl">
-              Contact{" "}
-              <span className="text-primary-container">Apindex</span>
+              Contact <span className="text-primary-container">Apindex</span>
               <br />
               Pharmaceuticals
             </h1>
             <p className="mt-5 max-w-2xl text-base font-medium leading-6 text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.32)] sm:text-lg">
-              Connect with our team for pharmaceutical manufacturing
-              partnerships, product inquiries, export support, and
-              quality-focused supply discussions across global markets.
+              Connect with our team for contract manufacturing, product
+              sourcing, distribution partnerships, export support, and bulk
+              pharmaceutical inquiries.
             </p>
           </div>
         </div>
