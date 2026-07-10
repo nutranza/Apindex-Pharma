@@ -12,9 +12,7 @@ export default function CtaSection() {
             </p>
             <h2 className="apx-font-headline flex flex-col items-center gap-2 text-3xl font-bold leading-tight sm:text-4xl lg:text-[44px]">
               <span>Scale with Trusted</span>
-              <span className="text-secondary">
-                Pharma Supply Support
-              </span>
+              <span className="text-secondary">Pharma Supply Support</span>
             </h2>
 
             <p className="mx-auto mt-5 max-w-2xl text-base font-medium leading-7 text-on-surface-variant sm:text-lg">
@@ -29,14 +27,12 @@ export default function CtaSection() {
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(232,150,29,0.22)] transition-colors  focus:outline-none"
               >
                 Start an Inquiry
-                <ArrowRight aria-hidden="true" className="h-5 w-5" />
               </Link>
               <Link
                 href="/products"
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-outline-variant/50 bg-white px-6 py-3 text-sm font-semibold text-on-surface transition-colors focus:outline-none"
               >
                 Explore Products
-                <ArrowRight aria-hidden="true" className="h-5 w-5" />
               </Link>
             </div>
           </div>

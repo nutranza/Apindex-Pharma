@@ -30,6 +30,30 @@ function normalizePathname(pathname: string) {
   return pathname.endsWith("/") ? pathname.slice(0, -1) : pathname
 }
 
+function getHrefPathname(href: string) {
+  const [pathname] = href.split("#")
+
+  return normalizePathname(pathname || "/")
+}
+
+function isNavItemActive(pathname: string, href: string) {
+  const hrefPathname = getHrefPathname(href)
+
+  if (hrefPathname === "/") {
+    return false
+  }
+
+  if (hrefPathname === "/products") {
+    return (
+      pathname === "/products" ||
+      pathname.startsWith("/products/") ||
+      pathname.startsWith("/categories/")
+    )
+  }
+
+  return pathname === hrefPathname || pathname.startsWith(`${hrefPathname}/`)
+}
+
 export default function TopNavBar() {
   const pathname = normalizePathname(usePathname() ?? "/")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -93,17 +117,30 @@ export default function TopNavBar() {
           </Link>
 
           <div className="hidden flex-1 items-center justify-end gap-10 small:flex">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="group apx-font-headline inline-flex items-center py-2 text-sm font-medium uppercase text-on-surface focus-visible:outline-none lg:text-base"
-              >
-                <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
-                  {item.label}
-                </span>
-              </Link>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const isActive = isNavItemActive(pathname, item.href)
+
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`group apx-font-headline inline-flex items-center py-2 text-sm font-medium uppercase transition-colors focus-visible:outline-none lg:text-base ${
+                    isActive
+                      ? "text-primary"
+                      : "text-on-surface hover:text-primary"
+                  }`}
+                >
+                  <span
+                    className={`relative inline-block after:absolute after:-bottom-2 after:left-0 after:h-1 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full ${
+                      isActive ? "after:w-full" : "after:w-0"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              )
+            })}
           </div>
 
           <button
@@ -160,18 +197,31 @@ export default function TopNavBar() {
             </div>
 
             <div className="flex flex-col gap-1 px-5 py-6">
-              {NAV_ITEMS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="group apx-font-headline rounded-lg px-4 py-3 text-base font-bold uppercase text-on-surface focus-visible:outline-none"
-                >
-                  <span className="relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:w-0 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full">
-                    {item.label}
-                  </span>
-                </Link>
-              ))}
+              {NAV_ITEMS.map((item) => {
+                const isActive = isNavItemActive(pathname, item.href)
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={`group apx-font-headline rounded-lg px-4 py-3 text-base font-bold uppercase transition-colors focus-visible:outline-none ${
+                      isActive
+                        ? "bg-primary-fixed text-primary"
+                        : "text-on-surface hover:bg-primary-fixed/60 hover:text-primary"
+                    }`}
+                  >
+                    <span
+                      className={`relative inline-block after:absolute after:-bottom-1 after:left-0 after:h-0.5 after:rounded-full after:bg-primary after:content-[''] after:transition-[width] after:duration-300 after:ease-out group-hover:after:w-full group-focus-visible:after:w-full ${
+                        isActive ? "after:w-full" : "after:w-0"
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </Link>
+                )
+              })}
             </div>
           </div>
         </div>

@@ -117,14 +117,38 @@ export default function FooterSection() {
             <FooterLinkColumn title="Quick Links" links={QUICK_LINKS} />
           </div>
 
-          <div className="flex flex-col gap-4 border-t border-gray-200/80 py-6 text-sm font-medium text-on-surface sm:flex-row sm:items-center sm:justify-between">
-            <p>
+          <div className="grid gap-4 border-t border-gray-200/80 py-6 text-center text-xs font-medium text-on-surface lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:text-left">
+            <p className="lg:justify-self-start">
               &copy; {new Date().getFullYear()} Apindex Pharmaceuticals. All
               Rights Reserved.
             </p>
-            <div className="flex gap-6 text-xs text-on-surface-variant">
-              <span>Privacy Policy</span>
-              <span>Disclaimer</span>
+
+            <p className="text-xs font-semibold text-on-surface-variant lg:justify-self-center">
+              Managed by{" "}
+              <a
+                href="https://apexture.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-on-surface underline underline-offset-2"
+              >
+                apexture.in
+              </a>
+            </p>
+
+            <div className="flex justify-center gap-4 text-xs text-on-surface-variant lg:justify-self-end">
+              <Link
+                href="/privacy-policy"
+                className="transition-colors hover:text-primary"
+              >
+                Privacy Policy
+              </Link>
+              <span className="text-on-surface">|</span>
+              <Link
+                href="/disclaimer"
+                className="transition-colors hover:text-primary"
+              >
+                Disclaimer
+              </Link>
             </div>
           </div>
         </div>

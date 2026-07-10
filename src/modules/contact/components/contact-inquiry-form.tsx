@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { ChevronDown, Send } from "lucide-react"
 import {
   type FormEvent,
@@ -222,7 +223,27 @@ export default function ContactInquiryForm() {
         </p>
       ) : null}
 
-      <div className="pt-3">
+      <label className="flex max-w-xl items-center cursor-pointer gap-3 text-on-surface-variant">
+        <input
+          type="checkbox"
+          required
+          aria-label="Privacy consent"
+          className="mt-1 size-5 shrink-0 rounded-md border-outline-variant accent-primary"
+        />
+        <span className="text-sm">
+          I agree that Apindex may process my details to respond to this
+          inquiry. I have read the{" "}
+          <Link
+            href="/privacy-policy"
+            className="font-semibold text-primary transition-colors hover:text-primary-container"
+          >
+            Privacy Policy
+          </Link>
+          .
+        </span>
+      </label>
+
+      <div>
         <button
           type="submit"
           disabled={isSubmitting}

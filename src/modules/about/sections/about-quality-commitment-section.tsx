@@ -6,6 +6,7 @@ type StorySection = {
   descriptions: string[]
   imageUrl: string
   imageAlt: string
+  imageClassName?: string
   reverse?: boolean
   surface?: "white" | "muted"
   attributionName?: string
@@ -46,10 +47,9 @@ const STORY_SECTIONS: StorySection[] = [
       "Quality is the discipline behind every partnership we build, from finished formulation support and documentation to dependable export-ready supply.",
       "Our focus is to help healthcare partners source pharmaceutical products with clarity, consistency, and long-term confidence.",
     ],
-    imageUrl:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuAmz7qGu1kSrO-j3LIFD3Oa_y98cJvLNgoaHSAkIg8ZR3tV6tTNlRJ4a20-nGSdkftbgdVnE63J0IzvHQSJ8UhUMtLDQu6ARjwMd5A3IhnMR4VIionc2I_47BNCiJK94YICDLLwOP1ux1rGpKCzg2cLC6BuPYdiPYIUtGuPWAa_tz58efwHzyQQYOeUk2YJLdZT3N7Y-HA4rvnPRJmZWfrdjEpot1fIYB5cy4wQXl9nLBCuHUGvLWqaKE7p6fAaQj1x3qYWmgxM5-4",
-    imageAlt:
-      "Professional portrait representing Apindex pharmaceutical leadership and trust",
+    imageUrl: "/founder-of-apindex.jpeg",
+    imageAlt: "Ashish Chovatiya at the Apindex Pharma exhibition booth",
+    imageClassName: "object-cover object-[center_28%]",
     attributionName: "Ashish Chovatiya",
     attributionTitle: "Founder, Apindex Pharmaceuticals Pvt. Ltd.",
   },
@@ -66,6 +66,7 @@ export default function AboutQualityCommitmentSection() {
           descriptions={section.descriptions}
           imageUrl={section.imageUrl}
           imageAlt={section.imageAlt}
+          imageClassName={section.imageClassName}
           reverse={section.reverse}
           surface={section.surface}
           attributionName={section.attributionName}
@@ -82,6 +83,7 @@ function SplitStorySection({
   descriptions,
   imageUrl,
   imageAlt,
+  imageClassName = "object-cover object-center",
   reverse = false,
   surface = "white",
   attributionName,
@@ -105,7 +107,7 @@ function SplitStorySection({
               sizes="(min-width: 1024px) 50vw, 100vw"
               src={imageUrl}
               alt={imageAlt}
-              className="object-cover object-center"
+              className={imageClassName}
             />
           </div>
 
