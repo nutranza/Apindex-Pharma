@@ -20,20 +20,20 @@ export default function AboutIntroSection() {
 
           <div className="space-y-6">
             <h2 className="section-heading">
-              Pharma Supply Support,
+              Trusted Pharma Supply,
               <span className="block text-primary">
-                Built for Global Care
+                Built for Global Healthcare
               </span>
             </h2>
             <p className="section-description">
-              Apindex Pharmaceuticals supports partners with finished
-              formulations, WHO-GMP aligned coordination, and dependable
-              documentation for regulated healthcare markets.
+              Apindex Pharmaceuticals Pvt. Ltd. supplies and exports finished
+              formulation products, surgicals, and disposable healthcare
+              products for domestic and international buyers.
             </p>
             <p className="section-description">
-              From formulation planning and quality records to export-ready
-              supply support, we help brands, distributors, and institutions
-              build consistent pharmaceutical programs with confidence.
+              With reliable sourcing, clear documentation, and export-ready
+              support, we help distributors, institutions, and healthcare
+              partners source pharmaceutical products with confidence.
             </p>
             <div className="pt-2">
               <Link

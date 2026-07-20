@@ -16,10 +16,10 @@ type StorySection = {
 const STORY_SECTIONS: StorySection[] = [
   {
     eyebrow: "Our Story",
-    title: "Built on Trust, Focused on Pharma Supply",
+    title: "From Domestic Supply to Global Pharma Trade",
     descriptions: [
-      "Apindex Pharmaceuticals supports healthcare partners with finished formulations, coordinated manufacturing support, clear documentation, and export-ready supply programs.",
-      "Our approach is built on quality discipline, reliable communication, and practical execution so brands, distributors, and institutions can source pharmaceutical products with greater confidence.",
+      "Apindex Pharmaceuticals Pvt. Ltd. began in November 2021 with a focus on dependable pharmaceutical supply in the domestic market.",
+      "Step by step, we expanded from domestic supply into export-focused sourcing of finished formulations, surgicals, and disposable healthcare products.",
     ],
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuD2wBwbxNQrbVjfUwAbA4_lX2b5eNFLpfHpbcLTPbHXBzizt8YKT7uUMWR7_Dh1YXHm6NsVgJIv5hAPNRp77WwbBdn6ENp0h9n10xkdJF_bLkNv1X3Nbz3CMpkoA5YLGBGjjvVk0sQadHx7r-QUWm7wJrEGHzsnwl4tl5IZqdgzu453uEZJfHHA0p4UGsFF_mSxHq8S_HRTX5F8ujTCY9p_zTemplbcz32kh1-1n7K4T-KSLrFJvjqLpFvIMoF3LWrDEGHr-n0OxRw",
@@ -28,10 +28,10 @@ const STORY_SECTIONS: StorySection[] = [
   },
   {
     eyebrow: "Our Vision",
-    title: "Built for Reliable Global Supply",
+    title: "Affordable Healthcare Products for Global Markets",
     descriptions: [
-      "We aim to be recognized for quality-focused coordination, ethical execution, and export-ready supply support, helping pharmaceutical brands expand confidently across domestic and international markets.",
-      "Our long-term vision is to strengthen trust through efficient, compliant, and dependable systems that support consistent pharmaceutical access at scale.",
+      "Our vision is to make quality-assured finished formulations, surgicals, and disposable healthcare products accessible to global buyers at affordable, competitive prices.",
+      "We focus on reliable sourcing, clear documentation, and long-term partnerships across global healthcare markets.",
     ],
     imageUrl:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCAToZADVB4xM043eYneGVipKDmGjt3ph4cimJUXczxXks53ENiKA298Jr7Q3IsHTX8QPiBebYPsAjW-2R4e1lT1XBaFsKdQSYG9Dh5VKyHWZilO-h-r2fwsxA2ISz24B6DASZ-uA-GDG3nq5fs3_6RNht9AInM30W52QgIxlkFsKGLsmiBu5RdULYLhL8JfJ0Q33ayp_tgiAAA2hHYi-B9QUnozF0TUQrGnne4DzE5GdT5D71uKueghBgYsaNMVU7NaNDszMJTL-o",
@@ -42,16 +42,16 @@ const STORY_SECTIONS: StorySection[] = [
   },
   {
     eyebrow: "Leadership Voice",
-    title: "Quality Behind Every Partnership",
+    title: "Building Apindex as a Global Export Partner",
     descriptions: [
-      "Quality is the discipline behind every partnership we build, from finished formulation support and documentation to dependable export-ready supply.",
-      "Our focus is to help healthcare partners source pharmaceutical products with clarity, consistency, and long-term confidence.",
+      "I started Apindex to build trust-led Indian pharmaceutical supply for global healthcare markets.",
+      "Our mission is to grow as an export-driven partner and contribute to India's pharmaceutical export progress through dependable products and disciplined execution.",
     ],
     imageUrl: "/founder-of-apindex.jpeg",
     imageAlt: "Ashish Chovatiya at the Apindex Pharma exhibition booth",
     imageClassName: "object-cover object-[center_28%]",
     attributionName: "Ashish Chovatiya",
-    attributionTitle: "Founder, Apindex Pharmaceuticals Pvt. Ltd.",
+    attributionTitle: "Director, Apindex Pharmaceuticals Pvt. Ltd.",
   },
 ]
 
