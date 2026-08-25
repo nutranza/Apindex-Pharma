@@ -68,6 +68,10 @@ yarn dev
 
 Your site is now running at http://localhost:8000!
 
+# Artistly store image connector
+
+Apply `supabase/migrations/202608250002_artistly_image_publications.sql`, then add `ARTISTLY_STORE_API_TOKEN` to the server environment. The token is shared only with the Artistly server and is never exposed to browser code.
+
 # Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
