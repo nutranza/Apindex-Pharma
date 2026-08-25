@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 
     const rows = (data ?? []) as ArtistlyProductRow[]
     const hasNextPage = rows.length > limit
-    const products = rows.slice(0, limit).map(toProductResponse)
+    const products = rows.slice(0, limit).map((product) => toProductResponse(product, request))
 
     return NextResponse.json({
       products,
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
   }
 }
 
-function toProductResponse(product: ArtistlyProductRow) {
+function toProductResponse(product: ArtistlyProductRow, request: Request) {
   const imageUrls = uniqueImageUrls([
     product.image_url,
     product.thumbnail,
@@ -69,6 +69,12 @@ function toProductResponse(product: ArtistlyProductRow) {
     status: product.status,
     imageUrl: imageUrls[0] ?? null,
     imageUrls,
+    sourceImageUrl: imageUrls[0]
+      ? new URL(
+          `/api/artistly/products/${encodeURIComponent(product.id)}/source-image`,
+          request.url,
+        ).toString()
+      : null,
     imageVersion: product.updated_at,
   }
 }
