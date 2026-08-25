@@ -40,6 +40,7 @@ import {
   normalizeProductVariantImage,
   resolveProductImageUrl,
 } from "@/lib/util/images"
+import { revalidateStorefrontProductPaths } from "@/lib/data/product-revalidation"
 
 type EmailBackedRow = {
   email: string | null
@@ -107,30 +108,6 @@ function buildOrderShippingAddress(formData: FormData): Address {
     postal_code: getTrimmedFormValue(formData, "postal_code") || null,
     phone: getTrimmedFormValue(formData, "phone") || null,
   }
-}
-
-function revalidateStorefrontProductPaths(
-  handles: Array<string | null | undefined>
-) {
-  const uniqueHandles = Array.from(
-    new Set(
-      handles.filter((handle): handle is string => Boolean(handle?.trim()))
-    )
-  )
-
-  revalidatePath("/")
-  revalidatePath("/products")
-  revalidatePath("/store")
-  revalidatePath("/collections")
-  revalidatePath("/categories")
-  revalidatePath("/products/[handle]", "page")
-  revalidatePath("/collections/[handle]", "page")
-  revalidatePath("/categories/[handle]", "page")
-  revalidateTag("products", "max")
-
-  uniqueHandles.forEach((handle) => {
-    revalidatePath(`/products/${handle}`)
-  })
 }
 
 export type AdminOrder = Order & {
@@ -1010,6 +987,7 @@ export async function createProduct(
       og_description: (formData.get("og_description") as string) || null,
       no_index: formData.get("no_index") === "true",
     },
+    updated_at: new Date().toISOString(),
   }
 
   const { data: newProduct, error } = await supabase
@@ -1193,6 +1171,7 @@ export async function updateProduct(formData: FormData) {
       og_description: (formData.get("og_description") as string) || null,
       no_index: formData.get("no_index") === "true",
     },
+    updated_at: new Date().toISOString(),
   }
 
   // If image changed, clear the embedding so it gets regenerated
@@ -3871,5 +3850,3 @@ export async function deleteAdminCustomerAddress(addressId: string) {
   }
   revalidatePath("/admin/customers")
 }
-
-

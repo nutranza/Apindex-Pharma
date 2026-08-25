@@ -46,7 +46,7 @@ export default function HomeSettingsClient({ banners, collections, homeReviews, 
             <div className="mb-6">
                 <h1 className="text-xl font-semibold text-gray-900">Home Appearance</h1>
                 <p className="mt-1 text-sm text-gray-500">
-                    Manage your storefront's first impression. Customize banners, featured collections, and top-rated customer reviews.
+                    Manage your storefront&apos;s first impression. Customize banners, featured collections, and top-rated customer reviews.
                 </p>
             </div>
 

@@ -288,7 +288,7 @@ export default function ReviewsTable({ reviews }: { reviews: ReviewWithMedia[] }
                                                                 Your browser does not support the audio element.
                                                             </audio>
                                                             <p className="text-xs text-gray-500 text-center">
-                                                                Listen to the customer's voice review
+                                                                Listen to the customer&apos;s voice review
                                                             </p>
                                                         </div>
                                                     )}
