@@ -8,3 +8,6 @@ ignoredBuiltDependencies:
   - esbuild
   - protobufjs
   - unrs-resolver
+
+overrides:
+  sharp: ^0.33.5
