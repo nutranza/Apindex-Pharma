@@ -40,7 +40,7 @@ const REFERRAL_SOURCES = [
   "Invite from Local Chambers / Association",
 ]
 
-test("header links to the Expo Nairobi visitor registration form", async ({
+test("header links to the Kenya Expo visitor registration form", async ({
   page,
 }) => {
   await page.goto("/")
@@ -116,7 +116,7 @@ test("visitor registration form matches the reference fields and options", async
     page.getByRole("radio", {
       name: "Find new Indian suppliers or partners",
     })
-  ).toBeChecked()
+  ).not.toBeChecked()
   await expect(page.getByPlaceholder("Nairobi, Kenya")).toBeVisible()
   await expect(
     page.getByRole("checkbox", { name: /I agree to our Privacy Policy/ })
@@ -138,7 +138,61 @@ test("visitor registration form matches the reference fields and options", async
   ).toBeVisible()
 })
 
-test("visitor registration blocks invalid data and shows success after submission", async ({
+test("visitor registration shows inline errors below invalid fields", async ({
+  page,
+}) => {
+  await page.goto(REGISTRATION_PATH)
+
+  await page.getByRole("button", { name: "Submit" }).click()
+
+  for (const errorId of [
+    "firstName-error",
+    "lastName-error",
+    "companyName-error",
+    "designation-error",
+    "whatsappNumber-error",
+    "email-error",
+    "website-error",
+    "countyCountry-error",
+    "industries-error",
+    "businessTypes-error",
+    "lookingFor-error",
+    "referralSource-error",
+    "privacyConsent-error",
+  ]) {
+    await expect(page.locator(`#${errorId}`)).toHaveText(
+      "This field is required."
+    )
+  }
+
+  await page.locator('input[name="email"]').fill("not-an-email")
+  await page.getByLabel("WhatsApp Number with Country Code").fill("12345")
+  await page.getByRole("button", { name: "Submit" }).click()
+
+  await expect(page.locator("#email-error")).toHaveText(
+    "Please enter a valid email address."
+  )
+  await expect(page.locator("#whatsappNumber-error")).toHaveText(
+    "The number of characters should not be less than the minimum value: 10."
+  )
+
+  await page.locator('input[name="industries"][value="Other"]').check()
+  await page.locator('input[name="businessTypes"][value="Other"]').check()
+  await page.getByRole("radio", { name: "Other", exact: true }).check()
+  await page.getByRole("button", { name: "Submit" }).click()
+
+  for (const errorId of [
+    "industryOther-error",
+    "businessTypeOther-error",
+    "referralSourceOther-error",
+  ]) {
+    await expect(page.locator(`#${errorId}`)).toHaveText(
+      "This field is required."
+    )
+  }
+})
+
+test("visitor registration blocks invalid data and shows a success toast after submission", async ({
   page,
 }) => {
   await page.route("**/api/visitor-registration", async (route) => {
@@ -178,6 +232,9 @@ test("visitor registration blocks invalid data and shows success after submissio
     .locator('input[name="industries"][value="Medical, Health & Pharma"]')
     .check()
   await page.locator('input[name="businessTypes"][value="Importer"]').check()
+  await page
+    .getByRole("radio", { name: "Find new Indian suppliers or partners" })
+    .check()
   await page.getByRole("radio", { name: "Social Media" }).check()
   await page
     .getByRole("checkbox", { name: /I agree to our Privacy Policy/ })
@@ -185,9 +242,10 @@ test("visitor registration blocks invalid data and shows success after submissio
 
   await page.getByRole("button", { name: "Submit" }).click()
 
-  await expect(page.getByRole("status")).toHaveText(
-    "Visitor registration submitted successfully."
-  )
+  await expect(
+    page.getByText("Registration Submitted", { exact: true })
+  ).toBeVisible()
+  await expect(page.locator('form [role="status"]')).toHaveCount(0)
   await expect(page.getByLabel("First Name")).toHaveValue("")
 })
 
@@ -217,5 +275,37 @@ test("visitor registration API rejects invalid input", async ({ request }) => {
   expect(response.status()).toBe(400)
   await expect(response.json()).resolves.toMatchObject({
     success: false,
+  })
+})
+
+test("visitor registration API requires text for selected Other options", async ({
+  request,
+}) => {
+  const response = await request.post("/api/visitor-registration", {
+    data: {
+      firstName: "Asha",
+      lastName: "Patel",
+      companyName: "Example Company",
+      designation: "Buyer",
+      whatsappNumber: "254712345678",
+      email: "asha@example.com",
+      website: "example.com",
+      countyCountry: "Nairobi, Kenya",
+      industries: ["Other"],
+      industryOther: "",
+      businessTypes: ["Other"],
+      businessTypeOther: "",
+      lookingFor: "B2B meetings",
+      partnershipInterest: "",
+      referralSource: "Other",
+      referralSourceOther: "",
+      privacyConsent: true,
+    },
+  })
+
+  expect(response.status()).toBe(400)
+  await expect(response.json()).resolves.toMatchObject({
+    success: false,
+    message: "This field is required.",
   })
 })

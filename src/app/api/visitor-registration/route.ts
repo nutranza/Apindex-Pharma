@@ -53,27 +53,27 @@ const visitorRegistrationSchema = z
     }),
   })
   .superRefine((data, context) => {
-    if (data.industries.includes("Other") && !data.industryOther) {
+    if (data.industries.includes("Other") && !data.industryOther.trim()) {
       context.addIssue({
         code: "custom",
         path: ["industryOther"],
-        message: "Enter your industry",
+        message: "This field is required.",
       })
     }
 
-    if (data.businessTypes.includes("Other") && !data.businessTypeOther) {
+    if (data.businessTypes.includes("Other") && !data.businessTypeOther.trim()) {
       context.addIssue({
         code: "custom",
         path: ["businessTypeOther"],
-        message: "Enter your business type",
+        message: "This field is required.",
       })
     }
 
-    if (data.referralSource === "Other" && !data.referralSourceOther) {
+    if (data.referralSource === "Other" && !data.referralSourceOther.trim()) {
       context.addIssue({
         code: "custom",
         path: ["referralSourceOther"],
-        message: "Enter how you found the Expo",
+        message: "This field is required.",
       })
     }
   })

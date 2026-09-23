@@ -12,6 +12,7 @@ import {
   type IndustryOption,
   type ReferralSourceOption,
 } from "@modules/visitor-registration/constants"
+import { useOptionalToast } from "@modules/common/context/toast-context"
 
 const FIELD_CLASS =
   "w-full rounded-xl border border-outline-variant/30 bg-white px-4 py-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/15"
@@ -20,7 +21,7 @@ const CHECKBOX_CLASS =
   "size-5 shrink-0 rounded border-outline-variant accent-primary"
 
 type FormStatus = {
-  type: "success" | "error"
+  type: "error"
   message: string
 }
 
@@ -29,9 +30,24 @@ type GroupErrorKey =
   | "industryOther"
   | "businessTypes"
   | "businessTypeOther"
+  | "lookingFor"
+  | "referralSource"
   | "referralSourceOther"
 
 type GroupErrors = Partial<Record<GroupErrorKey, string>>
+
+type FieldErrorKey =
+  | "firstName"
+  | "lastName"
+  | "companyName"
+  | "designation"
+  | "whatsappNumber"
+  | "email"
+  | "website"
+  | "countyCountry"
+  | "privacyConsent"
+
+type FieldErrors = Partial<Record<FieldErrorKey, string>>
 
 type VisitorRegistrationRequest = {
   firstName: string
@@ -60,9 +76,11 @@ type VisitorRegistrationResponse = {
 
 export default function VisitorRegistrationForm() {
   const formRef = useRef<HTMLFormElement>(null)
+  const toast = useOptionalToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState<FormStatus | null>(null)
   const [groupErrors, setGroupErrors] = useState<GroupErrors>({})
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [selectedIndustries, setSelectedIndustries] = useState<
     IndustryOption[]
   >([])
@@ -74,6 +92,20 @@ export default function VisitorRegistrationForm() {
 
   const updateGroupError = (key: GroupErrorKey, message?: string) => {
     setGroupErrors((currentErrors) => {
+      const nextErrors = { ...currentErrors }
+
+      if (message) {
+        nextErrors[key] = message
+      } else {
+        delete nextErrors[key]
+      }
+
+      return nextErrors
+    })
+  }
+
+  const updateFieldError = (key: FieldErrorKey, message?: string) => {
+    setFieldErrors((currentErrors) => {
       const nextErrors = { ...currentErrors }
 
       if (message) {
@@ -141,37 +173,96 @@ export default function VisitorRegistrationForm() {
       privacyConsent: formData.get("privacyConsent") === "on",
     }
 
-    const nextErrors: GroupErrors = {}
+    const nextFieldErrors: FieldErrors = {}
+    const nextGroupErrors: GroupErrors = {}
+
+    if (!payload.firstName.trim()) {
+      nextFieldErrors.firstName = "This field is required."
+    }
+
+    if (!payload.lastName.trim()) {
+      nextFieldErrors.lastName = "This field is required."
+    }
+
+    if (!payload.companyName.trim()) {
+      nextFieldErrors.companyName = "This field is required."
+    }
+
+    if (!payload.designation.trim()) {
+      nextFieldErrors.designation = "This field is required."
+    }
+
+    if (!payload.whatsappNumber.trim()) {
+      nextFieldErrors.whatsappNumber = "This field is required."
+    } else if (!/^\d+$/.test(payload.whatsappNumber.trim())) {
+      nextFieldErrors.whatsappNumber = "Please enter numbers only."
+    } else if (payload.whatsappNumber.trim().length < 10) {
+      nextFieldErrors.whatsappNumber =
+        "The number of characters should not be less than the minimum value: 10."
+    } else if (payload.whatsappNumber.trim().length > 13) {
+      nextFieldErrors.whatsappNumber =
+        "The maximum number of characters should be: 13."
+    }
+
+    if (!payload.email.trim()) {
+      nextFieldErrors.email = "This field is required."
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email.trim())) {
+      nextFieldErrors.email = "Please enter a valid email address."
+    }
+
+    if (!payload.website.trim()) {
+      nextFieldErrors.website = "This field is required."
+    }
+
+    if (!payload.countyCountry.trim()) {
+      nextFieldErrors.countyCountry = "This field is required."
+    }
 
     if (payload.industries.length === 0) {
-      nextErrors.industries = "Select at least one industry."
+      nextGroupErrors.industries = "This field is required."
     }
 
     if (payload.industries.includes("Other") && !payload.industryOther.trim()) {
-      nextErrors.industryOther = "Enter your industry."
+      nextGroupErrors.industryOther = "This field is required."
     }
 
     if (payload.businessTypes.length === 0) {
-      nextErrors.businessTypes = "Select at least one business type."
+      nextGroupErrors.businessTypes = "This field is required."
     }
 
     if (
       payload.businessTypes.includes("Other") &&
       !payload.businessTypeOther.trim()
     ) {
-      nextErrors.businessTypeOther = "Enter your business type."
+      nextGroupErrors.businessTypeOther = "This field is required."
+    }
+
+    if (!payload.lookingFor) {
+      nextGroupErrors.lookingFor = "This field is required."
+    }
+
+    if (!payload.referralSource) {
+      nextGroupErrors.referralSource = "This field is required."
     }
 
     if (
       payload.referralSource === "Other" &&
       !payload.referralSourceOther.trim()
     ) {
-      nextErrors.referralSourceOther = "Enter how you found the Expo."
+      nextGroupErrors.referralSourceOther = "This field is required."
     }
 
-    setGroupErrors(nextErrors)
+    if (!payload.privacyConsent) {
+      nextFieldErrors.privacyConsent = "This field is required."
+    }
 
-    if (Object.keys(nextErrors).length > 0) {
+    setFieldErrors(nextFieldErrors)
+    setGroupErrors(nextGroupErrors)
+
+    if (
+      Object.keys(nextFieldErrors).length > 0 ||
+      Object.keys(nextGroupErrors).length > 0
+    ) {
       setStatus({
         type: "error",
         message: "Please complete the highlighted selections.",
@@ -207,26 +298,37 @@ export default function VisitorRegistrationForm() {
       setSelectedIndustries([])
       setSelectedBusinessTypes([])
       setSelectedReferralSource("")
+      setFieldErrors({})
       setGroupErrors({})
-      setStatus({
-        type: "success",
-        message: result.message || "Visitor registration submitted successfully.",
-      })
+      setStatus(null)
+      toast?.showToast(
+        result.message || "Visitor registration submitted successfully.",
+        "success",
+        "Registration Submitted"
+      )
     } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "We could not submit your registration right now. Please try again."
+
       setStatus({
         type: "error",
-        message:
-          error instanceof Error
-            ? error.message
-            : "We could not submit your registration right now. Please try again.",
+        message,
       })
+      toast?.showToast(message, "error", "Submission Failed")
     } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="space-y-7">
+    <form
+      ref={formRef}
+      noValidate
+      onSubmit={handleSubmit}
+      className="space-y-7"
+    >
       <fieldset className="space-y-3">
         <legend className="text-sm font-semibold text-on-surface">
           Name <span className="text-primary">*</span>
@@ -237,12 +339,16 @@ export default function VisitorRegistrationForm() {
             name="firstName"
             label="First Name"
             required
+            error={fieldErrors.firstName}
+            onChange={() => updateFieldError("firstName")}
           />
           <TextField
             id="lastName"
             name="lastName"
             label="Last Name"
             required
+            error={fieldErrors.lastName}
+            onChange={() => updateFieldError("lastName")}
           />
         </div>
       </fieldset>
@@ -253,12 +359,16 @@ export default function VisitorRegistrationForm() {
           name="companyName"
           label="Company / Business Name"
           required
+          error={fieldErrors.companyName}
+          onChange={() => updateFieldError("companyName")}
         />
         <TextField
           id="designation"
           name="designation"
           label="Designation in Company / Business"
           required
+          error={fieldErrors.designation}
+          onChange={() => updateFieldError("designation")}
         />
       </div>
 
@@ -272,6 +382,8 @@ export default function VisitorRegistrationForm() {
           pattern="[0-9]{10,13}"
           maxLength={13}
           required
+          error={fieldErrors.whatsappNumber}
+          onChange={() => updateFieldError("whatsappNumber")}
         />
         <TextField
           id="email"
@@ -280,17 +392,28 @@ export default function VisitorRegistrationForm() {
           type="email"
           placeholder="example@example.com"
           required
+          error={fieldErrors.email}
+          onChange={() => updateFieldError("email")}
         />
       </div>
 
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-        <TextField id="website" name="website" label="Website" required />
+        <TextField
+          id="website"
+          name="website"
+          label="Website"
+          required
+          error={fieldErrors.website}
+          onChange={() => updateFieldError("website")}
+        />
         <TextField
           id="countyCountry"
           name="countyCountry"
           label="County and Country"
           placeholder="Nairobi, Kenya"
           required
+          error={fieldErrors.countyCountry}
+          onChange={() => updateFieldError("countyCountry")}
         />
       </div>
 
@@ -333,10 +456,11 @@ export default function VisitorRegistrationForm() {
       ) : null}
 
       <RadioGroup
+        error={groupErrors.lookingFor}
         legend="What Are You Looking For at the Expo?"
         name="lookingFor"
         options={LOOKING_FOR_OPTIONS}
-        defaultValue={LOOKING_FOR_OPTIONS[0]}
+        onChange={() => updateGroupError("lookingFor")}
       />
 
       <div>
@@ -355,11 +479,13 @@ export default function VisitorRegistrationForm() {
       </div>
 
       <RadioGroup
+        error={groupErrors.referralSource}
         legend="How did you get to know about this Expo?"
         name="referralSource"
         options={REFERRAL_SOURCE_OPTIONS}
         onChange={(value) => {
           setSelectedReferralSource(value)
+          updateGroupError("referralSource")
           updateGroupError("referralSourceOther")
         }}
       />
@@ -383,7 +509,12 @@ export default function VisitorRegistrationForm() {
             type="checkbox"
             name="privacyConsent"
             required
+            aria-invalid={Boolean(fieldErrors.privacyConsent)}
+            aria-describedby={
+              fieldErrors.privacyConsent ? "privacyConsent-error" : undefined
+            }
             className={`${CHECKBOX_CLASS} mt-0.5`}
+            onChange={() => updateFieldError("privacyConsent")}
           />
           <span>
             I agree to our{" "}
@@ -396,17 +527,22 @@ export default function VisitorRegistrationForm() {
             . <span className="font-semibold text-primary">* REQUIRED</span>
           </span>
         </label>
+        {fieldErrors.privacyConsent ? (
+          <p
+            id="privacyConsent-error"
+            role="alert"
+            className="text-sm text-red-700"
+          >
+            {fieldErrors.privacyConsent}
+          </p>
+        ) : null}
       </fieldset>
 
       {status ? (
         <p
-          role={status.type === "error" ? "alert" : "status"}
+          role="alert"
           aria-live="polite"
-          className={`rounded-xl px-4 py-3 text-sm font-medium ${
-            status.type === "success"
-              ? "bg-secondary-fixed text-on-secondary-container"
-              : "bg-red-50 text-red-700"
-          }`}
+          className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
         >
           {status.message}
         </p>
@@ -429,16 +565,20 @@ function TextField({
   label,
   maxLength,
   name,
+  onChange,
   pattern,
   placeholder,
   required,
+  error,
   type = "text",
 }: {
+  error?: string
   id: string
   inputMode?: "numeric"
   label: string
   maxLength?: number
   name: string
+  onChange?: () => void
   pattern?: string
   placeholder?: string
   required?: boolean
@@ -462,8 +602,16 @@ function TextField({
         maxLength={maxLength}
         placeholder={placeholder}
         required={required}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
+        onChange={onChange}
         className={FIELD_CLASS}
       />
+      {error ? (
+        <p id={`${id}-error`} role="alert" className="mt-2 text-sm text-red-700">
+          {error}
+        </p>
+      ) : null}
     </div>
   )
 }
@@ -547,12 +695,18 @@ function OtherField({
         id={id}
         name={name}
         placeholder="Please type another option here"
+        required
         aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
         onChange={onChange}
         className={FIELD_CLASS}
       />
       {error ? (
-        <p role="alert" className="mt-2 text-sm text-red-700">
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className="mt-2 text-sm text-red-700"
+        >
           {error}
         </p>
       ) : null}
@@ -561,42 +715,55 @@ function OtherField({
 }
 
 function RadioGroup<T extends readonly string[]>({
-  defaultValue,
+  error,
   legend,
   name,
   onChange,
   options,
 }: {
-  defaultValue?: T[number]
+  error?: string
   legend: string
   name: "lookingFor" | "referralSource"
   onChange?: (_value: T[number]) => void
   options: T
 }) {
   return (
-    <fieldset className="space-y-3">
+    <fieldset
+      aria-describedby={error ? `${name}-error` : undefined}
+      aria-required="true"
+      className="space-y-3"
+    >
       <legend className="text-sm font-semibold text-on-surface">
         {legend} <span className="text-primary">*</span>
       </legend>
       <div className="space-y-3">
-        {options.map((option, index) => (
+        {options.map((option) => (
           <label
             key={option}
             className="flex cursor-pointer items-center gap-3 text-sm text-on-surface-variant"
           >
-            <input
-              type="radio"
-              name={name}
-              value={option}
-              defaultChecked={defaultValue === option}
-              required={index === 0}
-              onChange={() => onChange?.(option)}
-              className="size-5 shrink-0 border-outline-variant accent-primary"
-            />
+            <span className="relative size-5 shrink-0">
+              <input
+                type="radio"
+                name={name}
+                value={option}
+                onChange={() => onChange?.(option)}
+                className="peer absolute inset-0 z-10 size-5 cursor-pointer opacity-0"
+              />
+              <span
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-full border-2 border-outline-variant bg-white transition-colors after:size-2.5 after:scale-0 after:rounded-full after:bg-white after:transition-transform peer-checked:border-primary peer-checked:bg-primary peer-checked:after:scale-100 peer-focus-visible:ring-2 peer-focus-visible:ring-primary/30 peer-focus-visible:ring-offset-2"
+              />
+            </span>
             <span>{option}</span>
           </label>
         ))}
       </div>
+      {error ? (
+        <p id={`${name}-error`} role="alert" className="text-sm text-red-700">
+          {error}
+        </p>
+      ) : null}
     </fieldset>
   )
 }
