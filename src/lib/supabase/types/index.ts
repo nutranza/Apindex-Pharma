@@ -445,3 +445,25 @@ export interface GlobalSettings {
   is_gift_wrap_enabled: boolean
   updated_at: string
 }
+
+export interface VisitorRegistration {
+  id: string
+  created_at: string
+  first_name: string
+  last_name: string
+  company_name: string
+  designation: string
+  whatsapp_number: string
+  email: string
+  website: string
+  county_country: string
+  industries: string[]
+  industry_other: string
+  business_types: string[]
+  business_type_other: string
+  looking_for: string
+  partnership_interest: string
+  referral_source: string
+  referral_source_other: string
+  privacy_consent: boolean
+}
