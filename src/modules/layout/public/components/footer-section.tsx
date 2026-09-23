@@ -7,7 +7,9 @@ import {
   FaLinkedinIn,
   FaXTwitter,
   FaYoutube,
+  FaWhatsapp,
 } from "react-icons/fa6"
+import { WHATSAPP_URL } from "@/modules/layout/public/constants"
 
 type NavLink = {
   label: string
@@ -41,6 +43,7 @@ const SOCIAL_ICONS = [
   { label: "X", icon: FaXTwitter },
   { label: "Instagram", icon: FaInstagram },
   { label: "YouTube", icon: FaYoutube },
+  { label: "WhatsApp", icon: FaWhatsapp, href: WHATSAPP_URL },
 ]
 
 export default function FooterSection() {
@@ -73,7 +76,7 @@ export default function FooterSection() {
                   <span>info@apindexpharma.com</span>
                 </a>
                 <a
-                  href="tel:+912345678900"
+                  href="tel:+917698743840"
                   className="flex w-fit items-center gap-4 text-sm text-on-surface-variant transition-colors hover:text-primary"
                 >
                   <MdCall aria-hidden="true" className="text-xl" />
@@ -81,12 +84,12 @@ export default function FooterSection() {
                 </a>
               </div>
 
-              <div className="mt-5 flex items-center gap-5">
+              <div className="mt-5 flex flex-wrap items-center gap-3">
                 {SOCIAL_ICONS.map((item) => {
                   const Icon = item.icon
                   const iconContent = <Icon aria-hidden="true" />
                   const iconClassName =
-                    "inline-flex size-9 items-center justify-center rounded-full bg-surface-high text-lg text-on-surface transition-colors hover:bg-primary hover:text-white"
+                    "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-high text-lg text-on-surface transition-colors hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
 
                   return item.href ? (
                     <a
