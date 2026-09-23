@@ -5,6 +5,11 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { FaWhatsapp } from "react-icons/fa6"
+import {
+  VISITOR_REGISTRATION_PATH,
+  WHATSAPP_URL,
+} from "@/modules/layout/public/constants"
 
 type NavItem = {
   label: string
@@ -141,6 +146,24 @@ export default function TopNavBar() {
                 </Link>
               )
             })}
+
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Chat with Apindex on WhatsApp"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 lg:text-base"
+            >
+              <FaWhatsapp aria-hidden="true" className="text-lg" />
+              <span>WhatsApp</span>
+            </a>
+
+            <Link
+              href={VISITOR_REGISTRATION_PATH}
+              className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 lg:text-base"
+            >
+              Visitor Registration
+            </Link>
           </div>
 
           <button
@@ -222,6 +245,14 @@ export default function TopNavBar() {
                   </Link>
                 )
               })}
+
+              <Link
+                href={VISITOR_REGISTRATION_PATH}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-3 text-base font-bold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+              >
+                Visitor Registration
+              </Link>
             </div>
           </div>
         </div>

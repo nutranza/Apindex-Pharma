@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
+  ClipboardDocumentListIcon,
   FolderIcon,
   RectangleStackIcon,
   TagIcon,
@@ -36,6 +37,11 @@ const NAV_ITEMS: NavItemConfig[] = [
     href: "/admin/categories",
     icon: FolderIcon,
     permission: PERMISSIONS.CATEGORIES_READ,
+  },
+  {
+    label: "Visitor Registrations",
+    href: "/admin/visitor-registrations",
+    icon: ClipboardDocumentListIcon,
   },
   {
     label: "Team",
