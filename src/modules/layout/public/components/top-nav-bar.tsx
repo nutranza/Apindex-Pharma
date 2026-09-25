@@ -108,7 +108,7 @@ export default function TopNavBar() {
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-gray-200/60 shadow-sm bg-white">
       <div className="content-container">
-        <div className="flex h-20 w-full items-center justify-between">
+        <div className="grid h-20 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center">
           <Link href="/" aria-label="Apindex home" className="shrink-0">
             <Image
               src="/apindex-logo.jpg"
@@ -121,7 +121,7 @@ export default function TopNavBar() {
             />
           </Link>
 
-          <div className="hidden flex-1 items-center justify-end gap-10 small:flex">
+          <div className="hidden min-w-0 items-center justify-center gap-4 px-4 small:flex medium:gap-7">
             {NAV_ITEMS.map((item) => {
               const isActive = isNavItemActive(pathname, item.href)
 
@@ -130,7 +130,7 @@ export default function TopNavBar() {
                   key={item.label}
                   href={item.href}
                   aria-current={isActive ? "page" : undefined}
-                  className={`group apx-font-headline inline-flex items-center py-2 text-sm font-medium uppercase transition-colors focus-visible:outline-none lg:text-base ${
+                  className={`group apx-font-headline inline-flex shrink-0 items-center py-2 text-sm font-medium uppercase transition-colors focus-visible:outline-none medium:text-base ${
                     isActive
                       ? "text-primary"
                       : "text-on-surface hover:text-primary"
@@ -146,13 +146,15 @@ export default function TopNavBar() {
                 </Link>
               )
             })}
+          </div>
 
+          <div className="ml-3 hidden shrink-0 items-center gap-2 small:flex">
             <a
               href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Chat with Apindex on WhatsApp"
-              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 lg:text-base"
+              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 medium:px-4 medium:text-sm"
             >
               <FaWhatsapp aria-hidden="true" className="text-lg" />
               <span>WhatsApp</span>
@@ -160,7 +162,7 @@ export default function TopNavBar() {
 
             <Link
               href={VISITOR_REGISTRATION_PATH}
-              className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 lg:text-base"
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-primary px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 medium:px-4 medium:text-sm"
             >
               Visitor Registration
             </Link>
@@ -176,7 +178,7 @@ export default function TopNavBar() {
                 : "Open navigation menu"
             }
             onClick={() => setIsMobileMenuOpen((currentValue) => !currentValue)}
-            className="inline-flex h-11 w-11 items-center justify-center text-on-surface transition-colors hover:text-primary focus-visible:outline-none small:hidden"
+            className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify-self-end text-on-surface transition-colors hover:text-primary focus-visible:outline-none small:hidden"
           >
             {isMobileMenuOpen ? (
               <XMarkIcon className="h-6 w-6" />
