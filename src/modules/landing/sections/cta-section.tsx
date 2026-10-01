@@ -1,9 +1,8 @@
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
 
 export default function CtaSection() {
   return (
-    <section className="bg-white py-16 lg:py-20">
+    <section className="bg-white apx-section">
       <div className="content-container">
         <div className="mx-auto overflow-hidden rounded-2xl bg-primary-container/80 px-6 py-10 text-on-surface shadow-[0_28px_80px_rgba(107,173,35,0.14)] sm:px-10 lg:px-14 lg:py-12">
           <div className="mx-auto max-w-3xl text-center">
@@ -24,13 +23,13 @@ export default function CtaSection() {
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Link
                 href="/contact"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-secondary px-6 py-3 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(232,150,29,0.22)] transition-colors  focus:outline-none"
+                className="apx-button-secondary min-h-12"
               >
                 Start an Inquiry
               </Link>
               <Link
                 href="/products"
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg border border-outline-variant/50 bg-white px-6 py-3 text-sm font-semibold text-on-surface transition-colors focus:outline-none"
+                className="apx-button-outline min-h-12"
               >
                 Explore Products
               </Link>

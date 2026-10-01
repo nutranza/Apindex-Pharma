@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 import { sendContactInquiryEmail } from "@/lib/email/contact-mail"
+import { validatePhoneNumber } from "@/modules/contact/lib/phone-validation"
 
 export const runtime = "nodejs"
 
@@ -17,17 +18,31 @@ const contactInquirySchema = z.object({
     .email("Enter a valid work email")
     .max(160, "Work email is too long"),
   phone_number: z.string().trim().max(40, "Phone number is too long").optional(),
-  country: z
+  phone_country_code: z
     .string()
     .trim()
-    .min(2, "Select your country")
-    .max(120, "Country is too long"),
+    .regex(/^\+\d{1,4}$/, "Enter a valid country code")
+    .optional(),
   message: z
     .string()
     .trim()
     .min(10, "Tell us a little more about your inquiry")
     .max(4000, "Message is too long"),
+  contact_consent: z.literal("yes"),
   company_website: z.string().optional(),
+}).superRefine((data, context) => {
+  const phoneValidationError = validatePhoneNumber(
+    data.phone_country_code,
+    data.phone_number
+  )
+
+  if (phoneValidationError) {
+    context.addIssue({
+      code: "custom",
+      path: ["phone_number"],
+      message: phoneValidationError,
+    })
+  }
 })
 
 function jsonResponse(body: Record<string, unknown>, status = 200) {
@@ -81,8 +96,8 @@ export async function POST(request: Request) {
     await sendContactInquiryEmail({
       fullName: data.full_name,
       workEmail: data.work_email,
+      phoneCountryCode: data.phone_country_code,
       phoneNumber: data.phone_number,
-      country: data.country,
       message: data.message,
     })
 

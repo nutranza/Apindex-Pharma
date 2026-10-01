@@ -1,4 +1,5 @@
 import Image from "next/image"
+import Link from "next/link"
 
 const TRUST_POINTS = [
   { value: "WHO-GMP", label: "Certified" },
@@ -8,7 +9,7 @@ const TRUST_POINTS = [
 
 export default function WelcomeSection() {
   return (
-    <section id="welcome" className="bg-white py-16 lg:py-24">
+    <section id="welcome" className="bg-white apx-section">
       <div className="content-container">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
           <div className="max-w-2xl">
@@ -45,13 +46,17 @@ export default function WelcomeSection() {
                 </div>
               ))}
             </div>
+
+            <Link href="/about" className="apx-button-primary mt-6">
+              About Apindex
+            </Link>
           </div>
 
           <div className="relative h-[320px] overflow-hidden rounded-xl border border-outline-variant/50 bg-surface-low shadow-[0_24px_60px_rgba(86,67,54,0.10)] sm:h-[420px] lg:h-[500px]">
             <Image
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
-              src="about-company.jpg"
+              src="/about-company.jpg"
               alt="Apindex Pharmaceutical modern manufacturing facility production line"
               className="object-cover"
             />

@@ -2,6 +2,7 @@ import { ExternalLink, FileText } from "lucide-react"
 
 type CompanyDocument = {
   title: string
+  country: string
   summary: string
   href: string
   status: string
@@ -14,6 +15,7 @@ type CompanyDocument = {
 const COMPANY_DOCUMENTS: CompanyDocument[] = [
   {
     title: "Drug License - Forms 20B & 21B",
+    country: "India",
     summary:
       "Wholesale drug license documentation issued through the Food & Drugs Control Administration, Surat.",
     href: "/assets/pdf/DL%20APINDEX%20PHARMA%20KATARGAM.pdf",
@@ -35,6 +37,7 @@ const COMPANY_DOCUMENTS: CompanyDocument[] = [
   },
   {
     title: "MSME Udyam Registration Certificate",
+    country: "India",
     summary:
       "Government of India Udyam registration certificate for Apindex Pharmaceuticals Private Limited.",
     href: "/assets/pdf/MSME%20UPDATED%20CERTIFICATE%202026-27.pdf",
@@ -60,12 +63,12 @@ export default function AboutCompanyDocumentsSection() {
   return (
     <section
       id="credentials"
-      className="scroll-mt-28 bg-surface-low py-14 lg:py-24"
+      className="scroll-mt-28 bg-surface-low apx-section"
     >
       <div className="content-container">
         <div className="mb-10 max-w-3xl">
           <div className="max-w-3xl">
-            <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
+            <p className="apx-eyebrow mb-3">
               Credentials & Documents
             </p>
             <h2 className="section-heading">Public Company Documents</h2>
@@ -81,7 +84,7 @@ export default function AboutCompanyDocumentsSection() {
           {COMPANY_DOCUMENTS.map((document) => (
             <article
               key={document.title}
-              className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white p-6"
+              className="apx-card group relative flex h-full flex-col overflow-hidden p-6"
             >
               <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-primary to-secondary" />
 
@@ -98,9 +101,12 @@ export default function AboutCompanyDocumentsSection() {
                 </span>
               </div>
 
-              <h3 className="text-xl font-extrabold leading-tight text-on-surface sm:text-[1.35rem]">
+              <h3 className="apx-card-title sm:text-[1.35rem]">
                 {document.title}
               </h3>
+              <p className="mt-2 text-sm font-bold text-primary">
+                Issuing country: {document.country}
+              </p>
               <p className="mt-3 text-sm leading-6 text-on-surface-variant sm:min-h-[48px]">
                 {document.summary}
               </p>
@@ -126,7 +132,7 @@ export default function AboutCompanyDocumentsSection() {
                   href={document.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-extrabold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:w-auto"
+                  className="apx-button-primary w-full sm:w-auto"
                 >
                   View PDF
                   <ExternalLink
@@ -138,6 +144,14 @@ export default function AboutCompanyDocumentsSection() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-dashed border-outline-variant/60 bg-white p-5 text-sm leading-6 text-on-surface-variant">
+          <span className="font-extrabold text-on-surface">
+            Target-country credentials:
+          </span>{" "}
+          Country-specific registrations and certificates will be added after
+          the client confirms the target markets and supplies the documents.
         </div>
       </div>
     </section>

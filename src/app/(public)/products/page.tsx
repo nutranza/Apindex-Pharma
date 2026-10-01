@@ -1,5 +1,4 @@
 import type { Metadata } from "next"
-import { redirect } from "next/navigation"
 
 import { listPublicCatalogListing } from "@/lib/data/public-catalog"
 import ProductsPageTemplate from "@/modules/products/templates/products-page"
@@ -18,47 +17,29 @@ export default async function ProductsPage({
   searchParams: Promise<{
     q?: string
     category?: string
-    page?: string
+    dosageForm?: string
     subcategory?: string
+    page?: string
   }>
 }) {
   const resolvedSearchParams = await searchParams
   const categoryHandle = resolvedSearchParams.category?.trim()
-
-  if (categoryHandle) {
-    const query = resolvedSearchParams.q?.trim()
-    const subcategory = resolvedSearchParams.subcategory?.trim()
-    const redirectSearchParams = new URLSearchParams()
-
-    if (query) {
-      redirectSearchParams.set("q", query)
-    }
-
-    if (subcategory) {
-      redirectSearchParams.set("subcategory", subcategory)
-    }
-
-    const queryString = redirectSearchParams.toString()
-      ? `?${redirectSearchParams.toString()}`
-      : ""
-
-    redirect(
-      `/categories/${encodeURIComponent(
-        categoryHandle
-      )}${queryString}`
-    )
-  }
+  const dosageForm =
+    resolvedSearchParams.dosageForm?.trim() ||
+    resolvedSearchParams.subcategory?.trim()
 
   const catalog = await listPublicCatalogListing({
     page: 1,
     pageSize: 2000,
     query: resolvedSearchParams.q,
+    categoryHandle,
   })
 
   return (
     <ProductsPageTemplate
       catalog={catalog}
-      initialSubcategoryLabel={resolvedSearchParams.subcategory?.trim() || null}
+      initialCategoryHandle={catalog.selectedCategory?.handle ?? categoryHandle ?? null}
+      initialDosageForm={dosageForm || null}
     />
   )
 }

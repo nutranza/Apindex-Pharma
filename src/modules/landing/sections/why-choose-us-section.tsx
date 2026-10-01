@@ -1,7 +1,11 @@
 import type { LucideIcon } from "lucide-react"
 import {
+  ClipboardCheck,
   FlaskConical,
   Globe2,
+  Handshake,
+  PackageCheck,
+  UsersRound,
   ShieldCheck,
 } from "lucide-react"
 
@@ -26,9 +30,33 @@ const FEATURES: FeatureItem[] = [
   },
   {
     icon: Globe2,
-    title: "Export-Ready Support",
+    title: "Global Supplies",
     description:
-      "Coordinated documentation, regulatory support, and supply planning to help partners serve regulated and emerging healthcare markets.",
+      "Flexible product and supply coordination for healthcare partners serving domestic and international markets.",
+  },
+  {
+    icon: PackageCheck,
+    title: "Reliable Sourcing",
+    description:
+      "Structured sourcing and product coordination designed to support dependable availability and clear communication.",
+  },
+  {
+    icon: ClipboardCheck,
+    title: "Documentation Readiness",
+    description:
+      "Organized product and company information to support procurement, partner review, and responsible supply discussions.",
+  },
+  {
+    icon: Handshake,
+    title: "Flexible Partnerships",
+    description:
+      "Responsive collaboration for distributors, institutions, brands, and healthcare businesses with different supply needs.",
+  },
+  {
+    icon: UsersRound,
+    title: "Partner-First Coordination",
+    description:
+      "A practical team approach focused on clear updates, realistic commitments, and long-term business relationships.",
   },
 ]
 
@@ -36,7 +64,7 @@ export default function WhyChooseUsSection() {
   return (
     <section
       id="why-choose-us"
-      className="bg-white py-14 lg:py-20"
+      className="bg-white apx-section-compact"
     >
       <div className="content-container">
         <div className="mb-12 max-w-3xl">
@@ -46,12 +74,12 @@ export default function WhyChooseUsSection() {
           </h2>
           <p className="mt-5 max-w-2xl section-description">
             A dependable pharmaceutical partner for finished formulations,
-            contract manufacturing coordination, export readiness, and
-            long-term supply confidence.
+            contract manufacturing coordination, domestic and global supply,
+            and long-term partnership confidence.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-3 lg:gap-14">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-14">
           {FEATURES.map((item) => {
             const Icon = item.icon
             return (

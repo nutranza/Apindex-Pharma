@@ -1,67 +1,61 @@
-import type { IconType } from "react-icons"
-import { MdAdjust, MdRemoveRedEye } from "react-icons/md"
-import SectionBadge from "@modules/common/components/section-badge"
-
-type PurposeTone = "primary" | "secondary"
+import { Eye, Target } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
 type PurposeCard = {
   title: string
-  description: string
-  icon: IconType
-  tone: PurposeTone
+  paragraphs: string[]
+  icon: LucideIcon
 }
 
 const PURPOSE_CARDS: PurposeCard[] = [
   {
-    title: "Our Mission",
-    description:
+    title: "Mission",
+    paragraphs: [
       "To deliver reliable, accessible pharmaceutical solutions backed by disciplined process controls, responsive partnerships, and continuous quality improvement.",
-    icon: MdAdjust,
-    tone: "primary",
+      "We build long-term relationships by listening carefully, communicating clearly, and improving the way we support healthcare partners.",
+    ],
+    icon: Target,
   },
   {
-    title: "Our Vision",
-    description:
+    title: "Vision",
+    paragraphs: [
       "To be recognized as a globally trusted pharmaceutical company where precision manufacturing, ethics, and better patient outcomes move together.",
-    icon: MdRemoveRedEye,
-    tone: "secondary",
+      "We aim to grow as a dependable healthcare supply partner across domestic and international markets through quality, transparency, and responsible execution.",
+    ],
+    icon: Eye,
   },
 ]
 
-const ICON_TONE_CLASS: Record<PurposeTone, string> = {
-  primary: "bg-primary/[0.08] text-primary",
-  secondary: "bg-secondary/[0.08] text-secondary",
-}
-
 export default function AboutPurposeSection() {
   return (
-    <section className="bg-surface py-16 lg:py-24">
+    <section className="bg-white apx-section">
       <div className="content-container">
-        <div className="mb-12 space-y-4">
-          <SectionBadge tone="primary">Our Purpose</SectionBadge>
-          <h2 className="section-heading">Mission &amp; Vision</h2>
-        </div>
+        <h2 id="purpose-heading" className="sr-only">
+          Mission &amp; Vision
+        </h2>
 
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+        <div
+          aria-labelledby="purpose-heading"
+          className="grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-16 lg:gap-24"
+        >
           {PURPOSE_CARDS.map((card) => {
             const Icon = card.icon
 
             return (
-              <article
-                key={card.title}
-                className="rounded-xl bg-surface-low p-6 lg:p-8"
-              >
-                <div
-                  className={`mb-4 flex h-8 w-8 items-center justify-center rounded-full ${ICON_TONE_CLASS[card.tone]}`}
-                >
-                  <Icon aria-hidden="true" className="text-sm" />
-                </div>
-                <h3 className="apx-font-headline text-lg font-bold lg:text-xl">
+              <article key={card.title} className="max-w-xl">
+                <Icon
+                  aria-hidden="true"
+                  className="size-14 text-primary"
+                  strokeWidth={1.7}
+                />
+                <h3 className="mt-7 text-2xl font-medium uppercase tracking-[0.01em] text-on-surface">
                   {card.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
-                  {card.description}
-                </p>
+                <div className="mt-4 space-y-4 text-base leading-7 text-on-surface sm:text-lg sm:leading-8">
+                  {card.paragraphs.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
+                </div>
               </article>
             )
           })}

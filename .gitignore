@@ -11,6 +11,8 @@
 
 # testing
 /coverage
+/e2e/
+
 
 # next.js
 /.next/
@@ -62,5 +64,5 @@ dump.rdb
 # Local cache
 .cache/
 
-
 .claude/
+/resend-assets

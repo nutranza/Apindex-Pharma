@@ -1,17 +1,11 @@
 import Image from "next/image"
-
-const GLOBAL_STATS = [
-  { value: "25+", label: "Countries Served" },
-  { value: "1000+", label: "Global Clients" },
-  { value: "400+", label: "Sterile Products" },
-  { value: "500+", label: "Non-Sterile Products" },
-]
+import { GLOBAL_STATS } from "@modules/company/constants"
 
 export default function GlobalPresenceSection() {
   return (
     <section
       id="global-presence"
-      className="relative overflow-hidden bg-[#0d1117] py-24 lg:py-36 text-white"
+      className="relative overflow-hidden bg-[#0d1117] apx-section text-white"
     >
       {/* World map — subtle background */}
       <div className="absolute inset-0">

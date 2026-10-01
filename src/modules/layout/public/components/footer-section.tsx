@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { MdCall, MdMail } from "react-icons/md"
+import { MdCall, MdMail, MdLocationOn } from "react-icons/md"
 import {
   FaFacebookF,
   FaInstagram,
@@ -10,6 +10,10 @@ import {
   FaWhatsapp,
 } from "react-icons/fa6"
 import { WHATSAPP_URL } from "@/modules/layout/public/constants"
+import {
+  COMPANY_ADDRESS_TEXT,
+  COMPANY_DESCRIPTION,
+} from "@modules/company/constants"
 
 type NavLink = {
   label: string
@@ -17,20 +21,19 @@ type NavLink = {
 }
 
 const COMPANY_LINKS: NavLink[] = [
+  { label: "Home", href: "/" },
   { label: "About Us", href: "/about" },
-  { label: "Certificates & Licenses", href: "/about#credentials" },
-  { label: "Product Categories", href: "/#categories" },
-  { label: "Manufacturing Capabilities", href: "/#infrastructure" },
-  { label: "Global Presence", href: "/#global-presence" },
-  { label: "Quality & R&D", href: "/#why-choose-us" },
+  { label: "Products", href: "/products" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact Us", href: "/contact" },
 ]
 
-const QUICK_LINKS: NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "Products", href: "/products" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Contact Us", href: "/contact" },
-  { label: "Latest Blog", href: "/#latest-blog" },
+const LEGAL_LINKS: NavLink[] = [
+  { label: "Shipping Policy", href: "/shipping-policy" },
+  { label: "Return Policy", href: "/return-policy" },
+  { label: "Terms & Conditions", href: "/terms-and-conditions" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+  { label: "Disclaimer", href: "/disclaimer" },
 ]
 
 const SOCIAL_ICONS = [
@@ -48,115 +51,139 @@ const SOCIAL_ICONS = [
 
 export default function FooterSection() {
   return (
-    <footer className="apx-font-body border-t border-gray-200/60 bg-white text-on-surface">
+    <footer className="apx-font-body border-t border-outline-variant/20 text-on-surface pt-14 pb-6 sm:pt-16">
       <div className="content-container">
-        <div className="mt-10">
-          <div className="grid gap-12 pb-10 lg:grid-cols-[1.2fr_0.7fr_0.7fr] lg:gap-16">
-            <div className="max-w-md">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_0.85fr_0.85fr_1.15fr] lg:gap-10 xl:gap-16">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <Link
+              href="/"
+              aria-label="Apindex home"
+              className="inline-flex focus-visible:outline-none"
+            >
               <Image
                 src="/apindex-logo.jpg"
-                alt="Apindex"
+                alt="Apindex Pharmaceuticals"
                 width={1920}
                 height={1187}
                 quality={100}
-                className="h-16 w-auto object-contain"
+                className="block h-24 w-auto object-contain sm:h-28"
               />
+            </Link>
 
-              <p className="mt-5 max-w-sm text-sm font-semibold leading-6 text-on-surface">
-                WHO-GMP certified pharmaceutical manufacturing for global
-                healthcare partners.
-              </p>
+            <p className="mt-6 max-w-lg text-sm leading-7 text-on-surface-variant sm:text-base">
+              {COMPANY_DESCRIPTION}
+            </p>
 
-              <div className="mt-5 space-y-3">
-                <a
-                  href="mailto:info@apindexpharma.com"
-                  className="flex w-fit items-center gap-4 text-sm text-on-surface-variant transition-colors hover:text-primary"
-                >
-                  <MdMail aria-hidden="true" className="text-xl" />
-                  <span>info@apindexpharma.com</span>
-                </a>
-                <a
-                  href="tel:+917698743840"
-                  className="flex w-fit items-center gap-4 text-sm text-on-surface-variant transition-colors hover:text-primary"
-                >
-                  <MdCall aria-hidden="true" className="text-xl" />
-                  <span>+91 7698743840</span>
-                </a>
-              </div>
+            <div className="mt-7 flex flex-wrap items-center gap-2.5">
+              {SOCIAL_ICONS.map((item) => {
+                const Icon = item.icon
+                const iconClassName =
+                  "inline-flex size-10 items-center justify-center rounded-full border border-outline-variant/40 text-base text-on-surface-variant transition-colors hover:border-primary-container hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
 
-              <div className="mt-5 flex flex-wrap items-center gap-3">
-                {SOCIAL_ICONS.map((item) => {
-                  const Icon = item.icon
-                  const iconContent = <Icon aria-hidden="true" />
-                  const iconClassName =
-                    "inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-high text-lg text-on-surface transition-colors hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-
-                  return item.href ? (
-                    <a
-                      key={item.label}
-                      aria-label={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={iconClassName}
-                    >
-                      {iconContent}
-                    </a>
-                  ) : (
-                    <span
-                      key={item.label}
-                      aria-label={item.label}
-                      role="img"
-                      className={iconClassName}
-                    >
-                      {iconContent}
-                    </span>
-                  )
-                })}
-              </div>
+                return item.href ? (
+                  <a
+                    key={item.label}
+                    aria-label={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={iconClassName}
+                  >
+                    <Icon aria-hidden="true" />
+                  </a>
+                ) : (
+                  <span
+                    key={item.label}
+                    aria-label={item.label}
+                    role="img"
+                    className={iconClassName}
+                  >
+                    <Icon aria-hidden="true" />
+                  </span>
+                )
+              })}
             </div>
-
-            <FooterLinkColumn title="Company" links={COMPANY_LINKS} />
-            <FooterLinkColumn title="Quick Links" links={QUICK_LINKS} />
           </div>
 
-          <div className="grid gap-4 border-t border-gray-200/80 py-6 text-center text-xs font-medium text-on-surface lg:grid-cols-[1fr_auto_1fr] lg:items-center lg:text-left">
-            <p className="lg:justify-self-start">
-              &copy; {new Date().getFullYear()} Apindex Pharmaceuticals. All
-              Rights Reserved.
-            </p>
+          <FooterLinkColumn title="Company" links={COMPANY_LINKS} />
+          <FooterLinkColumn title="Policies" links={LEGAL_LINKS} />
 
-            <p className="text-xs font-semibold text-on-surface-variant lg:justify-self-center">
-              Managed by{" "}
-              <a
-                href="https://apexture.in/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold text-on-surface underline underline-offset-2"
+          <div>
+            <h3 className="apx-font-headline text-xs font-bold uppercase tracking-[0.16em] text-on-surface">
+              Reach Us
+            </h3>
+            <div className="mt-5 space-y-3.5 text-sm leading-6 text-on-surface-variant">
+              <FooterContactItem icon={MdCall} href="tel:+917698743840">
+                +91 7698743840
+              </FooterContactItem>
+              <FooterContactItem
+                icon={MdMail}
+                href="mailto:info@apindexpharma.com"
               >
-                apexture.in
-              </a>
-            </p>
-
-            <div className="flex justify-center gap-4 text-xs text-on-surface-variant lg:justify-self-end">
-              <Link
-                href="/privacy-policy"
-                className="transition-colors hover:text-primary"
-              >
-                Privacy Policy
-              </Link>
-              <span className="text-on-surface">|</span>
-              <Link
-                href="/disclaimer"
-                className="transition-colors hover:text-primary"
-              >
-                Disclaimer
-              </Link>
+                info@apindexpharma.com
+              </FooterContactItem>
+              <FooterContactItem icon={MdLocationOn}>
+                {COMPANY_ADDRESS_TEXT}
+              </FooterContactItem>
             </div>
           </div>
         </div>
+
+        <div className="mt-12 flex flex-col gap-5 border-t border-outline-variant/25 pt-6 text-center text-xs text-on-surface-variant sm:mt-16 sm:pt-7 lg:flex-row lg:items-center lg:justify-between lg:text-left">
+          <p>
+            &copy; {new Date().getFullYear()} Apindex Pharmaceuticals. All Rights
+            Reserved.
+          </p>
+
+          <a
+            href="https://apexture.in/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Managed by Apexture"
+            className="inline-flex items-center justify-center gap-2 rounded-md transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container lg:justify-end"
+          >
+            <span>Managed by</span>
+            <span className="inline-flex rounded bg-white px-2 py-1">
+              <Image
+                src="/apexture-logo.svg"
+                alt="Apexture"
+                width={112}
+                height={22}
+                className="h-5 w-auto"
+              />
+            </span>
+          </a>
+        </div>
       </div>
     </footer>
+  )
+}
+
+function FooterContactItem({
+  icon: Icon,
+  href,
+  children,
+}: {
+  icon: typeof MdLocationOn
+  href?: string
+  children: string
+}) {
+  const className =
+    "flex max-w-sm items-start gap-3 transition-colors hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+
+  const content = (
+    <>
+      <Icon aria-hidden="true" className="mt-0.5 shrink-0 text-lg text-primary-container" />
+      <span>{children}</span>
+    </>
+  )
+
+  return href ? (
+    <a href={href} className={className}>
+      {content}
+    </a>
+  ) : (
+    <div className={className}>{content}</div>
   )
 }
 
@@ -169,15 +196,15 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <h4 className="apx-font-headline text-base font-semibold text-on-surface">
+      <h3 className="apx-font-headline text-xs font-bold uppercase tracking-[0.16em] text-on-surface">
         {title}
-      </h4>
-      <ul className="mt-4 space-y-3">
+      </h3>
+      <ul className="mt-5 space-y-3.5">
         {links.map((link) => (
           <li key={link.label}>
             <Link
               href={link.href}
-              className="text-sm text-on-surface-variant transition-colors hover:text-primary"
+              className="text-sm text-on-surface-variant transition-colors hover:text-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
             >
               {link.label}
             </Link>

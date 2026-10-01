@@ -1,38 +1,31 @@
 import { Mail, MapPin, Phone } from "lucide-react"
 
+import { COMPANY_ADDRESS_TEXT } from "@/modules/company/constants"
 import ContactInquiryForm from "@modules/contact/components/contact-inquiry-form"
 
 const GOOGLE_MAP_EMBED_URL =
-  "https://www.google.com/maps?q=401%2C%20Rudra%20Diamond%2C%20Near%20Zalal%20Liquid%2C%20Near%20Kiran%20Hospital%2C%20Katargam%2C%20Surat%2C%20Gujarat%2C%20India&z=17&hl=en&gl=IN&output=embed"
+  "https://www.google.com/maps?q=401%2C%20Rudra%20Diamond%2C%20Near%20Zalal%20Liquid%2C%20Near%20Kiran%20Hospital%2C%20Katargam%2C%20Surat%2C%20Gujarat%20395004%2C%20India&z=17&hl=en&gl=IN&output=embed"
 
 const CONTACT_EMAIL = "info@apindexpharma.com"
 
 const CONTACT_ITEMS = [
   {
     label: "Corporate Office",
-    value: (
-      <>
-        401, Rudra Diamond, Near Zalal Liquid, Near Kiran Hospital, Katargam,
-        Surat
-      </>
-    ),
+    value: COMPANY_ADDRESS_TEXT,
     icon: MapPin,
     tone: "primary",
-    subtext: null,
   },
   {
     label: "Direct Line",
     value: "+91 7698743840",
     icon: Phone,
     tone: "secondary",
-    subtext: "Mon - Sun, 10am - 6pm IST",
   },
   {
     label: "Inquiries",
     value: CONTACT_EMAIL,
     icon: Mail,
     tone: "primary",
-    subtext: "Product, partnership, and export inquiries",
   },
 ] as const
 
@@ -43,12 +36,12 @@ const ICON_TONE_CLASS = {
 
 export default function ContactContentSection() {
   return (
-    <section className="bg-surface py-16">
+    <section className="bg-surface apx-section">
       <div className="content-container">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-stretch lg:gap-16">
           <div className="flex flex-col gap-10 lg:col-span-5">
             <div className="shrink-0">
-              <h2 className="apx-font-headline mb-8 text-2xl sm:text-3xl font-semibold text-on-surface">
+              <h2 className="apx-card-title mb-8 text-2xl sm:text-3xl">
                 Corporate Office
               </h2>
               <div className="space-y-8">
@@ -73,11 +66,6 @@ export default function ContactContentSection() {
                         <p className="text-lg leading-[1.65] text-on-surface">
                           {item.value}
                         </p>
-                        {item.subtext ? (
-                          <p className="mt-1 text-sm text-on-surface-variant">
-                            {item.subtext}
-                          </p>
-                        ) : null}
                       </div>
                     </div>
                   )
@@ -102,7 +90,7 @@ export default function ContactContentSection() {
               className="h-full rounded-2xl border border-outline-variant/15 bg-white p-6 sm:p-10"
             >
               <div className="mb-8">
-                <h2 className="apx-font-headline sm:text-3xl text-2xl font-semibold text-on-surface">
+                <h2 className="apx-card-title text-2xl sm:text-3xl">
                   Send an Inquiry
                 </h2>
                 <p className="mt-3 max-w-xl text-sm leading-6 text-on-surface-variant md:text-base">
