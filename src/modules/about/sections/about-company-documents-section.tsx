@@ -2,6 +2,7 @@ import { ExternalLink, FileText } from "lucide-react"
 
 type CompanyDocument = {
   title: string
+  country: string
   summary: string
   href: string
   status: string
@@ -14,6 +15,7 @@ type CompanyDocument = {
 const COMPANY_DOCUMENTS: CompanyDocument[] = [
   {
     title: "Drug License - Forms 20B & 21B",
+    country: "India",
     summary:
       "Wholesale drug license documentation issued through the Food & Drugs Control Administration, Surat.",
     href: "/assets/pdf/DL%20APINDEX%20PHARMA%20KATARGAM.pdf",
@@ -35,6 +37,7 @@ const COMPANY_DOCUMENTS: CompanyDocument[] = [
   },
   {
     title: "MSME Udyam Registration Certificate",
+    country: "India",
     summary:
       "Government of India Udyam registration certificate for Apindex Pharmaceuticals Private Limited.",
     href: "/assets/pdf/MSME%20UPDATED%20CERTIFICATE%202026-27.pdf",
@@ -101,6 +104,9 @@ export default function AboutCompanyDocumentsSection() {
               <h3 className="text-xl font-extrabold leading-tight text-on-surface sm:text-[1.35rem]">
                 {document.title}
               </h3>
+              <p className="mt-2 text-sm font-bold text-primary">
+                Issuing country: {document.country}
+              </p>
               <p className="mt-3 text-sm leading-6 text-on-surface-variant sm:min-h-[48px]">
                 {document.summary}
               </p>
@@ -138,6 +144,14 @@ export default function AboutCompanyDocumentsSection() {
               </div>
             </article>
           ))}
+        </div>
+
+        <div className="mt-6 rounded-2xl border border-dashed border-outline-variant/60 bg-white p-5 text-sm leading-6 text-on-surface-variant">
+          <span className="font-extrabold text-on-surface">
+            Target-country credentials:
+          </span>{" "}
+          Country-specific registrations and certificates will be added after
+          the client confirms the target markets and supplies the documents.
         </div>
       </div>
     </section>

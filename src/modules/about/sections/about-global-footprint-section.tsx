@@ -83,8 +83,8 @@ export default function AboutGlobalFootprintSection() {
           <h2 className="section-heading">Global <span className="text-primary">Footprint</span></h2>
           <p className="mt-3 section-description">
             Connecting pharmaceutical partners with finished formulations,
-            clear documentation, and export-ready supply support across global
-            healthcare markets.
+            clear documentation, and dependable global supply support across
+            domestic and international healthcare markets.
           </p>
         </div>
 

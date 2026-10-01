@@ -5,11 +5,6 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { FaWhatsapp } from "react-icons/fa6"
-import {
-  VISITOR_REGISTRATION_PATH,
-  WHATSAPP_URL,
-} from "@/modules/layout/public/constants"
 
 type NavItem = {
   label: string
@@ -21,10 +16,9 @@ const NAV_ITEMS: NavItem[] = [
   // { label: "Company", href: "/company" },
   { label: "About", href: "/about" },
   { label: "Products", href: "/products" },
-  { label: "Gallery", href: "/gallery" },
-  // { label: "Global Presence", href: "/Global-Presence" },
+  { label: "Blog", href: "/blog" },
+  { label: "FAQ", href: "/faq" },
   { label: "Contact", href: "/contact" },
-
 ]
 
 function normalizePathname(pathname: string) {
@@ -108,7 +102,7 @@ export default function TopNavBar() {
   return (
     <nav className="fixed top-0 z-50 w-full border-b border-gray-200/60 shadow-sm bg-white">
       <div className="content-container">
-        <div className="grid h-20 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center">
+        <div className="flex h-20 w-full items-center justify-between">
           <Link href="/" aria-label="Apindex home" className="shrink-0">
             <Image
               src="/apindex-logo.jpg"
@@ -148,26 +142,6 @@ export default function TopNavBar() {
             })}
           </div>
 
-          <div className="ml-3 hidden shrink-0 items-center gap-2 small:flex">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Chat with Apindex on WhatsApp"
-              className="inline-flex items-center gap-2 rounded-full bg-[#25D366] px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2 medium:px-4 medium:text-sm"
-            >
-              <FaWhatsapp aria-hidden="true" className="text-lg" />
-              <span>WhatsApp</span>
-            </a>
-
-            <Link
-              href={VISITOR_REGISTRATION_PATH}
-              className="inline-flex items-center justify-center whitespace-nowrap rounded-full bg-primary px-3 py-2 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 medium:px-4 medium:text-sm"
-            >
-              Visitor Registration
-            </Link>
-          </div>
-
           <button
             type="button"
             aria-expanded={isMobileMenuOpen}
@@ -178,7 +152,7 @@ export default function TopNavBar() {
                 : "Open navigation menu"
             }
             onClick={() => setIsMobileMenuOpen((currentValue) => !currentValue)}
-            className="col-start-3 inline-flex h-11 w-11 items-center justify-center justify-self-end text-on-surface transition-colors hover:text-primary focus-visible:outline-none small:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center text-on-surface transition-colors hover:text-primary focus-visible:outline-none small:hidden"
           >
             {isMobileMenuOpen ? (
               <XMarkIcon className="h-6 w-6" />
@@ -248,13 +222,6 @@ export default function TopNavBar() {
                 )
               })}
 
-              <Link
-                href={VISITOR_REGISTRATION_PATH}
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-3 text-base font-bold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-              >
-                Visitor Registration
-              </Link>
             </div>
           </div>
         </div>

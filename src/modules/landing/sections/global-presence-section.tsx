@@ -1,11 +1,5 @@
 import Image from "next/image"
-
-const GLOBAL_STATS = [
-  { value: "25+", label: "Countries Served" },
-  { value: "1000+", label: "Global Clients" },
-  { value: "400+", label: "Sterile Products" },
-  { value: "500+", label: "Non-Sterile Products" },
-]
+import { GLOBAL_STATS } from "@modules/company/constants"
 
 export default function GlobalPresenceSection() {
   return (

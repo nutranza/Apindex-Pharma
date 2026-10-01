@@ -15,7 +15,7 @@ export default function ContactHeroSection() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.72)_0%,rgba(13,17,23,0.44)_42%,rgba(13,17,23,0.08)_100%)]" />
       </div>
 
-      <div className="relative z-10 h-[550px] lg:h-[650px]">
+      <div className="relative z-10 h-[380px] sm:h-[430px] lg:h-[480px]">
         <div className="content-container flex h-full items-center">
           <div className="max-w-3xl">
             <h1 className="text-4xl font-semibold leading-[1.08] text-white drop-shadow-[0_3px_16px_rgba(0,0,0,0.32)] sm:text-5xl md:text-6xl">

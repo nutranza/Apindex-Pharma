@@ -1,4 +1,3 @@
-import BlogSection from "@modules/landing/sections/blog-section"
 import CategoriesSection from "@modules/landing/sections/categories-section"
 import CtaSection from "@modules/landing/sections/cta-section"
 import GlobalPresenceSection from "@modules/landing/sections/global-presence-section"
@@ -17,7 +16,6 @@ export default function LandingPageTemplate() {
         <ServicesSection />
         <GlobalPresenceSection />
         <WhyChooseUsSection />
-        <BlogSection />
         <CtaSection />
       </main>
     </div>

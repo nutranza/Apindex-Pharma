@@ -181,11 +181,11 @@ const listPublicCatalogProductsCached = unstable_cache(
 
     const baseSelect =
       mode === "media"
-        ? "id, handle, name, image_url, images, metadata, created_at, product_categories(category:categories(id, name, handle, image_url))"
+        ? "id, handle, name, short_description, image_url, images, metadata, created_at, product_categories(category:categories(id, name, handle, image_url))"
         : "id, handle, name, metadata, created_at, product_categories(category:categories(id, name, handle, image_url))"
     const selectWithCategory =
       mode === "media"
-        ? "id, handle, name, image_url, images, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
+        ? "id, handle, name, short_description, image_url, images, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
         : "id, handle, name, metadata, created_at, product_categories!inner(category_id, category:categories(id, name, handle, image_url))"
 
     const createProductsQuery = (shouldIncludeCount: boolean) => {
@@ -329,7 +329,7 @@ export const listPublicCatalogListing = cache(
   ): Promise<PublicCatalogResult> {
     return listPublicCatalogProducts({
       ...options,
-      mode: "listing",
+      mode: "media",
       includeCount: false,
     })
   }

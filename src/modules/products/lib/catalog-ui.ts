@@ -181,13 +181,13 @@ export function getProductIcon(product: PublicCatalogProduct): IconType {
   return GiMedicines
 }
 
-export function buildProductEnquiryHref(product: PublicCatalogProduct): string {
+export function buildProductQuoteHref(product: PublicCatalogProduct): string {
   return buildEnquiryHref(
-    `${product.name} enquiry`,
+    `${product.name} quote request`,
     [
       "Hello Apindex team,",
       "",
-      `I would like to enquire about ${product.name}.`,
+      `I would like to request a quote for ${product.name}.`,
       "Please share the available catalogue details.",
       "",
       "Thank you.",
@@ -208,11 +208,16 @@ export function buildCatalogRequestHref(): string {
   )
 }
 
-export function buildProductsPageHref(options: {
-  query?: string
+export type ProductCatalogFilterState = {
+  query?: string | null
   categoryHandle?: string | null
+  dosageForm?: string | null
   page?: number
-}): string {
+}
+
+export function buildProductsPageHref(
+  options: ProductCatalogFilterState = {}
+): string {
   const searchParams = new URLSearchParams()
 
   if (options.query?.trim()) {
@@ -221,6 +226,10 @@ export function buildProductsPageHref(options: {
 
   if (options.categoryHandle) {
     searchParams.set("category", options.categoryHandle)
+  }
+
+  if (options.dosageForm?.trim()) {
+    searchParams.set("dosageForm", options.dosageForm.trim())
   }
 
   if (options.page && options.page > 1) {

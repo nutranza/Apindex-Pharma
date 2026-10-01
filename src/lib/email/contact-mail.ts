@@ -1,12 +1,13 @@
 import "server-only"
 
 import nodemailer from "nodemailer"
+import { getPhoneCountryName } from "@/modules/contact/lib/phone-validation"
 
 export type ContactInquiryEmailInput = {
   fullName: string
   workEmail: string
+  phoneCountryCode?: string
   phoneNumber?: string
-  country: string
   message: string
 }
 
@@ -29,12 +30,22 @@ function escapeHtml(value: string): string {
     .replace(/'/g, "&#039;")
 }
 
+function formatPhoneNumber(input: ContactInquiryEmailInput): string {
+  const phoneNumber = input.phoneNumber?.trim()
+  if (!phoneNumber) {
+    return "Not provided"
+  }
+
+  const countryCode = input.phoneCountryCode?.trim()
+  return countryCode ? `${countryCode} ${phoneNumber}` : phoneNumber
+}
+
 function renderRows(input: ContactInquiryEmailInput): string {
-  const rows = [
+  const rows: Array<[string, string]> = [
     ["Full Name", input.fullName],
     ["Work Email", input.workEmail],
-    ["Phone Number", input.phoneNumber || "Not provided"],
-    ["Country", input.country],
+    ["Phone Number", formatPhoneNumber(input)],
+    ["Country", getPhoneCountryName(input.phoneCountryCode)],
   ]
 
   return rows
@@ -114,8 +125,8 @@ function buildTextContent(input: ContactInquiryEmailInput): string {
     "",
     `Full Name: ${input.fullName}`,
     `Work Email: ${input.workEmail}`,
-    `Phone Number: ${input.phoneNumber || "Not provided"}`,
-    `Country: ${input.country}`,
+    `Phone Number: ${formatPhoneNumber(input)}`,
+    `Country: ${getPhoneCountryName(input.phoneCountryCode)}`,
     "",
     "Message:",
     input.message,

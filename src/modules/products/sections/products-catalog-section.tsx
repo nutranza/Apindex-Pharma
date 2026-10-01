@@ -1,167 +1,205 @@
 "use client"
 
 import Link from "next/link"
-import { useEffect, useMemo, useState } from "react"
-import { GiMedicines } from "react-icons/gi"
-import { LuDroplets, LuPill, LuSyringe } from "react-icons/lu"
-import { MdOutlineScience } from "react-icons/md"
-import { TbBottleFilled, TbTopologyStar3 } from "react-icons/tb"
+import { useRouter } from "next/navigation"
+import { type FormEvent, useEffect, useMemo, useRef, useState } from "react"
+import { ArrowUpRight, Search, X } from "lucide-react"
 
 import { CATALOG_DOSAGE_OPTIONS } from "@/lib/constants/product-dosage"
 import type { PublicCatalogResult } from "@/lib/data/public-catalog"
+import CatalogFilterSelect, {
+  type CatalogFilterOption,
+} from "@/modules/products/components/catalog-filter-select"
 import { buildProductDetailHref } from "@/modules/products/lib/product-detail-ui"
-import { HiCheck } from "react-icons/hi2"
+import { buildProductsPageHref } from "@/modules/products/lib/catalog-ui"
 
 type ProductsCatalogSectionProps = {
   catalog: PublicCatalogResult
   initialCategoryHandle?: string | null
+  initialDosageForm?: string | null
   initialSubcategoryLabel?: string | null
 }
 
-const DOSAGE_TILES = [
-  {
-    label: "Tablet",
-    icon: LuPill,
-    className: "bg-[#f39a09]",
-  },
-  {
-    label: "Capsule",
-    icon: GiMedicines,
-    className: "bg-[#2c86bd]",
-  },
-  {
-    label: "Eye / Ear Drops",
-    icon: LuDroplets,
-    className: "bg-[#20aa59]",
-  },
-  {
-    label: "Injection",
-    icon: LuSyringe,
-    className: "bg-[#c43b2d]",
-  },
-  {
-    label: "Creams",
-    icon: TbBottleFilled,
-    className: "bg-[#8e44ad]",
-  },
-  {
-    label: "Suspension / Syrup",
-    icon: MdOutlineScience,
-    className: "bg-[#2d3e50]",
-  },
-  {
-    label: "Other",
-    icon: TbTopologyStar3,
-    className: "bg-[#f2c500]",
-  },
-] as const
-
-const DOSAGE_LABELS = CATALOG_DOSAGE_OPTIONS.filter(
-  (option) => option !== "All Dosage Forms"
-)
-
-type CatalogProduct = PublicCatalogResult["products"][number]
 type ProductGroup = {
   label: string
   products: CatalogProduct[]
 }
 
-function normalizeSubcategory(value: string | null | undefined) {
+const ALL_DOSAGE_FORMS = CATALOG_DOSAGE_OPTIONS[0]
+const DOSAGE_FORM_LABELS = CATALOG_DOSAGE_OPTIONS.filter(
+  (option) => option !== ALL_DOSAGE_FORMS
+)
+
+type CatalogProduct = PublicCatalogResult["products"][number]
+
+function normalizeValue(value: string | null | undefined) {
   return value?.trim().toLowerCase() ?? ""
 }
 
-function buildSubcategorySectionId(label: string) {
-  return `product-subcategory-${normalizeSubcategory(label)
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "")}`
+function normalizeDosageForm(value: string | null | undefined): string | null {
+  const normalizedValue = normalizeValue(value)
+
+  if (!normalizedValue || normalizedValue === normalizeValue(ALL_DOSAGE_FORMS)) {
+    return null
+  }
+
+  return (
+    DOSAGE_FORM_LABELS.find(
+      (label) => normalizeValue(label) === normalizedValue
+    ) ?? null
+  )
 }
 
-const DOSAGE_ORDER = DOSAGE_LABELS.map((label) => normalizeSubcategory(label))
+function getProductDosageForm(product: CatalogProduct) {
+  const normalizedProductValue = normalizeValue(product.subcategory)
 
-function getProductSubcategory(product: CatalogProduct) {
-  return product.subcategory?.trim() || "Other"
+  return (
+    DOSAGE_FORM_LABELS.find(
+      (label) => normalizeValue(label) === normalizedProductValue
+    ) ?? "Other"
+  )
 }
 
-function buildProductGroups(products: CatalogProduct[]): ProductGroup[] {
-  const groups = new Map<string, ProductGroup>()
+function buildProductGroups(
+  products: CatalogProduct[],
+  selectedDosageForm: string | null
+): ProductGroup[] {
+  const groupedProducts = new Map<string, CatalogProduct[]>()
 
   products.forEach((product) => {
-    const label = getProductSubcategory(product)
-    const key = normalizeSubcategory(label)
-    const group = groups.get(key)
+    const dosageForm = getProductDosageForm(product)
 
-    if (group) {
-      group.products.push(product)
+    if (selectedDosageForm && dosageForm !== selectedDosageForm) {
       return
     }
 
-    groups.set(key, {
-      label,
-      products: [product],
-    })
+    const groupProducts = groupedProducts.get(dosageForm) ?? []
+    groupProducts.push(product)
+    groupedProducts.set(dosageForm, groupProducts)
   })
 
-  return Array.from(groups.values()).sort((firstGroup, secondGroup) => {
-    const firstIndex = DOSAGE_ORDER.indexOf(
-      normalizeSubcategory(firstGroup.label)
-    )
-    const secondIndex = DOSAGE_ORDER.indexOf(
-      normalizeSubcategory(secondGroup.label)
-    )
+  return DOSAGE_FORM_LABELS.map((label) => ({
+    label,
+    products: groupedProducts.get(label) ?? [],
+  })).filter((group) => group.products.length > 0)
+}
 
-    if (firstIndex !== -1 || secondIndex !== -1) {
-      return (
-        (firstIndex === -1 ? Number.MAX_SAFE_INTEGER : firstIndex) -
-        (secondIndex === -1 ? Number.MAX_SAFE_INTEGER : secondIndex)
-      )
-    }
-
-    return firstGroup.label.localeCompare(secondGroup.label)
+function scrollToProductResults() {
+  window.requestAnimationFrame(() => {
+    document.getElementById("product-catalog-results")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    })
   })
 }
 
 export default function ProductsCatalogSection({
   catalog,
   initialCategoryHandle = null,
+  initialDosageForm = null,
   initialSubcategoryLabel = null,
 }: ProductsCatalogSectionProps) {
-  const [selectedSubcategoryLabel, setSelectedSubcategoryLabel] = useState<
-    string | null
-  >(initialSubcategoryLabel)
-  const selectedCategoryHandle =
-    catalog.selectedCategory?.handle ?? initialCategoryHandle
+  const router = useRouter()
+  const resolvedInitialDosageForm = normalizeDosageForm(
+    initialDosageForm ?? initialSubcategoryLabel
+  )
+  const routeCategoryHandle =
+    catalog.selectedCategory?.handle ?? initialCategoryHandle?.trim() ?? ""
+  const routeDosageForm = normalizeDosageForm(
+    initialDosageForm ?? initialSubcategoryLabel
+  )
+  const routeFilterKey = [
+    catalog.query.trim(),
+    routeCategoryHandle,
+    routeDosageForm ?? "",
+  ].join("|")
+  const previousRouteFilterKey = useRef<string | null>(null)
+  const [selectedCategoryHandle, setSelectedCategoryHandle] = useState(
+    routeCategoryHandle
+  )
+  const [selectedDosageForm, setSelectedDosageForm] = useState<string | null>(
+    resolvedInitialDosageForm
+  )
+  const [searchInput, setSearchInput] = useState(catalog.query)
+  const [searchQuery, setSearchQuery] = useState(catalog.query)
+
+  const categoryOptions = useMemo<readonly CatalogFilterOption[]>(
+    () => [
+      { label: "All categories", value: "" },
+      ...catalog.categories.map((category) => ({
+        label: category.name,
+        value: category.handle,
+      })),
+    ],
+    [catalog.categories]
+  )
+
+  const dosageFormOptions = useMemo<readonly CatalogFilterOption[]>(
+    () => [
+      { label: ALL_DOSAGE_FORMS, value: "" },
+      ...DOSAGE_FORM_LABELS.map((label) => ({ label, value: label })),
+    ],
+    []
+  )
 
   useEffect(() => {
-    const nextSubcategory = initialSubcategoryLabel?.trim() || null
-    const hasMatchingSubcategory = nextSubcategory
-      ? catalog.products.some(
-          (product) =>
-            normalizeSubcategory(getProductSubcategory(product)) ===
-            normalizeSubcategory(nextSubcategory)
-        )
-      : false
-
-    setSelectedSubcategoryLabel(hasMatchingSubcategory ? nextSubcategory : null)
-  }, [catalog.products, initialSubcategoryLabel, selectedCategoryHandle])
+    setSelectedCategoryHandle(routeCategoryHandle)
+  }, [routeCategoryHandle])
 
   useEffect(() => {
-    if (!selectedCategoryHandle && !initialSubcategoryLabel) {
+    setSelectedDosageForm(routeDosageForm)
+  }, [routeDosageForm])
+
+  useEffect(() => {
+    setSearchInput(catalog.query)
+    setSearchQuery(catalog.query)
+  }, [catalog.query])
+
+  useEffect(() => {
+    if (previousRouteFilterKey.current === null) {
+      previousRouteFilterKey.current = routeFilterKey
+
+      if (routeFilterKey !== "||") {
+        scrollToProductResults()
+      }
+
       return
     }
 
-    const cleanUrl = `${window.location.pathname}${window.location.search}`
-    if (window.location.hash) {
-      window.history.replaceState(null, "", cleanUrl)
+    if (previousRouteFilterKey.current !== routeFilterKey) {
+      previousRouteFilterKey.current = routeFilterKey
+      scrollToProductResults()
+    }
+  }, [routeFilterKey])
+
+  useEffect(() => {
+    const nextQuery = searchInput.trim()
+
+    if (nextQuery === catalog.query.trim()) {
+      return
     }
 
-    const target = document.getElementById("product-catalog")
-    if (target) {
-      window.scrollTo({
-        top: target.getBoundingClientRect().top + window.scrollY - 96,
-        behavior: "auto",
-      })
-    }
-  }, [initialSubcategoryLabel, selectedCategoryHandle])
+    const timeoutId = window.setTimeout(() => {
+      setSearchQuery(nextQuery)
+      router.replace(
+        buildProductsPageHref({
+          query: nextQuery,
+          categoryHandle: selectedCategoryHandle || null,
+          dosageForm: selectedDosageForm,
+        }),
+        { scroll: false }
+      )
+    }, 350)
+
+    return () => window.clearTimeout(timeoutId)
+  }, [
+    catalog.query,
+    router,
+    searchInput,
+    selectedCategoryHandle,
+    selectedDosageForm,
+  ])
 
   const selectedCategory =
     catalog.categories.find(
@@ -169,185 +207,250 @@ export default function ProductsCatalogSection({
     ) ?? null
 
   const visibleProducts = useMemo(() => {
-    if (!selectedSubcategoryLabel) {
-      return catalog.products
-    }
+    const normalizedQuery = normalizeValue(searchQuery)
 
-    const selectedSubcategory = normalizeSubcategory(selectedSubcategoryLabel)
+    return catalog.products.filter((product) => {
+      if (!normalizedQuery) {
+        return true
+      }
 
-    return catalog.products.filter(
-      (product) =>
-        normalizeSubcategory(getProductSubcategory(product)) ===
-        selectedSubcategory
-    )
-  }, [catalog.products, selectedSubcategoryLabel])
+      return (
+        normalizeValue(product.name).includes(normalizedQuery) ||
+        normalizeValue(product.handle).includes(normalizedQuery)
+      )
+    })
+  }, [catalog.products, searchQuery])
 
   const productGroups = useMemo(
-    () => buildProductGroups(visibleProducts),
-    [visibleProducts]
+    () => buildProductGroups(visibleProducts, selectedDosageForm),
+    [selectedDosageForm, visibleProducts]
   )
-  const selectedLabel =
-    selectedSubcategoryLabel ??
-    selectedCategory?.name ??
-    "All therapeutic categories"
+  const visibleProductCount = productGroups.reduce(
+    (productCount, group) => productCount + group.products.length,
+    0
+  )
 
-  function scrollToSubcategory(label: string) {
-    setSelectedSubcategoryLabel(label)
-
-    window.requestAnimationFrame(() => {
-      const target = document.getElementById("product-catalog-results")
-      target?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest",
-      })
-    })
+  function navigateWithFilters(
+    query: string,
+    categoryHandle: string | null,
+    dosageForm: string | null
+  ) {
+    const nextQuery = query.trim()
+    setSearchQuery(nextQuery)
+    router.replace(
+      buildProductsPageHref({
+        query: nextQuery,
+        categoryHandle,
+        dosageForm,
+      }),
+      { scroll: false }
+    )
   }
 
+  function handleSearchSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    navigateWithFilters(
+      searchInput,
+      selectedCategoryHandle || null,
+      selectedDosageForm
+    )
+  }
+
+  function handleCategoryChange(categoryHandle: string) {
+    const nextCategoryHandle = categoryHandle || null
+    setSelectedCategoryHandle(categoryHandle)
+    navigateWithFilters(searchInput, nextCategoryHandle, selectedDosageForm)
+  }
+
+  function handleDosageFormChange(dosageForm: string) {
+    const nextDosageForm = dosageForm || null
+    setSelectedDosageForm(nextDosageForm)
+    navigateWithFilters(searchInput, selectedCategoryHandle || null, nextDosageForm)
+  }
+
+  function clearSearch() {
+    setSearchInput("")
+    navigateWithFilters("", selectedCategoryHandle || null, selectedDosageForm)
+  }
+
+  function clearFilters() {
+    setSearchInput("")
+    setSearchQuery("")
+    setSelectedCategoryHandle("")
+    setSelectedDosageForm(null)
+    router.replace("/products", { scroll: false })
+  }
+
+  const hasActiveFilters = Boolean(
+    searchInput.trim() || selectedCategoryHandle || selectedDosageForm
+  )
+
   return (
-    <section id="product-catalog" className="scroll-mt-24 bg-white py-14 lg:py-20">
+    <section
+      id="product-catalog"
+      className="scroll-mt-24 bg-surface py-14 sm:py-16 lg:py-24"
+    >
       <div className="content-container">
-        <div className="grid gap-8 lg:grid-cols-[260px_minmax(0,1fr)]">
-          <aside className="overflow-hidden border border-gray-200 bg-white h-fit">
-            <h2 className="bg-gray-50 px-5 py-6 text-center text-2xl font-semibold text-primary">
-              Category
-            </h2>
-            <nav aria-label="Therapeutic categories">
-              <Link
-                href="/products"
-                className={`block w-full border-t border-gray-200 px-5 py-3 text-left text-sm transition-colors ${
-                  !selectedCategoryHandle
-                    ? "bg-secondary text-white"
-                    : "bg-white text-on-surface hover:bg-gray-50"
-                }`}
-              >
-                All
-              </Link>
-
-              {catalog.categories.map((category) => {
-                const isSelected = category.handle === selectedCategoryHandle
-
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/categories/${encodeURIComponent(
-                      category.handle
-                    )}`}
-                    className={`block w-full border-t border-gray-200 px-5 py-3 text-left text-sm transition-colors ${
-                      isSelected
-                        ? "bg-secondary text-white"
-                        : "bg-white text-on-surface hover:bg-gray-50"
-                    }`}
-                  >
-                    {category.name}
-                  </Link>
-                )
-              })}
-            </nav>
-          </aside>
-
-          <div className="min-w-0">
-            <div className="mb-12 grid grid-cols-2 gap-5 sm:grid-cols-3 xl:grid-cols-7">
-              {DOSAGE_TILES.filter((tile) =>
-                DOSAGE_LABELS.includes(
-                  tile.label as (typeof DOSAGE_LABELS)[number]
-                )
-              ).map((tile) => {
-                const Icon = tile.icon
-                const isSelected =
-                  normalizeSubcategory(selectedSubcategoryLabel) ===
-                  normalizeSubcategory(tile.label)
-
-                return (
-                  <button
-                    key={tile.label}
-                    type="button"
-                    onClick={() => scrollToSubcategory(tile.label)}
-                    aria-pressed={isSelected}
-                    className={`relative flex flex-col items-center justify-center gap-2 px-3 py-4 text-center text-white transition-transform focus:outline-none ${tile.className} ${
-                      isSelected
-                        ? "shadow-[inset_0_0_0_3px_rgba(255,255,255,0.96),0_0_0_4px_#64b51f,0_10px_22px_rgba(28,25,23,0.14)]"
-                        : ""
-                    }`}
-                  >
-                    {isSelected ? (
-                      <span className="absolute right-3 top-3 inline-flex size-5 items-center justify-center bg-secondary text-white shadow-sm ring-2 rounded ring-white">
-                        <HiCheck className="size-3.5" />
-                      </span>
-                    ) : null}
-                    <Icon className="text-3xl" />
-                    <span className="text-sm font-semibold leading-tight">
-                      {tile.label}
-                    </span>
-                  </button>
-                )
-              })}
+        <div className="mb-10 rounded-3xl border border-outline-variant/25 bg-white p-4 shadow-[0_14px_38px_rgba(86,67,54,0.06)] sm:p-7">
+          <form
+            role="search"
+            onSubmit={handleSearchSubmit}
+            className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
+          >
+            <label htmlFor="product-catalog-search" className="sr-only">
+              Search by product name
+            </label>
+            <div className="relative">
+              <Search
+                aria-hidden="true"
+                className="pointer-events-none absolute left-4 top-1/2 size-5 -translate-y-1/2 text-on-surface-variant"
+              />
+              <input
+                id="product-catalog-search"
+                type="search"
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+                placeholder="Search by product name"
+                className="h-14 w-full rounded-2xl border border-outline-variant/35 bg-surface pl-12 pr-12 text-sm font-medium text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/65 focus:border-primary focus:ring-4 focus:ring-primary/10"
+              />
+              {searchInput ? (
+                <button
+                  type="button"
+                  onClick={clearSearch}
+                  aria-label="Clear product search"
+                  className="absolute right-3 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-xl text-on-surface-variant transition-colors hover:bg-primary-fixed hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  <X aria-hidden="true" className="size-4" />
+                </button>
+              ) : null}
             </div>
-
-            <div
-              id="product-catalog-results"
-              className="mb-4 scroll-mt-28 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-primary px-8 py-4 apx-font-headline text-base font-semibold text-white transition-colors hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 md:w-auto"
             >
-              <h3 className="text-2xl font-semibold text-secondary">
-                {selectedCategory?.name ?? "All Products"}
-              </h3>
-              <div className="flex flex-wrap items-center gap-3 sm:justify-end">
-                <p className="text-sm text-on-surface-variant">
-                  Showing {visibleProducts.length} result
-                  {visibleProducts.length === 1 ? "" : "s"} in {selectedLabel}
-                </p>
-                {selectedSubcategoryLabel ? (
-                  <button
-                    type="button"
-                    onClick={() => setSelectedSubcategoryLabel(null)}
-                    className="inline-flex min-h-[36px] items-center justify-center border border-secondary bg-secondary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-on-secondary-container focus:outline-none focus-visible:ring-4 focus-visible:ring-secondary-container"
-                  >
-                    Clear Filter
-                  </button>
-                ) : null}
-              </div>
-            </div>
+              Search
+            </button>
+          </form>
 
-            {productGroups.length > 0 ? (
-              <div className="space-y-8">
-                {productGroups.map((group) => {
-                  return (
-                    <div
-                      key={normalizeSubcategory(group.label)}
-                      id={buildSubcategorySectionId(group.label)}
-                      className="scroll-mt-28"
-                    >
-                      <h4 className="mb-3 text-xl font-semibold text-primary">
-                        {group.label}
-                      </h4>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                        {group.products.map((product) => (
-                          <Link
-                            key={product.id}
-                            href={buildProductDetailHref(product.handle)}
-                            className="-ml-px -mt-px flex min-h-[56px] items-center justify-center border border-gray-200 px-4 py-3 text-center text-sm leading-6 text-on-surface transition-colors hover:bg-gray-50"
-                          >
-                            {product.name}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className="border border-gray-200 px-4 py-14 text-center">
-                <h3 className="apx-font-headline text-xl font-semibold text-on-surface">
-                  No products found
-                </h3>
-                <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-on-surface-variant">
-                  Select another category to review the available
-                  pharmaceutical catalogue entries.
-                </p>
-              </div>
-            )}
+          <div className="mt-6 grid gap-5 border-t border-outline-variant/20 pt-6 md:grid-cols-2">
+            <CatalogFilterSelect
+              id="product-catalog-category"
+              label="Category"
+              value={selectedCategoryHandle}
+              options={categoryOptions}
+              searchable
+              searchPlaceholder="Search categories"
+              onChange={handleCategoryChange}
+            />
+            <CatalogFilterSelect
+              id="product-catalog-dosage-form"
+              label="Dosage Form"
+              value={selectedDosageForm ?? ""}
+              options={dosageFormOptions}
+              onChange={handleDosageFormChange}
+            />
           </div>
+
+          <div className="mt-6 flex flex-col gap-4 border-t border-outline-variant/20 pt-6 sm:flex-row sm:items-center sm:justify-between">
+            <p
+              aria-live="polite"
+              className="text-sm font-medium leading-6 text-on-surface-variant"
+            >
+              Showing{" "}
+              <span className="font-bold text-on-surface">{visibleProductCount}</span>{" "}
+              product
+              {visibleProductCount === 1 ? "" : "s"}
+            </p>
+            <button
+              type="button"
+              onClick={clearFilters}
+              className={
+                hasActiveFilters
+                  ? "inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-primary bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
+                  : "inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-outline-variant/35 bg-surface px-5 py-3 text-sm font-bold text-on-surface-variant transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
+              }
+            >
+              Clear Filters
+            </button>
+          </div>
+        </div>
+
+        <div id="product-catalog-results" className="scroll-mt-28">
+          <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <h3 className="text-2xl font-semibold text-on-surface sm:text-3xl">
+              {selectedCategory?.name ?? "All Products"}
+            </h3>
+            {searchQuery.trim() ? (
+              <p className="text-sm text-on-surface-variant sm:text-right">
+                Search results for “{searchQuery.trim()}”
+              </p>
+            ) : null}
+          </div>
+
+          {productGroups.length > 0 ? (
+            <div className="space-y-10">
+              {productGroups.map((group) => (
+                <section
+                  key={group.label}
+                  data-product-dosage-group={group.label}
+                  className="scroll-mt-28"
+                >
+                  <div className="mb-4 flex items-center gap-4">
+                    <h4 className="text-lg font-bold text-primary sm:text-xl">
+                      {group.label}
+                    </h4>
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {group.products.map((product) => (
+                      <article
+                        key={product.id}
+                        className="group flex min-h-[142px] flex-col rounded-2xl border bg-white p-5 shadow-sm transition-all hover:border-secondary/60 hover:shadow-md"
+                      >
+                        <h5 className="line-clamp-3 text-base font-medium text-on-surface transition-colors">
+                          {product.name}
+                        </h5>
+                        <div className="mt-auto flex items-center justify-end border-t border-outline-variant/25 pt-4">
+                          <Link
+                            href={buildProductDetailHref(product.handle)}
+                            aria-label={`View ${product.name} details`}
+                            className="inline-flex items-center gap-1 text-sm text-secondary transition-colors focus-visible:outline-none"
+                          >
+                            Details
+                            <ArrowUpRight
+                              aria-hidden="true"
+                              className="size-4"
+                            />
+                          </Link>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ))}
+
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-outline-variant/30 bg-white px-4 py-16 text-center shadow-[0_8px_24px_rgba(31,65,21,0.06)]">
+              <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary-fixed text-primary">
+                <Search aria-hidden="true" className="size-6" />
+              </div>
+              <h3 className="apx-font-headline mt-5 text-xl font-semibold text-on-surface">
+                No products found
+              </h3>
+              <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-on-surface-variant">
+                Try a different product name or clear the filters to review the
+                full pharmaceutical catalogue.
+              </p>
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-on-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
+              >
+                Clear Filters
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </section>

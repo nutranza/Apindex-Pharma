@@ -62,10 +62,14 @@ export default function ProductImageGallery({
   }
 
   return (
-    <div>
-      <div className="group relative flex min-h-[320px] items-center justify-center border border-gray-200 bg-white p-6 sm:min-h-[380px]">
+    <div className="min-w-0">
+      <div className="group relative flex min-h-[360px] items-center justify-center overflow-hidden rounded-3xl border border-outline-variant/25 bg-surface-lowest p-4 shadow-[0_18px_45px_rgba(86,67,54,0.08)] sm:min-h-[500px] sm:p-7">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-8 rounded-[2rem] border border-white/80"
+        />
         {selectedImage ? (
-          <div className="relative h-full min-h-[260px] w-full">
+          <div className="relative z-10 h-full min-h-[320px] w-full rounded-2xl bg-white/80">
             <Image
               src={selectedImage}
               alt={`${productName} packaging`}
@@ -87,25 +91,25 @@ export default function ProductImageGallery({
             <button
               type="button"
               onClick={showPreviousImage}
-              className="absolute left-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black/70 text-white opacity-0 transition-opacity hover:bg-black focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary group-hover:opacity-100"
+              className="absolute left-6 top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-secondary text-white opacity-0 shadow-lg transition-all hover:-translate-x-0.5 hover:bg-on-secondary-container focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary group-hover:opacity-100"
               aria-label={`Show previous ${productName} image`}
             >
-              <ChevronLeft className="h-6 w-6" aria-hidden="true" />
+              <ChevronLeft className="size-5" aria-hidden="true" />
             </button>
             <button
               type="button"
               onClick={showNextImage}
-              className="absolute right-4 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center bg-black/70 text-white opacity-0 transition-opacity hover:bg-black focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary group-hover:opacity-100"
+              className="absolute right-6 top-1/2 z-20 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-secondary text-white opacity-0 shadow-lg transition-all hover:translate-x-0.5 hover:bg-on-secondary-container focus:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary group-hover:opacity-100"
               aria-label={`Show next ${productName} image`}
             >
-              <ChevronRight className="h-6 w-6" aria-hidden="true" />
+              <ChevronRight className="size-5" aria-hidden="true" />
             </button>
           </>
         ) : null}
       </div>
 
       {hasMultipleImages ? (
-        <div className="mt-4 grid grid-cols-3 gap-3 sm:flex sm:flex-wrap">
+        <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
           {galleryImages.map((image, index) => {
             const isSelected = image === selectedImage
 
@@ -114,8 +118,10 @@ export default function ProductImageGallery({
                 key={image}
                 type="button"
                 onClick={() => setSelectedImage(image)}
-                className={`relative h-20 w-full border bg-white p-2 transition-colors hover:border-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary sm:w-24 ${
-                  isSelected ? "border-secondary" : "border-gray-200"
+                className={`relative h-24 w-full overflow-hidden rounded-2xl border bg-white p-2 transition-all hover:-translate-y-0.5 hover:border-secondary focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary ${
+                  isSelected
+                    ? "border-secondary shadow-[0_0_0_3px_rgba(107,173,35,0.16)]"
+                    : "border-outline-variant/30"
                 }`}
                 aria-label={`Show ${productName} image ${index + 1}`}
               >

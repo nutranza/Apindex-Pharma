@@ -168,18 +168,8 @@ export function buildProductDetailHref(handle: string): string {
   return `/products/${encodeURIComponent(handle)}`
 }
 
-export function buildProductDetailEnquiryHref(product: PublicProductDetail): string {
-  return buildEnquiryHref(
-    `${product.name} enquiry`,
-    [
-      "Hello Apindex team,",
-      "",
-      `I would like to enquire about ${product.name}.`,
-      "Please share the available product details and export catalogue information.",
-      "",
-      "Thank you.",
-    ].join("\n")
-  )
+export function buildProductDetailQuoteHref(_product: PublicProductDetail): string {
+  return "/contact#contact-form"
 }
 
 export function buildProductBrochureHref(product: PublicProductDetail): string {

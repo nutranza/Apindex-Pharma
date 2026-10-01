@@ -5,36 +5,18 @@ import { ChevronDown, Send } from "lucide-react"
 import {
   type FormEvent,
   type ReactNode,
-  useEffect,
   useRef,
   useState,
 } from "react"
 
+import Modal from "@modules/common/components/modal"
 import { useOptionalToast } from "@modules/common/context/toast-context"
-
-const ISO_COUNTRY_CODES = [
-  "AF", "AX", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM",
-  "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ",
-  "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF",
-  "BI", "CV", "KH", "CM", "CA", "KY", "CF", "TD", "CL", "CN", "CX", "CC",
-  "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CW", "CY", "CZ",
-  "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "SZ", "ET",
-  "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE",
-  "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY",
-  "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE",
-  "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR",
-  "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO",
-  "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX",
-  "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP",
-  "NL", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MK", "MP", "NO", "OM",
-  "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR",
-  "QA", "RE", "RO", "RU", "RW", "BL", "SH", "KN", "LC", "MF", "PM", "VC",
-  "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SX", "SK", "SI",
-  "SB", "SO", "ZA", "GS", "SS", "ES", "LK", "SD", "SR", "SJ", "SE", "CH",
-  "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR",
-  "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU",
-  "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW",
-] as const
+import {
+  getPhoneCountryRule,
+  getPhoneNumberPattern,
+  PHONE_COUNTRY_CODES,
+  validatePhoneNumber,
+} from "@modules/contact/lib/phone-validation"
 
 const FIELD_CLASS =
   "w-full rounded-xl border border-outline-variant/25 bg-white px-4 py-3.5 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/50 focus:border-primary focus:ring-2 focus:ring-primary/15"
@@ -44,45 +26,36 @@ type ContactApiResponse = {
   message?: string
 }
 
-function buildCountryOptions(): string[] {
-  const displayNames = new Intl.DisplayNames(["en"], { type: "region" })
-  const countryNames = ISO_COUNTRY_CODES.map((code) => displayNames.of(code))
-    .filter((country): country is string => Boolean(country))
-    .sort((a, b) => a.localeCompare(b))
-
-  return [...countryNames, "Other"]
-}
-
-const COUNTRIES = buildCountryOptions()
-
 export default function ContactInquiryForm() {
   const formRef = useRef<HTMLFormElement>(null)
   const toast = useOptionalToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [status, setStatus] = useState<{
-    type: "success" | "error"
+    type: "error"
     message: string
   } | null>(null)
-
-  useEffect(() => {
-    if (status?.type !== "success") {
-      return
-    }
-
-    const timeoutId = window.setTimeout(() => {
-      setStatus(null)
-    }, 5000)
-
-    return () => {
-      window.clearTimeout(timeoutId)
-    }
-  }, [status])
+  const [isThankYouOpen, setIsThankYouOpen] = useState(false)
+  const [phoneCountryCode, setPhoneCountryCode] = useState<string>(
+    PHONE_COUNTRY_CODES[0].value
+  )
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const phoneRule =
+    getPhoneCountryRule(phoneCountryCode) ?? PHONE_COUNTRY_CODES[0]
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const form = event.currentTarget
     const formData = new FormData(form)
     const payload = Object.fromEntries(formData.entries())
+    const phoneValidationError = validatePhoneNumber(
+      phoneCountryCode,
+      phoneNumber
+    )
+
+    if (phoneValidationError) {
+      setStatus({ type: "error", message: phoneValidationError })
+      return
+    }
 
     setStatus(null)
     setIsSubmitting(true)
@@ -115,7 +88,10 @@ export default function ContactInquiryForm() {
         result.message || "Your inquiry has been sent successfully."
 
       formRef.current?.reset()
-      setStatus({ type: "success", message })
+      setPhoneCountryCode(PHONE_COUNTRY_CODES[0].value)
+      setPhoneNumber("")
+      setStatus(null)
+      setIsThankYouOpen(true)
       toast?.showToast(message, "success", "Inquiry Sent")
     } catch (error) {
       const message =
@@ -167,31 +143,60 @@ export default function ContactInquiryForm() {
         </Field>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-5">
         <Field label="Phone Number">
-          <input
-            aria-label="Phone Number"
-            name="phone_number"
-            type="tel"
-            placeholder="+91 00000 00000"
-            className={FIELD_CLASS}
-            maxLength={40}
-          />
-        </Field>
-        <Field label="Country">
-          <div className="relative">
-            <select
-              aria-label="Country"
-              name="country"
-              defaultValue="India"
-              className={`${FIELD_CLASS} appearance-none pr-12`}
-              required
-            >
-              {COUNTRIES.map((country) => (
-                <option key={country}>{country}</option>
-              ))}
-            </select>
-            <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-on-surface-variant" />
+          <div className="grid grid-cols-[minmax(0,150px)_minmax(0,1fr)] gap-2">
+            <div className="relative">
+              <select
+                aria-label="Phone Country Code"
+                name="phone_country_code"
+                value={phoneCountryCode}
+                autoComplete="tel-country-code"
+                className={`${FIELD_CLASS} appearance-none pr-10`}
+                onChange={(event) => {
+                  const nextCountryCode = event.target.value
+                  const nextRule =
+                    getPhoneCountryRule(nextCountryCode) ?? PHONE_COUNTRY_CODES[0]
+
+                  setPhoneCountryCode(nextCountryCode)
+                  setPhoneNumber((currentValue) =>
+                    currentValue.slice(0, nextRule.maxDigits)
+                  )
+                }}
+              >
+                {PHONE_COUNTRY_CODES.map((countryCode) => (
+                  <option key={countryCode.value} value={countryCode.value}>
+                    {countryCode.label}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-on-surface-variant" />
+            </div>
+            <input
+              aria-label="Phone Number"
+              name="phone_number"
+              type="tel"
+              placeholder="00000 00000"
+              autoComplete="tel-national"
+              className={FIELD_CLASS}
+              inputMode="numeric"
+              pattern={getPhoneNumberPattern(phoneRule)}
+              maxLength={phoneRule.maxDigits}
+              minLength={phoneRule.minDigits}
+              title={`Enter ${
+                phoneRule.minDigits === phoneRule.maxDigits
+                  ? phoneRule.maxDigits
+                  : `${phoneRule.minDigits} to ${phoneRule.maxDigits}`
+              } digits for ${phoneRule.label}`}
+              value={phoneNumber}
+              onChange={(event) => {
+                const digitsOnly = event.target.value
+                  .replace(/\D/g, "")
+                  .slice(0, phoneRule.maxDigits)
+
+                setPhoneNumber(digitsOnly)
+              }}
+            />
           </div>
         </Field>
       </div>
@@ -211,35 +216,38 @@ export default function ContactInquiryForm() {
 
       {status ? (
         <p
-          className={`rounded-xl px-4 py-3 text-sm font-medium ${
-            status.type === "success"
-              ? "bg-primary/10 text-primary"
-              : "bg-red-50 text-red-700"
-          }`}
-          role={status.type === "error" ? "alert" : "status"}
+          className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+          role="alert"
           aria-live="polite"
         >
           {status.message}
         </p>
       ) : null}
 
-      <label className="flex max-w-xl items-center cursor-pointer gap-3 text-on-surface-variant">
+      <label className="flex max-w-xl cursor-pointer items-start gap-3 text-on-surface-variant">
         <input
           type="checkbox"
+          name="contact_consent"
+          value="yes"
           required
           aria-label="Privacy consent"
           className="mt-1 size-5 shrink-0 rounded-md border-outline-variant accent-primary"
         />
         <span className="text-sm">
-          I agree that Apindex may process my details to respond to this
-          inquiry. I have read the{" "}
-          <Link
-            href="/privacy-policy"
-            className="font-semibold text-primary transition-colors hover:text-primary-container"
-          >
-            Privacy Policy
-          </Link>
-          .
+          <span>
+            I am okay to be contacted by Apindex Pharma regarding my inquiry
+            over Call, WhatsApp, or Email.
+          </span>{" "}
+          <span>
+            I have read the{" "}
+            <Link
+              href="/privacy-policy"
+              className="font-semibold text-primary transition-colors hover:text-primary-container"
+            >
+              Privacy Policy
+            </Link>
+            .
+          </span>
         </span>
       </label>
 
@@ -253,6 +261,27 @@ export default function ContactInquiryForm() {
           <Send className="h-5 w-5" strokeWidth={2.4} />
         </button>
       </div>
+
+      <Modal
+        isOpen={isThankYouOpen}
+        close={() => setIsThankYouOpen(false)}
+        size="small"
+      >
+        <Modal.Title>Thank you</Modal.Title>
+        <Modal.Description>
+          Thank you for contacting Apindex Pharma. Our team will reach out to
+          you within 24–48 hours.
+        </Modal.Description>
+        <Modal.Footer>
+          <button
+            type="button"
+            onClick={() => setIsThankYouOpen(false)}
+            className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            Close
+          </button>
+        </Modal.Footer>
+      </Modal>
     </form>
   )
 }
