@@ -63,12 +63,12 @@ export default function AboutCompanyDocumentsSection() {
   return (
     <section
       id="credentials"
-      className="scroll-mt-28 bg-surface-low py-14 lg:py-24"
+      className="scroll-mt-28 bg-surface-low apx-section"
     >
       <div className="content-container">
         <div className="mb-10 max-w-3xl">
           <div className="max-w-3xl">
-            <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
+            <p className="apx-eyebrow mb-3">
               Credentials & Documents
             </p>
             <h2 className="section-heading">Public Company Documents</h2>
@@ -84,7 +84,7 @@ export default function AboutCompanyDocumentsSection() {
           {COMPANY_DOCUMENTS.map((document) => (
             <article
               key={document.title}
-              className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white p-6"
+              className="apx-card group relative flex h-full flex-col overflow-hidden p-6"
             >
               <div className="absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-primary to-secondary" />
 
@@ -101,7 +101,7 @@ export default function AboutCompanyDocumentsSection() {
                 </span>
               </div>
 
-              <h3 className="text-xl font-extrabold leading-tight text-on-surface sm:text-[1.35rem]">
+              <h3 className="apx-card-title sm:text-[1.35rem]">
                 {document.title}
               </h3>
               <p className="mt-2 text-sm font-bold text-primary">
@@ -132,7 +132,7 @@ export default function AboutCompanyDocumentsSection() {
                   href={document.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-extrabold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:w-auto"
+                  className="apx-button-primary w-full sm:w-auto"
                 >
                   View PDF
                   <ExternalLink

@@ -12,7 +12,7 @@ const STAT_ICONS: Record<string, LucideIcon> = {
 
 export default function AboutStatsSection() {
   return (
-    <section className="bg-white py-16 lg:py-24">
+    <section className="bg-white apx-section">
       <div className="content-container grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-10">
         {GLOBAL_STATS.map((stat) => {
           const Icon = STAT_ICONS[stat.label] ?? BadgeCheck

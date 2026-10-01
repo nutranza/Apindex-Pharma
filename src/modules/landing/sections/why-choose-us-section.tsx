@@ -64,7 +64,7 @@ export default function WhyChooseUsSection() {
   return (
     <section
       id="why-choose-us"
-      className="bg-white py-14 lg:py-20"
+      className="bg-white apx-section-compact"
     >
       <div className="content-container">
         <div className="mb-12 max-w-3xl">

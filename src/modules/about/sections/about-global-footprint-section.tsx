@@ -77,7 +77,7 @@ export default function AboutGlobalFootprintSection() {
   )
 
   return (
-    <section id="global-presence" className="bg-surface py-14 lg:py-20">
+    <section id="global-presence" className="bg-surface apx-section-compact">
       <div className="content-container">
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="section-heading">Global <span className="text-primary">Footprint</span></h2>

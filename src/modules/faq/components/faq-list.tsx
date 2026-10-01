@@ -17,7 +17,7 @@ export default function FaqList() {
         return (
           <article
             key={item.question}
-            className="overflow-hidden rounded-xl border border-outline-variant/20 bg-white transition-colors hover:border-secondary/35"
+            className="apx-card overflow-hidden transition-colors hover:border-secondary/35"
           >
             <h2>
               <button

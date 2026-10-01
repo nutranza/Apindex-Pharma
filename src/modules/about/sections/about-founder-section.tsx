@@ -2,7 +2,7 @@ import Image from "next/image"
 
 export default function AboutFounderSection() {
   return (
-    <section className="bg-white py-14 lg:py-20">
+    <section className="bg-white apx-section-compact">
       <div className="content-container">
         <div className="grid items-center gap-8 rounded-3xl bg-surface-low p-6 sm:p-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12 lg:p-10">
           <div className="relative h-[280px] overflow-hidden rounded-2xl sm:h-[340px] lg:h-[360px]">
@@ -16,7 +16,7 @@ export default function AboutFounderSection() {
           </div>
 
           <div className="max-w-3xl">
-            <p className="text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
+            <p className="apx-eyebrow">
               Founder&apos;s Message
             </p>
             <h2 className="mt-3 section-heading">

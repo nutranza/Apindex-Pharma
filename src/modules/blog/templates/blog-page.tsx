@@ -2,31 +2,29 @@ import Image from "next/image"
 import Link from "next/link"
 
 import { BLOG_POSTS } from "@modules/blog/constants"
+import PageHeroSection from "@modules/common/components/page-hero-section"
 
 export default function BlogPageTemplate() {
   return (
     <div className="apx-landing apx-font-body bg-surface text-on-surface">
-      <main className="!pb-0 pt-20">
-        <section className="bg-white py-14 lg:py-20">
-          <div className="content-container">
-            <div className="max-w-3xl">
-              <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
-                Apindex Insights
-              </p>
-              <h1 className="section-heading">
-                Pharmaceutical <span className="text-primary">Insights</span>
-              </h1>
-              <p className="mt-5 section-description">
-                Practical information about pharmaceutical supply, quality,
-                documentation, and long-term healthcare partnerships.
-              </p>
-            </div>
+      <main className="!pb-0">
+        <PageHeroSection
+          title="Pharmaceutical"
+          accent="Insights"
+          suffix="for Better Decisions"
+          description="Practical information about pharmaceutical supply, quality, documentation, and long-term healthcare partnerships."
+          imageSrc="/blog-hero-pharmaceutical-insights.png"
+          imageAlt="Pharmaceutical quality specialist reviewing product documentation in a laboratory"
+          imageClassName="object-[66%_center] sm:object-center lg:object-[50%_top]"
+        />
 
-            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <section className="bg-white apx-section">
+          <div className="content-container">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {BLOG_POSTS.map((post) => (
                 <article
                   key={post.slug}
-                  className="overflow-hidden rounded-2xl border border-outline-variant/20 bg-white shadow-sm"
+                  className="apx-card group overflow-hidden apx-card-interactive"
                 >
                   <div className="relative aspect-[16/9] overflow-hidden bg-surface-high">
                     <Image
@@ -56,14 +54,11 @@ export default function BlogPageTemplate() {
               <h2 className="apx-font-headline text-2xl font-extrabold">
                 Need help with a product or supply requirement?
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-on-surface-variant sm:text-base">
+              <p className="apx-body-muted mt-3 max-w-2xl">
                 Contact our team for product information, documentation, or a
                 tailored pharmaceutical supply discussion.
               </p>
-              <Link
-                href="/contact"
-                className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-container"
-              >
+              <Link href="/contact" className="apx-button-primary mt-5">
                 Contact Apindex
               </Link>
             </div>

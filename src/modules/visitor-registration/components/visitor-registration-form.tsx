@@ -466,7 +466,7 @@ export default function VisitorRegistrationForm() {
       <div>
         <label
           htmlFor="partnershipInterest"
-          className="mb-2 block text-sm font-semibold text-on-surface"
+          className="apx-field-label"
         >
           Tell us briefly what kind of products or partnerships you’re seeking:
         </label>
@@ -551,7 +551,7 @@ export default function VisitorRegistrationForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="inline-flex w-full items-center justify-center rounded-xl bg-primary px-8 py-4 apx-font-headline text-base font-semibold text-white transition-colors hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+        className="apx-button-primary w-full px-8 py-4 sm:w-auto"
       >
         {isSubmitting ? "Submitting..." : "Submit"}
       </button>
@@ -588,7 +588,7 @@ function TextField({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block text-sm font-semibold text-on-surface"
+        className="apx-field-label"
       >
         {label}
         {required ? <span className="text-primary"> *</span> : null}
@@ -687,7 +687,7 @@ function OtherField({
     <div>
       <label
         htmlFor={id}
-        className="mb-2 block text-sm font-semibold text-on-surface"
+        className="apx-field-label"
       >
         {label} <span className="text-primary">*</span>
       </label>

@@ -9,7 +9,7 @@ const TRUST_POINTS = [
 
 export default function WelcomeSection() {
   return (
-    <section id="welcome" className="bg-white py-16 lg:py-24">
+    <section id="welcome" className="bg-white apx-section">
       <div className="content-container">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-16">
           <div className="max-w-2xl">
@@ -47,10 +47,7 @@ export default function WelcomeSection() {
               ))}
             </div>
 
-            <Link
-              href="/about"
-              className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg bg-primary px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            >
+            <Link href="/about" className="apx-button-primary mt-6">
               About Apindex
             </Link>
           </div>

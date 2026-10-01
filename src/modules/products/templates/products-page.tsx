@@ -17,7 +17,7 @@ export default function ProductsPageTemplate({
 }: ProductsPageTemplateProps) {
   return (
     <div className="apx-landing apx-font-body min-h-screen bg-surface text-on-surface">
-      <main className="!pb-0 pt-20">
+      <main className="!pb-0">
         <ProductsHeroSection />
         <ProductsCatalogSection
           catalog={catalog}

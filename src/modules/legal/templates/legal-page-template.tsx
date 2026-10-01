@@ -47,7 +47,7 @@ export default function LegalPageTemplate({
           <div className="content-container mt-14 lg:mt-16">
             <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-end">
               <div className="max-w-3xl">
-                <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.14em] text-primary">
+                <p className="apx-eyebrow mb-3">
                   {eyebrow}
                 </p>
                 <h1 className="section-heading">{title}</h1>
@@ -68,7 +68,7 @@ export default function LegalPageTemplate({
                 {summaryItems.map((item) => (
                   <div
                     key={item}
-                    className="rounded-xl border border-outline-variant/15 bg-white p-5"
+                    className="apx-card p-5"
                   >
                     <p className="text-sm font-semibold leading-6 text-on-surface-variant">
                       {item}
@@ -83,14 +83,14 @@ export default function LegalPageTemplate({
                 <LegalPageNav items={navItems} />
               </aside>
 
-              <div className="rounded-xl border border-outline-variant/15 bg-white">
+              <div className="apx-card overflow-hidden">
                 {sections.map((section, index) => (
                   <article
                     key={section.title}
                     id={navItems[index].id}
                     className="scroll-mt-28 border-b border-outline-variant/10 p-6 last:border-b-0 sm:p-8"
                   >
-                    <h2 className="apx-font-headline text-lg font-extrabold text-on-surface sm:text-xl">
+                    <h2 className="apx-card-title text-lg sm:text-xl">
                       {section.title}
                     </h2>
 

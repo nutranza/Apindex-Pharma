@@ -5,7 +5,7 @@ export default function GlobalPresenceSection() {
   return (
     <section
       id="global-presence"
-      className="relative overflow-hidden bg-[#0d1117] py-24 lg:py-36 text-white"
+      className="relative overflow-hidden bg-[#0d1117] apx-section text-white"
     >
       {/* World map — subtle background */}
       <div className="absolute inset-0">

@@ -57,7 +57,7 @@ export default function CatalogFilterSelect({
       <div className="relative">
         <label
           htmlFor={id}
-          className="text-xs font-extrabold uppercase tracking-[0.16em] text-on-surface-variant"
+          className="apx-eyebrow text-on-surface-variant"
         >
           {label}
         </label>
@@ -65,7 +65,7 @@ export default function CatalogFilterSelect({
           id={id}
           aria-label={`${label}: ${selectedOption?.label}`}
           onClick={() => setOptionSearchQuery("")}
-          className="mt-3 flex h-12 w-full items-center justify-between gap-3 rounded-xl border border-outline-variant/35 bg-surface px-4 text-left text-sm font-semibold text-on-surface outline-none transition-colors hover:border-primary/45 focus:border-primary focus:ring-4 focus:ring-primary/10"
+          className="apx-select-trigger mt-3"
         >
           <span className="truncate">{selectedOption?.label}</span>
           <ChevronDown aria-hidden="true" className="size-4 shrink-0 text-primary" />

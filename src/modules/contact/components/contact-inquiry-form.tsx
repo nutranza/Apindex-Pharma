@@ -255,7 +255,7 @@ export default function ContactInquiryForm() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="flex w-full items-center justify-center gap-3 rounded-xl bg-primary px-8 py-4 apx-font-headline text-base font-semibold text-white transition-colors hover:bg-primary-container disabled:cursor-not-allowed disabled:opacity-70 md:w-auto"
+          className="apx-button-primary w-full px-8 py-4 md:w-auto"
         >
           {isSubmitting ? "Sending..." : "Submit Message"}
           <Send className="h-5 w-5" strokeWidth={2.4} />
@@ -276,7 +276,7 @@ export default function ContactInquiryForm() {
           <button
             type="button"
             onClick={() => setIsThankYouOpen(false)}
-            className="rounded-lg bg-primary px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-primary-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            className="apx-button-primary min-h-10 px-5 py-2.5"
           >
             Close
           </button>
@@ -295,7 +295,7 @@ function Field({
 }) {
   return (
     <label className="block space-y-2">
-      <span className="block text-sm font-semibold text-on-surface">
+              <span className="apx-field-label mb-0">
         {label}
       </span>
       {children}

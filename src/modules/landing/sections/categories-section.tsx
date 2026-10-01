@@ -66,7 +66,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
 
 export default function CategoriesSection() {
   return (
-    <section id="categories" className="bg-white py-16 lg:py-24">
+    <section id="categories" className="bg-white apx-section">
       <div className="content-container">
         <div className="mb-10 max-w-3xl lg:mb-12">
           <h2 className="section-heading text-on-surface">

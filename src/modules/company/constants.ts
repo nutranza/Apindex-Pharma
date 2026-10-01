@@ -14,7 +14,7 @@ export const COMPANY_TAGLINE =
   "Quality-focused pharmaceutical supply for healthcare partners worldwide."
 
 export const COMPANY_DESCRIPTION =
-  "Apindex Pharmaceuticals supports healthcare partners with finished formulations, dependable sourcing, contract manufacturing coordination, documentation support, and responsive global supply."
+  "Dependable pharmaceutical supply and manufacturing support for healthcare partners worldwide."
 
 export const COMPANY_ADDRESS = {
   street:

@@ -10,7 +10,7 @@ export default function ProductsNotFound() {
           <div className="mb-4">
             <SectionBadge tone="primary">Product Not Found</SectionBadge>
           </div>
-          <h1 className="apx-font-headline text-4xl font-extrabold tracking-tight text-on-surface md:text-5xl">
+          <h1 className="apx-page-heading tracking-tight">
             This product is not available in the public catalog.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-8 text-on-surface-variant">
@@ -20,13 +20,13 @@ export default function ProductsNotFound() {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link
               href="/products"
-              className="rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-primary-container"
+              className="apx-button-primary"
             >
               Back to Products
             </Link>
             <Link
               href="/"
-              className="rounded-xl border border-primary/20 bg-surface-lowest px-6 py-3 text-sm font-bold text-primary transition-colors hover:border-primary"
+              className="apx-button-outline text-primary hover:text-primary"
             >
               Return Home
             </Link>

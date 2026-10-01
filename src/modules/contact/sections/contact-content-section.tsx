@@ -36,12 +36,12 @@ const ICON_TONE_CLASS = {
 
 export default function ContactContentSection() {
   return (
-    <section className="bg-surface py-16">
+    <section className="bg-surface apx-section">
       <div className="content-container">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:items-stretch lg:gap-16">
           <div className="flex flex-col gap-10 lg:col-span-5">
             <div className="shrink-0">
-              <h2 className="apx-font-headline mb-8 text-2xl sm:text-3xl font-semibold text-on-surface">
+              <h2 className="apx-card-title mb-8 text-2xl sm:text-3xl">
                 Corporate Office
               </h2>
               <div className="space-y-8">
@@ -90,7 +90,7 @@ export default function ContactContentSection() {
               className="h-full rounded-2xl border border-outline-variant/15 bg-white p-6 sm:p-10"
             >
               <div className="mb-8">
-                <h2 className="apx-font-headline sm:text-3xl text-2xl font-semibold text-on-surface">
+                <h2 className="apx-card-title text-2xl sm:text-3xl">
                   Send an Inquiry
                 </h2>
                 <p className="mt-3 max-w-xl text-sm leading-6 text-on-surface-variant md:text-base">

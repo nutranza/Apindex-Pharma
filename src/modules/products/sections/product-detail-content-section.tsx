@@ -67,7 +67,7 @@ export default function ProductDetailContentSection({
   ) as string[]
 
   return (
-    <section className="content-container py-10 lg:py-14">
+    <section className="content-container apx-section-compact">
       <div className="min-w-0">
         <div className="grid gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] xl:gap-12">
           <ProductImageGallery
@@ -75,8 +75,8 @@ export default function ProductDetailContentSection({
             images={galleryImages}
           />
 
-          <div className="min-w-0 rounded-3xl border border-outline-variant/25 bg-white p-6 shadow-[0_18px_45px_rgba(86,67,54,0.08)] sm:p-8">
-            <h1 className="apx-font-headline text-xl font-semibold leading-tight text-on-surface md:text-2xl">
+          <div className="apx-card min-w-0 p-6 shadow-sm sm:p-8">
+            <h1 className="apx-card-title md:text-2xl">
               {product.name}
             </h1>
 
@@ -96,7 +96,7 @@ export default function ProductDetailContentSection({
 
             <a
               href={buildProductDetailQuoteHref(product)}
-              className="mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-2xl bg-secondary px-7 py-3 text-center text-sm font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-on-secondary-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-secondary/25"
+              className="apx-button-secondary mt-7 w-full min-h-12 px-7"
             >
               Get a Quote
             </a>
@@ -104,8 +104,8 @@ export default function ProductDetailContentSection({
         </div>
 
         {hasDescription ? (
-          <div className="mt-10 rounded-3xl border border-outline-variant/25 bg-white p-6 shadow-[0_14px_36px_rgba(86,67,54,0.06)] sm:p-8 lg:mt-12">
-            <h2 className="mb-5 text-2xl font-semibold text-secondary">
+          <div className="apx-card mt-10 p-6 shadow-sm sm:p-8 lg:mt-12">
+            <h2 className="mb-5 apx-card-title text-secondary">
               Description
             </h2>
 

@@ -51,10 +51,10 @@ const SOCIAL_ICONS = [
 
 export default function FooterSection() {
   return (
-    <footer className="apx-font-body text-on-surface pt-16 pb-7">
+    <footer className="apx-font-body border-t border-outline-variant/20 text-on-surface pt-14 pb-6 sm:pt-16">
       <div className="content-container">
-        <div className="grid gap-12 lg:grid-cols-[1.15fr_1fr] lg:gap-20 xl:gap-28">
-          <div className="max-w-xl">
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.35fr_0.85fr_0.85fr_1.15fr] lg:gap-10 xl:gap-16">
+          <div className="sm:col-span-2 lg:col-span-1">
             <Link
               href="/"
               aria-label="Apindex home"
@@ -74,26 +74,11 @@ export default function FooterSection() {
               {COMPANY_DESCRIPTION}
             </p>
 
-            <div className="mt-6 space-y-2.5 text-sm leading-6 text-on-surface-variant">
-              <FooterContactItem icon={MdLocationOn}>
-                {COMPANY_ADDRESS_TEXT}
-              </FooterContactItem>
-              <FooterContactItem
-                icon={MdMail}
-                href="mailto:info@apindexpharma.com"
-              >
-                info@apindexpharma.com
-              </FooterContactItem>
-              <FooterContactItem icon={MdCall} href="tel:+917698743840">
-                +91 7698743840
-              </FooterContactItem>
-            </div>
-
-            <div className="mt-7 flex flex-wrap items-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-2.5">
               {SOCIAL_ICONS.map((item) => {
                 const Icon = item.icon
                 const iconClassName =
-                  "inline-flex size-9 items-center justify-center rounded-md border border-outline-variant/35 text-base text-on-surface-variant transition-colors hover:border-primary-container hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
+                  "inline-flex size-10 items-center justify-center rounded-full border border-outline-variant/40 text-base text-on-surface-variant transition-colors hover:border-primary-container hover:bg-primary hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-container"
 
                 return item.href ? (
                   <a
@@ -120,9 +105,27 @@ export default function FooterSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 sm:gap-12 lg:pt-2">
-            <FooterLinkColumn title="Company" links={COMPANY_LINKS} />
-            <FooterLinkColumn title="Policies" links={LEGAL_LINKS} />
+          <FooterLinkColumn title="Company" links={COMPANY_LINKS} />
+          <FooterLinkColumn title="Policies" links={LEGAL_LINKS} />
+
+          <div>
+            <h3 className="apx-font-headline text-xs font-bold uppercase tracking-[0.16em] text-on-surface">
+              Reach Us
+            </h3>
+            <div className="mt-5 space-y-3.5 text-sm leading-6 text-on-surface-variant">
+              <FooterContactItem icon={MdCall} href="tel:+917698743840">
+                +91 7698743840
+              </FooterContactItem>
+              <FooterContactItem
+                icon={MdMail}
+                href="mailto:info@apindexpharma.com"
+              >
+                info@apindexpharma.com
+              </FooterContactItem>
+              <FooterContactItem icon={MdLocationOn}>
+                {COMPANY_ADDRESS_TEXT}
+              </FooterContactItem>
+            </div>
           </div>
         </div>
 
@@ -193,10 +196,10 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <h3 className="apx-font-headline text-sm font-semibold text-on-surface">
+      <h3 className="apx-font-headline text-xs font-bold uppercase tracking-[0.16em] text-on-surface">
         {title}
       </h3>
-      <ul className="mt-6 space-y-3.5">
+      <ul className="mt-5 space-y-3.5">
         {links.map((link) => (
           <li key={link.label}>
             <Link

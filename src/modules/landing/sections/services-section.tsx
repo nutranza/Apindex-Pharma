@@ -11,7 +11,7 @@ const SERVICE_CARDS: ServiceCard[] = [
 
 export default function ServicesSection() {
   return (
-    <section id="infrastructure" className="bg-surface py-14 lg:py-20">
+    <section id="infrastructure" className="bg-surface apx-section-compact">
       <div className="content-container">
         <div className="mb-10 lg:mb-12">
           <h2 className="section-heading max-w-3xl">

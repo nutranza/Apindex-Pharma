@@ -311,7 +311,7 @@ export default function ProductsCatalogSection({
                 value={searchInput}
                 onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Search by product name"
-                className="h-14 w-full rounded-2xl border border-outline-variant/35 bg-surface pl-12 pr-12 text-sm font-medium text-on-surface outline-none transition-colors placeholder:text-on-surface-variant/65 focus:border-primary focus:ring-4 focus:ring-primary/10"
+                className="apx-field h-14 pl-12 pr-12 font-medium placeholder:text-on-surface-variant/65"
               />
               {searchInput ? (
                 <button
@@ -326,7 +326,7 @@ export default function ProductsCatalogSection({
             </div>
             <button
               type="submit"
-              className="w-full rounded-xl bg-primary px-8 py-4 apx-font-headline text-base font-semibold text-white transition-colors hover:bg-primary/80 disabled:cursor-not-allowed disabled:opacity-70 md:w-auto"
+              className="apx-button-primary w-full px-8 py-4 md:w-auto"
             >
               Search
             </button>
@@ -366,8 +366,8 @@ export default function ProductsCatalogSection({
               onClick={clearFilters}
               className={
                 hasActiveFilters
-                  ? "inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-primary bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-primary/80 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
-                  : "inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl border border-outline-variant/35 bg-surface px-5 py-3 text-sm font-bold text-on-surface-variant transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
+                  ? "apx-button-primary shrink-0"
+                  : "apx-button-outline shrink-0 text-on-surface-variant"
               }
             >
               Clear Filters
@@ -377,7 +377,7 @@ export default function ProductsCatalogSection({
 
         <div id="product-catalog-results" className="scroll-mt-28">
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <h3 className="text-2xl font-semibold text-on-surface sm:text-3xl">
+            <h3 className="apx-card-title text-2xl sm:text-3xl">
               {selectedCategory?.name ?? "All Products"}
             </h3>
             {searchQuery.trim() ? (
@@ -405,7 +405,7 @@ export default function ProductsCatalogSection({
                     {group.products.map((product) => (
                       <article
                         key={product.id}
-                        className="group flex min-h-[142px] flex-col rounded-2xl border bg-white p-5 shadow-sm transition-all hover:border-secondary/60 hover:shadow-md"
+                        className="apx-card apx-card-interactive group flex min-h-[142px] flex-col p-5"
                       >
                         <h5 className="line-clamp-3 text-base font-medium text-on-surface transition-colors">
                           {product.name}
@@ -431,11 +431,11 @@ export default function ProductsCatalogSection({
 
             </div>
           ) : (
-            <div className="rounded-2xl border border-outline-variant/30 bg-white px-4 py-16 text-center shadow-[0_8px_24px_rgba(31,65,21,0.06)]">
+            <div className="apx-card px-4 py-16 text-center">
               <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary-fixed text-primary">
                 <Search aria-hidden="true" className="size-6" />
               </div>
-              <h3 className="apx-font-headline mt-5 text-xl font-semibold text-on-surface">
+              <h3 className="apx-card-title mt-5">
                 No products found
               </h3>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-on-surface-variant">
@@ -445,7 +445,7 @@ export default function ProductsCatalogSection({
               <button
                 type="button"
                 onClick={clearFilters}
-                className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-on-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/20"
+                className="apx-button-primary mt-6"
               >
                 Clear Filters
               </button>

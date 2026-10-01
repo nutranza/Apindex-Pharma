@@ -28,7 +28,7 @@ const PURPOSE_CARDS: PurposeCard[] = [
 
 export default function AboutPurposeSection() {
   return (
-    <section className="bg-white py-16 lg:py-24">
+    <section className="bg-white apx-section">
       <div className="content-container">
         <h2 id="purpose-heading" className="sr-only">
           Mission &amp; Vision
