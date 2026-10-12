@@ -24,7 +24,7 @@ export default function PageHeroSection({
       <div className="absolute inset-0 z-0">
         <Image
           fill
-          priority
+          preload
           sizes="100vw"
           src={imageSrc}
           alt={imageAlt}

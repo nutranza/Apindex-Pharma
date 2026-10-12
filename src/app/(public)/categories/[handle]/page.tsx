@@ -1,9 +1,13 @@
+import { Suspense } from "react"
+import ProductCatalogLoading from "@/modules/products/components/product-catalog-loading"
+import ProductsCatalogSection from "@/modules/products/sections/products-catalog-section"
 import type { Metadata } from "next"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 
 import {
   listPublicCatalogCategories,
   listPublicCatalogListing,
+  normalizeCatalogDosageForm,
 } from "@/lib/data/public-catalog"
 import ProductsPageTemplate from "@/modules/products/templates/products-page"
 
@@ -15,6 +19,7 @@ type CategoryPageProps = {
     q?: string
     dosageForm?: string
     subcategory?: string
+    page?: string
   }>
 }
 
@@ -49,7 +54,7 @@ export async function generateMetadata({
   }
 }
 
-export default async function CategoryPage({
+async function CategoryCatalogContent({
   params,
   searchParams,
 }: CategoryPageProps) {
@@ -58,9 +63,12 @@ export default async function CategoryPage({
     searchParams,
   ])
 
+  const dosageForm =
+    resolvedSearchParams.dosageForm?.trim() ||
+    resolvedSearchParams.subcategory?.trim()
   const catalog = await listPublicCatalogListing({
-    page: 1,
-    pageSize: 2000,
+    page: Number(resolvedSearchParams.page),
+    dosageForm,
     query: resolvedSearchParams.q,
     categoryHandle: handle,
   })
@@ -69,8 +77,21 @@ export default async function CategoryPage({
     notFound()
   }
 
+  if (catalog.page > catalog.totalPages) {
+    const query = new URLSearchParams()
+    if (catalog.query) query.set("q", catalog.query)
+    const normalizedDosage = normalizeCatalogDosageForm(dosageForm)
+    if (normalizedDosage) query.set("dosageForm", normalizedDosage)
+    if (catalog.totalPages > 1) query.set("page", String(catalog.totalPages))
+    redirect(
+      `/categories/${encodeURIComponent(handle)}${
+        query.size ? `?${query}` : ""
+      }`
+    )
+  }
+
   return (
-    <ProductsPageTemplate
+    <ProductsCatalogSection
       catalog={catalog}
       initialCategoryHandle={catalog.selectedCategory.handle}
       initialDosageForm={
@@ -79,5 +100,15 @@ export default async function CategoryPage({
         null
       }
     />
+  )
+}
+
+export default function CategoryPage(props: CategoryPageProps) {
+  return (
+    <ProductsPageTemplate>
+      <Suspense fallback={<ProductCatalogLoading />}>
+        <CategoryCatalogContent {...props} />
+      </Suspense>
+    </ProductsPageTemplate>
   )
 }
