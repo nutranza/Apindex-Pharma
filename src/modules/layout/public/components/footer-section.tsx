@@ -65,7 +65,8 @@ export default function FooterSection() {
                 alt="Apindex Pharmaceuticals"
                 width={1920}
                 height={1187}
-                quality={100}
+                sizes="(min-width: 640px) 182px, 156px"
+                quality={90}
                 className="block h-24 w-auto object-contain sm:h-28"
               />
             </Link>

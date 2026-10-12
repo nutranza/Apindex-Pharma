@@ -12,6 +12,7 @@ type HeroSlide = {
   suffix: string
   imageUrl: string
   imageAlt: string
+  blurDataURL: string
   backgroundPosition?: string
 }
 
@@ -21,7 +22,9 @@ const HERO_SLIDES: HeroSlide[] = [
     title: "Trusted Partner for",
     accent: "Pharma Contract",
     suffix: "Manufacturing",
-    imageUrl: "/slide1.jpg",
+    imageUrl: "/slide1.webp",
+    blurDataURL:
+      "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADQAQCdASoKAAcABABoJZQC7ADc5k1UAAD+BN6u//745BKZxM2UL7Qx6LUmt+Q0bdYHxEgkBHmfAAAA",
     imageAlt:
       "Pharmaceutical professionals working in a modern laboratory environment",
   },
@@ -30,7 +33,9 @@ const HERO_SLIDES: HeroSlide[] = [
     title: "Scalable Support for",
     accent: "Finished",
     suffix: "Formulations",
-    imageUrl: "/slide3.jpg",
+    imageUrl: "/slide3.webp",
+    blurDataURL:
+      "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAACwAQCdASoKAAcABABoJZQAAuTsvHAAAP7XiTPhYkrTN3iepTydKDCALiXepmqTeLgAAA==",
     imageAlt:
       "Modern pharmaceutical manufacturing facility with production equipment",
   },
@@ -39,7 +44,9 @@ const HERO_SLIDES: HeroSlide[] = [
     title: "Quality-Focused",
     accent: "Formulation",
     suffix: "Support",
-    imageUrl: "/slide2.jpg",
+    imageUrl: "/slide2.webp",
+    blurDataURL:
+      "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAACwAQCdASoKAAYABABoJYgCdADbIP3oAPab9tix3gzylKVb6Fzjqaz5/gi9JW4P8fSMri3vjvNzAAAA",
     imageAlt:
       "Pharmaceutical researcher working with a microscope in a clean laboratory",
     backgroundPosition: "center",
@@ -53,6 +60,7 @@ export default function HeroSection() {
     skipSnaps: false,
   })
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [prepareRemainingSlides, setPrepareRemainingSlides] = useState(false)
   const [visitedSlides, setVisitedSlides] = useState<ReadonlySet<number>>(
     new Set([0])
   )
@@ -111,7 +119,7 @@ export default function HeroSection() {
               aria-label={slide.imageAlt}
               className="relative min-w-0 flex-[0_0_100%] overflow-hidden"
             >
-              {visitedSlides.has(index) ? (
+              {prepareRemainingSlides || visitedSlides.has(index) ? (
                 <Image
                   fill
                   src={slide.imageUrl}
@@ -119,6 +127,19 @@ export default function HeroSection() {
                   sizes="100vw"
                   preload={index === 0}
                   loading={index === 0 ? undefined : "eager"}
+                  fetchPriority={index === 0 ? undefined : "low"}
+                  placeholder="blur"
+                  blurDataURL={slide.blurDataURL}
+                  onLoad={
+                    index === 0
+                      ? () => setPrepareRemainingSlides(true)
+                      : undefined
+                  }
+                  onError={
+                    index === 0
+                      ? () => setPrepareRemainingSlides(true)
+                      : undefined
+                  }
                   className="object-cover"
                   style={{
                     objectPosition: slide.backgroundPosition ?? "center",

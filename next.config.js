@@ -55,6 +55,12 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "wellonapharma.com",
+        pathname: "/admincms/product_img/product_resize_img/**",
+        search: "",
+      },
+      {
         protocol: "http",
         hostname: "localhost",
       },
