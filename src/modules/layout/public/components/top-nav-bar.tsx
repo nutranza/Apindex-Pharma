@@ -109,8 +109,9 @@ export default function TopNavBar() {
               alt="Apindex"
               width={1920}
               height={1187}
-              priority
-              quality={100}
+              sizes="(min-width: 640px) 104px, 91px"
+              loading="eager"
+              quality={90}
               className="h-14 w-auto object-contain sm:h-16"
             />
           </Link>
@@ -182,7 +183,8 @@ export default function TopNavBar() {
                 alt="Apindex"
                 width={1920}
                 height={1187}
-                quality={100}
+                sizes="104px"
+                quality={90}
                 className="h-14 w-auto object-contain"
               />
               <button

@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useCallback, useEffect, useState } from "react"
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline"
 import useEmblaCarousel from "embla-carousel-react"
@@ -11,6 +12,7 @@ type HeroSlide = {
   suffix: string
   imageUrl: string
   imageAlt: string
+  blurDataURL: string
   backgroundPosition?: string
 }
 
@@ -20,7 +22,9 @@ const HERO_SLIDES: HeroSlide[] = [
     title: "Trusted Partner for",
     accent: "Pharma Contract",
     suffix: "Manufacturing",
-    imageUrl: "/slide1.jpg",
+    imageUrl: "/slide1.webp",
+    blurDataURL:
+      "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADQAQCdASoKAAcABABoJZQC7ADc5k1UAAD+BN6u//745BKZxM2UL7Qx6LUmt+Q0bdYHxEgkBHmfAAAA",
     imageAlt:
       "Pharmaceutical professionals working in a modern laboratory environment",
   },
@@ -29,7 +33,9 @@ const HERO_SLIDES: HeroSlide[] = [
     title: "Scalable Support for",
     accent: "Finished",
     suffix: "Formulations",
-    imageUrl: "/slide3.jpg",
+    imageUrl: "/slide3.webp",
+    blurDataURL:
+      "data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAACwAQCdASoKAAcABABoJZQAAuTsvHAAAP7XiTPhYkrTN3iepTydKDCALiXepmqTeLgAAA==",
     imageAlt:
       "Modern pharmaceutical manufacturing facility with production equipment",
   },
@@ -38,7 +44,9 @@ const HERO_SLIDES: HeroSlide[] = [
     title: "Quality-Focused",
     accent: "Formulation",
     suffix: "Support",
-    imageUrl: "/slide2.jpg",
+    imageUrl: "/slide2.webp",
+    blurDataURL:
+      "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAACwAQCdASoKAAYABABoJYgCdADbIP3oAPab9tix3gzylKVb6Fzjqaz5/gi9JW4P8fSMri3vjvNzAAAA",
     imageAlt:
       "Pharmaceutical researcher working with a microscope in a clean laboratory",
     backgroundPosition: "center",
@@ -52,6 +60,10 @@ export default function HeroSection() {
     skipSnaps: false,
   })
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [prepareRemainingSlides, setPrepareRemainingSlides] = useState(false)
+  const [visitedSlides, setVisitedSlides] = useState<ReadonlySet<number>>(
+    new Set([0])
+  )
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
 
   const scrollPrev = useCallback(() => {
@@ -74,7 +86,11 @@ export default function HeroSection() {
       return
     }
 
-    setSelectedIndex(emblaApi.selectedScrollSnap())
+    const index = emblaApi.selectedScrollSnap()
+    setSelectedIndex(index)
+    setVisitedSlides((visited) =>
+      visited.has(index) ? visited : new Set([...Array.from(visited), index])
+    )
   }, [emblaApi])
 
   useEffect(() => {
@@ -94,25 +110,42 @@ export default function HeroSection() {
   }, [emblaApi, onSelect])
 
   return (
-    <section
-      id="home"
-      className="relative overflow-hidden bg-[#0d1117] pt-20"
-    >
-      <div
-        ref={emblaRef}
-        className="overflow-hidden h-[550px] lg:h-[650px]"
-      >
+    <section id="home" className="relative overflow-hidden bg-[#0d1117] pt-20">
+      <div ref={emblaRef} className="overflow-hidden h-[550px] lg:h-[650px]">
         <div className="flex h-full touch-pan-y">
-          {HERO_SLIDES.map((slide) => (
+          {HERO_SLIDES.map((slide, index) => (
             <div
               key={slide.eyebrow}
               aria-label={slide.imageAlt}
-              className="relative min-w-0 flex-[0_0_100%] overflow-hidden bg-cover bg-center bg-no-repeat"
-              style={{
-                backgroundImage: `url(${slide.imageUrl})`,
-                backgroundPosition: slide.backgroundPosition ?? "center",
-              }}
+              className="relative min-w-0 flex-[0_0_100%] overflow-hidden"
             >
+              {prepareRemainingSlides || visitedSlides.has(index) ? (
+                <Image
+                  fill
+                  src={slide.imageUrl}
+                  alt={slide.imageAlt}
+                  sizes="100vw"
+                  preload={index === 0}
+                  loading={index === 0 ? undefined : "eager"}
+                  fetchPriority={index === 0 ? undefined : "low"}
+                  placeholder="blur"
+                  blurDataURL={slide.blurDataURL}
+                  onLoad={
+                    index === 0
+                      ? () => setPrepareRemainingSlides(true)
+                      : undefined
+                  }
+                  onError={
+                    index === 0
+                      ? () => setPrepareRemainingSlides(true)
+                      : undefined
+                  }
+                  className="object-cover"
+                  style={{
+                    objectPosition: slide.backgroundPosition ?? "center",
+                  }}
+                />
+              ) : null}
               <div className="absolute inset-0 z-0 bg-[linear-gradient(90deg,rgba(13,17,23,0.68)_0%,rgba(13,17,23,0.42)_42%,rgba(13,17,23,0.08)_100%)]" />
 
               <div className="relative z-10 flex h-full items-center">

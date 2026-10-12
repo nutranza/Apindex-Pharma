@@ -1,20 +1,32 @@
 "use client"
 
 import Link from "next/link"
+import { ProductResultsLoading } from "@/modules/products/components/product-catalog-loading"
 import { useRouter } from "next/navigation"
-import { type FormEvent, useEffect, useMemo, useRef, useState } from "react"
+import {
+  type FormEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useTransition,
+} from "react"
 import { ArrowUpRight, Search, X } from "lucide-react"
 
 import { CATALOG_DOSAGE_OPTIONS } from "@/lib/constants/product-dosage"
-import type { PublicCatalogResult } from "@/lib/data/public-catalog"
+import type { PublicCatalogListingResult } from "@/lib/data/public-catalog"
 import CatalogFilterSelect, {
   type CatalogFilterOption,
 } from "@/modules/products/components/catalog-filter-select"
 import { buildProductDetailHref } from "@/modules/products/lib/product-detail-ui"
-import { buildProductsPageHref } from "@/modules/products/lib/catalog-ui"
+import {
+  buildProductsPageHref,
+  buildPageTokens,
+} from "@/modules/products/lib/catalog-ui"
 
 type ProductsCatalogSectionProps = {
-  catalog: PublicCatalogResult
+  catalog: PublicCatalogListingResult
   initialCategoryHandle?: string | null
   initialDosageForm?: string | null
   initialSubcategoryLabel?: string | null
@@ -30,7 +42,7 @@ const DOSAGE_FORM_LABELS = CATALOG_DOSAGE_OPTIONS.filter(
   (option) => option !== ALL_DOSAGE_FORMS
 )
 
-type CatalogProduct = PublicCatalogResult["products"][number]
+type CatalogProduct = PublicCatalogListingResult["products"][number]
 
 function normalizeValue(value: string | null | undefined) {
   return value?.trim().toLowerCase() ?? ""
@@ -39,7 +51,10 @@ function normalizeValue(value: string | null | undefined) {
 function normalizeDosageForm(value: string | null | undefined): string | null {
   const normalizedValue = normalizeValue(value)
 
-  if (!normalizedValue || normalizedValue === normalizeValue(ALL_DOSAGE_FORMS)) {
+  if (
+    !normalizedValue ||
+    normalizedValue === normalizeValue(ALL_DOSAGE_FORMS)
+  ) {
     return null
   }
 
@@ -60,18 +75,11 @@ function getProductDosageForm(product: CatalogProduct) {
   )
 }
 
-function buildProductGroups(
-  products: CatalogProduct[],
-  selectedDosageForm: string | null
-): ProductGroup[] {
+function buildProductGroups(products: CatalogProduct[]): ProductGroup[] {
   const groupedProducts = new Map<string, CatalogProduct[]>()
 
   products.forEach((product) => {
     const dosageForm = getProductDosageForm(product)
-
-    if (selectedDosageForm && dosageForm !== selectedDosageForm) {
-      return
-    }
 
     const groupProducts = groupedProducts.get(dosageForm) ?? []
     groupProducts.push(product)
@@ -101,6 +109,22 @@ export default function ProductsCatalogSection({
   initialSubcategoryLabel = null,
 }: ProductsCatalogSectionProps) {
   const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+  const pendingHref = useRef<string | null>(null)
+  const navigate = useCallback(
+    (href: string, replace = true) => {
+      if (pendingHref.current === href) return
+      pendingHref.current = href
+      startTransition(() => {
+        if (replace) router.replace(href, { scroll: false })
+        else router.push(href, { scroll: false })
+      })
+    },
+    [router]
+  )
+  useEffect(() => {
+    if (!isPending) pendingHref.current = null
+  }, [isPending])
   const resolvedInitialDosageForm = normalizeDosageForm(
     initialDosageForm ?? initialSubcategoryLabel
   )
@@ -113,11 +137,11 @@ export default function ProductsCatalogSection({
     catalog.query.trim(),
     routeCategoryHandle,
     routeDosageForm ?? "",
+    String(catalog.page),
   ].join("|")
   const previousRouteFilterKey = useRef<string | null>(null)
-  const [selectedCategoryHandle, setSelectedCategoryHandle] = useState(
-    routeCategoryHandle
-  )
+  const [selectedCategoryHandle, setSelectedCategoryHandle] =
+    useState(routeCategoryHandle)
   const [selectedDosageForm, setSelectedDosageForm] = useState<string | null>(
     resolvedInitialDosageForm
   )
@@ -160,7 +184,7 @@ export default function ProductsCatalogSection({
     if (previousRouteFilterKey.current === null) {
       previousRouteFilterKey.current = routeFilterKey
 
-      if (routeFilterKey !== "||") {
+      if (routeFilterKey !== "|||1") {
         scrollToProductResults()
       }
 
@@ -182,20 +206,19 @@ export default function ProductsCatalogSection({
 
     const timeoutId = window.setTimeout(() => {
       setSearchQuery(nextQuery)
-      router.replace(
+      navigate(
         buildProductsPageHref({
           query: nextQuery,
           categoryHandle: selectedCategoryHandle || null,
           dosageForm: selectedDosageForm,
-        }),
-        { scroll: false }
+        })
       )
     }, 350)
 
     return () => window.clearTimeout(timeoutId)
   }, [
     catalog.query,
-    router,
+    navigate,
     searchInput,
     selectedCategoryHandle,
     selectedDosageForm,
@@ -206,29 +229,23 @@ export default function ProductsCatalogSection({
       (category) => category.handle === selectedCategoryHandle
     ) ?? null
 
-  const visibleProducts = useMemo(() => {
-    const normalizedQuery = normalizeValue(searchQuery)
-
-    return catalog.products.filter((product) => {
-      if (!normalizedQuery) {
-        return true
-      }
-
-      return (
-        normalizeValue(product.name).includes(normalizedQuery) ||
-        normalizeValue(product.handle).includes(normalizedQuery)
-      )
-    })
-  }, [catalog.products, searchQuery])
-
   const productGroups = useMemo(
-    () => buildProductGroups(visibleProducts, selectedDosageForm),
-    [selectedDosageForm, visibleProducts]
+    () => buildProductGroups(catalog.products),
+    [catalog.products]
   )
-  const visibleProductCount = productGroups.reduce(
-    (productCount, group) => productCount + group.products.length,
-    0
-  )
+  const resultStart = catalog.total
+    ? (catalog.page - 1) * catalog.pageSize + 1
+    : 0
+  const resultEnd = catalog.total
+    ? resultStart + catalog.products.length - 1
+    : 0
+  const pageHref = (page: number) =>
+    buildProductsPageHref({
+      query: catalog.query,
+      categoryHandle: routeCategoryHandle,
+      dosageForm: routeDosageForm,
+      page,
+    })
 
   function navigateWithFilters(
     query: string,
@@ -237,13 +254,12 @@ export default function ProductsCatalogSection({
   ) {
     const nextQuery = query.trim()
     setSearchQuery(nextQuery)
-    router.replace(
+    navigate(
       buildProductsPageHref({
         query: nextQuery,
         categoryHandle,
         dosageForm,
-      }),
-      { scroll: false }
+      })
     )
   }
 
@@ -265,7 +281,11 @@ export default function ProductsCatalogSection({
   function handleDosageFormChange(dosageForm: string) {
     const nextDosageForm = dosageForm || null
     setSelectedDosageForm(nextDosageForm)
-    navigateWithFilters(searchInput, selectedCategoryHandle || null, nextDosageForm)
+    navigateWithFilters(
+      searchInput,
+      selectedCategoryHandle || null,
+      nextDosageForm
+    )
   }
 
   function clearSearch() {
@@ -278,7 +298,7 @@ export default function ProductsCatalogSection({
     setSearchQuery("")
     setSelectedCategoryHandle("")
     setSelectedDosageForm(null)
-    router.replace("/products", { scroll: false })
+    navigate("/products")
   }
 
   const hasActiveFilters = Boolean(
@@ -357,9 +377,10 @@ export default function ProductsCatalogSection({
               className="text-sm font-medium leading-6 text-on-surface-variant"
             >
               Showing{" "}
-              <span className="font-bold text-on-surface">{visibleProductCount}</span>{" "}
-              product
-              {visibleProductCount === 1 ? "" : "s"}
+              <span className="font-bold text-on-surface">
+                {resultStart}–{resultEnd}
+              </span>{" "}
+              of {catalog.total} products
             </p>
             <button
               type="button"
@@ -375,7 +396,11 @@ export default function ProductsCatalogSection({
           </div>
         </div>
 
-        <div id="product-catalog-results" className="scroll-mt-28">
+        <div
+          id="product-catalog-results"
+          className="scroll-mt-28"
+          aria-busy={isPending}
+        >
           <div className="mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <h3 className="apx-card-title text-2xl sm:text-3xl">
               {selectedCategory?.name ?? "All Products"}
@@ -387,7 +412,9 @@ export default function ProductsCatalogSection({
             ) : null}
           </div>
 
-          {productGroups.length > 0 ? (
+          {isPending ? (
+            <ProductResultsLoading />
+          ) : productGroups.length > 0 ? (
             <div className="space-y-10">
               {productGroups.map((group) => (
                 <section
@@ -428,16 +455,13 @@ export default function ProductsCatalogSection({
                   </div>
                 </section>
               ))}
-
             </div>
           ) : (
             <div className="apx-card px-4 py-16 text-center">
               <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-primary-fixed text-primary">
                 <Search aria-hidden="true" className="size-6" />
               </div>
-              <h3 className="apx-card-title mt-5">
-                No products found
-              </h3>
+              <h3 className="apx-card-title mt-5">No products found</h3>
               <p className="mx-auto mt-3 max-w-xl text-sm leading-6 text-on-surface-variant">
                 Try a different product name or clear the filters to review the
                 full pharmaceutical catalogue.
@@ -451,6 +475,73 @@ export default function ProductsCatalogSection({
               </button>
             </div>
           )}
+          {catalog.totalPages > 1 ? (
+            <nav
+              aria-label="Product pages"
+              className="mt-10 flex flex-wrap items-center justify-center gap-2"
+            >
+              {catalog.page > 1 ? (
+                <Link
+                  href={pageHref(catalog.page - 1)}
+                  onNavigate={(event) => {
+                    event.preventDefault()
+                    if (!isPending) navigate(pageHref(catalog.page - 1), false)
+                  }}
+                  aria-disabled={isPending}
+                  scroll={false}
+                  className="apx-button-outline"
+                >
+                  Previous
+                </Link>
+              ) : null}
+              {buildPageTokens(catalog.page, catalog.totalPages).map(
+                (token, index) =>
+                  token === "ellipsis" ? (
+                    <span
+                      key={`ellipsis-${index}`}
+                      aria-hidden="true"
+                      className="px-2"
+                    >
+                      …
+                    </span>
+                  ) : (
+                    <Link
+                      key={token}
+                      href={pageHref(token)}
+                      onNavigate={(event) => {
+                        event.preventDefault()
+                        if (!isPending) navigate(pageHref(token), false)
+                      }}
+                      aria-disabled={isPending}
+                      scroll={false}
+                      aria-label={`Page ${token}`}
+                      aria-current={catalog.page === token ? "page" : undefined}
+                      className={
+                        catalog.page === token
+                          ? "apx-button-primary"
+                          : "apx-button-outline"
+                      }
+                    >
+                      {token}
+                    </Link>
+                  )
+              )}
+              {catalog.page < catalog.totalPages ? (
+                <Link
+                  href={pageHref(catalog.page + 1)}
+                  onNavigate={(event) => {
+                    event.preventDefault()
+                    if (!isPending) navigate(pageHref(catalog.page + 1), false)
+                  }}
+                  aria-disabled={isPending}
+                  scroll={false}
+                  className="apx-button-outline"
+                >
+                  Next
+                </Link>
+              ) : null}
+            </nav>
+          ) : null}
         </div>
       </div>
     </section>

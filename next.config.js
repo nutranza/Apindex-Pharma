@@ -1,13 +1,14 @@
 const checkEnvVariables = require("./check-env-variables")
-const withSerwistInit = require("@serwist/next").default;
+const withSerwistInit = require("@serwist/next").default
 
 // Silence Serwist Turbopack warning as we have already disabled it in development
-process.env.SERWIST_SUPPRESS_TURBOPACK_WARNING = "1";
+process.env.SERWIST_SUPPRESS_TURBOPACK_WARNING = "1"
 
 checkEnvVariables()
 
 const R2_PROTOCOL = process.env.NEXT_PUBLIC_R2_MEDIA_PROTOCOL || "https"
-const R2_HOSTNAME = process.env.NEXT_PUBLIC_R2_MEDIA_HOSTNAME || "cdn.toycker.in"
+const R2_HOSTNAME =
+  process.env.NEXT_PUBLIC_R2_MEDIA_HOSTNAME || "cdn.toycker.in"
 const R2_PATHNAME = process.env.NEXT_PUBLIC_R2_MEDIA_PATHNAME || "/uploads/**"
 
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
@@ -18,7 +19,15 @@ const withSerwist = withSerwistInit({
   swSrc: "src/sw.ts",
   swDest: "public/sw.js",
   disable: process.env.NODE_ENV !== "production",
-});
+  globPublicPatterns: [
+    "favicon.png",
+    "icon-*.png",
+    "apple-touch-icon.png",
+    "maskable-icon-*.png",
+    "manifest.json",
+  ],
+  exclude: [/\.(?:ttf|otf|woff2?|eot|map)$/i],
+})
 
 /**
  * @type {import('next').NextConfig}
@@ -30,9 +39,12 @@ const nextConfig = {
 
   // Remove console.logs in production (keep error/warn for debugging)
   compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === "production"
+        ? {
+            exclude: ["error", "warn"],
+          }
+        : false,
   },
 
   logging: {
@@ -42,6 +54,12 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "wellonapharma.com",
+        pathname: "/admincms/product_img/product_resize_img/**",
+        search: "",
+      },
       {
         protocol: "http",
         hostname: "localhost",
@@ -83,21 +101,20 @@ const nextConfig = {
       },
       ...(R2_HOSTNAME
         ? [
-          {
-            protocol: R2_PROTOCOL,
-            hostname: R2_HOSTNAME,
-            pathname: R2_PATHNAME,
-          },
-          {
-            protocol: R2_PROTOCOL,
-            hostname: `*.${R2_HOSTNAME}`,
-            pathname: R2_PATHNAME,
-          },
-        ]
+            {
+              protocol: R2_PROTOCOL,
+              hostname: R2_HOSTNAME,
+              pathname: R2_PATHNAME,
+            },
+            {
+              protocol: R2_PROTOCOL,
+              hostname: `*.${R2_HOSTNAME}`,
+              pathname: R2_PATHNAME,
+            },
+          ]
         : []),
     ],
     qualities: IMAGE_QUALITIES,
-    unoptimized: true,
   },
   experimental: {
     optimizePackageImports: [
@@ -115,13 +132,13 @@ const nextConfig = {
 }
 
 // Injected Sentry Configuration
-const { withSentryConfig } = require("@sentry/nextjs");
+const { withSentryConfig } = require("@sentry/nextjs")
 
 const sentryWebpackPluginOptions = {
   silent: true,
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-};
+}
 
 const sentryOptions = {
   widenClientFileUpload: true,
@@ -130,10 +147,10 @@ const sentryOptions = {
   hideSourceMaps: true,
   disableLogger: true,
   automaticVercelMonitors: true,
-};
+}
 
 module.exports = withSentryConfig(
   withSerwist(withBundleAnalyzer(nextConfig)),
   sentryWebpackPluginOptions,
   sentryOptions
-);
+)

@@ -10,15 +10,29 @@ type ProductImageGalleryProps = {
   images: string[]
 }
 
+// Keep direct delivery for sources whose optimizer access has not been verified.
+function canOptimizeProductImage(src: string): boolean {
+  if (src.startsWith("/") && !src.startsWith("//")) return true
+  try {
+    const url = new URL(src)
+    return (
+      url.protocol === "https:" &&
+      url.hostname === "wellonapharma.com" &&
+      url.pathname.startsWith("/admincms/product_img/product_resize_img/") &&
+      !url.search
+    )
+  } catch {
+    return false
+  }
+}
+
 export default function ProductImageGallery({
   productName,
   images,
 }: ProductImageGalleryProps) {
   const galleryImages = useMemo(
     () =>
-      Array.from(
-        new Set(images.map((image) => image.trim()).filter(Boolean))
-      ),
+      Array.from(new Set(images.map((image) => image.trim()).filter(Boolean))),
     [images]
   )
   const [selectedImage, setSelectedImage] = useState<string | null>(
@@ -36,7 +50,9 @@ export default function ProductImageGallery({
     }
   }, [galleryImages, selectedImage])
 
-  const selectedIndex = selectedImage ? galleryImages.indexOf(selectedImage) : -1
+  const selectedIndex = selectedImage
+    ? galleryImages.indexOf(selectedImage)
+    : -1
   const hasMultipleImages = galleryImages.length > 1
 
   function showPreviousImage() {
@@ -74,10 +90,10 @@ export default function ProductImageGallery({
               src={selectedImage}
               alt={`${productName} packaging`}
               fill
-              unoptimized
+              unoptimized={!canOptimizeProductImage(selectedImage)}
               sizes="(min-width: 1024px) 38vw, 100vw"
               className="object-contain"
-              priority
+              loading="eager"
             />
           </div>
         ) : (
@@ -129,8 +145,8 @@ export default function ProductImageGallery({
                   src={image}
                   alt={`${productName} thumbnail ${index + 1}`}
                   fill
-                  unoptimized
-                  sizes="96px"
+                  unoptimized={!canOptimizeProductImage(image)}
+                  sizes="(min-width: 1280px) 140px, (min-width: 1024px) 12vw, (min-width: 640px) 22vw, 30vw"
                   className="object-contain p-2"
                 />
               </button>

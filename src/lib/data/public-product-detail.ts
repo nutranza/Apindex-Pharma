@@ -4,11 +4,20 @@ import { cache } from "react"
 import { listPublicCatalogCategories } from "@/lib/data/public-catalog"
 import { createPublicServerClient } from "@/lib/supabase/public-server"
 import type { Category, Collection, Product } from "@/lib/supabase/types"
-import { getProductPharmaDetails, type ProductPharmaDetails } from "@/lib/util/product-pharma"
+import {
+  getProductPharmaDetails,
+  type ProductPharmaDetails,
+} from "@/lib/util/product-pharma"
 import { ACTIVE_PRODUCT_STATUS } from "@/lib/util/product-visibility"
 
-type ProductDetailCategory = Pick<Category, "id" | "name" | "handle" | "image_url">
-type ProductDetailCollection = Pick<Collection, "id" | "title" | "handle" | "image_url">
+type ProductDetailCategory = Pick<
+  Category,
+  "id" | "name" | "handle" | "image_url"
+>
+type ProductDetailCollection = Pick<
+  Collection,
+  "id" | "title" | "handle" | "image_url"
+>
 
 type ProductCategoryLinkRow = {
   category: ProductDetailCategory | ProductDetailCategory[] | null
@@ -79,7 +88,9 @@ function getSeoMetadataValue(
   return trimmedValue ? trimmedValue : null
 }
 
-function resolveNoIndex(metadata: ProductSeoMetadata | null | undefined): boolean {
+function resolveNoIndex(
+  metadata: ProductSeoMetadata | null | undefined
+): boolean {
   return metadata?.no_index === true
 }
 
@@ -128,14 +139,15 @@ const getPublicProductDetailByHandleCached = unstable_cache(
       .eq("handle", normalizedHandle)
       .maybeSingle()
 
-    if (productError || !product) {
+    if (productError) {
+      throw new Error("Unable to load product details", { cause: productError })
+    }
+
+    if (!product) {
       return null
     }
 
-    const [
-      categoryLinksResult,
-      catalogCategories,
-    ] = await Promise.all([
+    const [categoryLinksResult, catalogCategories] = await Promise.all([
       supabase
         .from("product_categories")
         .select("category:categories(id, name, handle, image_url)")
@@ -144,13 +156,14 @@ const getPublicProductDetailByHandleCached = unstable_cache(
     ])
 
     if (categoryLinksResult.error) {
-      console.error(
-        "Error fetching public product categories:",
-        categoryLinksResult.error.message
-      )
+      throw new Error("Unable to load product categories", {
+        cause: categoryLinksResult.error,
+      })
     }
 
-    const categories = ((categoryLinksResult.data ?? []) as ProductCategoryLinkRow[])
+    const categories = (
+      (categoryLinksResult.data ?? []) as ProductCategoryLinkRow[]
+    )
       .flatMap((link) => normalizeRelatedRows(link.category))
       .filter((category, index, collection) => {
         return collection.findIndex((item) => item.id === category.id) === index
@@ -159,7 +172,9 @@ const getPublicProductDetailByHandleCached = unstable_cache(
     const images = normalizeProductImages(product)
 
     const seoMetadata =
-      product.seo_metadata && typeof product.seo_metadata === "object" && !Array.isArray(product.seo_metadata)
+      product.seo_metadata &&
+      typeof product.seo_metadata === "object" &&
+      !Array.isArray(product.seo_metadata)
         ? (product.seo_metadata as ProductSeoMetadata)
         : null
 
@@ -186,7 +201,7 @@ const getPublicProductDetailByHandleCached = unstable_cache(
     }
   },
   ["public-product-detail"],
-  { revalidate: 300 }
+  { revalidate: 300, tags: ["products"] }
 )
 
 export const getPublicProductDetailByHandle = cache(
