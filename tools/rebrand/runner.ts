@@ -50,12 +50,19 @@ function configuration(): { base: string; token: string; domain: string } {
 
 function itemDirectory(root: string, id: string): string { return path.join(root, sha256(id).slice(0,24)) }
 
+export function publicationEtag(header: string | null, version: string): string {
+  const canonical = `"${version}"`
+  // Compression/proxies can weaken the response validator. Publication uses
+  // the JSON's exact database version, never a weak If-Match comparison.
+  if (header !== canonical && header !== `W/${canonical}`) throw new Error("Product API did not return a matching ETag.")
+  return canonical
+}
+
 async function apiProduct(base: string, token: string, id: string): Promise<{ product: RebrandProduct; etag: string }> {
   const response = await request(`${base}/api/rebrand/products/${encodeURIComponent(id)}`, { headers: { Authorization: `Bearer ${token}` } })
   const product = productSchema.parse(JSON.parse((await readBytes(response, 1024 * 1024)).toString("utf8")))
   if (product.id !== id) throw new Error("Product API returned the wrong product.")
-  const etag = response.headers.get("etag")
-  if (etag !== `"${product.version}"`) throw new Error("Product API did not return a matching ETag.")
+  const etag = publicationEtag(response.headers.get("etag"), product.version)
   return { product, etag }
 }
 

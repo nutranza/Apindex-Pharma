@@ -10,7 +10,7 @@ import { inspectImage } from "../../src/lib/rebrand/media"
 import { publishProduct, readPublishInput, RebrandError, type PublishInput } from "../../src/lib/rebrand/publication"
 import { toRebrandProduct } from "../../src/lib/rebrand/product"
 import { isPrivateAddress } from "./network"
-import { discoverActiveProducts, fetchItem, main, prepareCandidate, prepareItem, publishItem, verifySavedProduct } from "./runner"
+import { discoverActiveProducts, fetchItem, main, prepareCandidate, prepareItem, publicationEtag, publishItem, verifySavedProduct } from "./runner"
 import { importImagegenOutput, generationMetrics } from "./imagegen"
 
 const product: RebrandProduct = { id: "p1", handle: "original-url", name: "Wellovir", description: '<p class="Wellovir">Wellona Pharma supplies Wellovir; well tolerated. Cipla and Lupin.</p>',
@@ -26,6 +26,15 @@ const review = (digest: string) => ({ status: "passed", candidateHash: digest, i
 const input: PublishInput = { productId: "p1", version: product.version, key: "test-request-123", patch: { tradeName: "Dexovir" },
   image: null, mimeType: null, extension: null, digest: "a".repeat(64) }
 const publication = { productId: "p1", handle: product.handle, imageUrl: product.imageUrl, version: product.version, replayed: false }
+
+test("matching weak response ETags become strong publication versions without accepting mismatches", () => {
+  const strong = `"${product.version}"`
+  assert.equal(publicationEtag(strong, product.version), strong)
+  assert.equal(publicationEtag(`W/${strong}`, product.version), strong)
+  for (const invalid of [null, "*", product.version, 'W/"stale"', '"stale"', `${strong}, ${strong}`, `w/${strong}`]) {
+    assert.throws(() => publicationEtag(invalid, product.version), /matching ETag/)
+  }
+})
 
 test("multiple trade names replace individual references and retain other brands", () => {
   const patch = preparePatch({ ...product, name: "Medicine Syrup", tradeName: "Ascoril, Chestwell",
@@ -147,13 +156,14 @@ test("fetch performs only a read and checkpoints validated source bytes; missing
   context.mock.method(globalThis, "fetch", async (_url: string | URL | Request, init?: RequestInit) => {
     assert.equal(init?.method ?? "GET", "GET")
     reads++
-    return Response.json(product, { headers: { ETag: `"${product.version}"` } })
+    return Response.json(product, { headers: { ETag: `W/"${product.version}"` } })
   })
   const item = { id: "p1", product: null, etag: null, original: null, originalHash: null, candidate: null,
     publication: null, verified: false, skipped: false, error: null }
   await fetchItem(item, root, "https://api.example", "test-token", async url => { assert.equal(url, product.imageUrl); return bytes })
   assert.equal(reads, 1)
   assert.equal(item.originalHash, sha256(bytes))
+  assert.equal(item.etag, `"${product.version}"`)
   assert.equal(item.publication, null)
   await fetchItem(item, root, "https://api.example", "test-token", async () => { throw new Error("Should not download twice") })
   assert.equal(reads, 1)
