@@ -16,8 +16,8 @@
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit",
     "analyze": "cross-env ANALYZE=true next build",
-    "rebrand": "tsx tools/rebrand/cli.ts",
-    "test:rebrand": "tsx --test tools/rebrand/*.test.ts"
+    "rebrand": "node --import tsx tools/rebrand/cli.ts",
+    "test:rebrand": "node --import tsx --test tools/rebrand/*.test.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.958.0",

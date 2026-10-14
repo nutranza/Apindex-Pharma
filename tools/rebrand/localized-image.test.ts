@@ -6,6 +6,7 @@ import path from "node:path"
 import { randomUUID } from "node:crypto"
 import { instructionSchema, sha256, type Instructions, type RebrandProduct } from "../../src/lib/rebrand/contracts"
 import { renderLocalizedImage, validateEditPlan, verifyProtectedPixels } from "./localized-image"
+import { prepareImagegen, importImagegenOutput, generationMetrics } from "./imagegen"
 
 const product: RebrandProduct = { id: "test", handle: "test", name: "Syrup", tradeName: "Ascoril, Chestwell", description: null,
   shortDescription: null, imageUrl: null, imageUrls: [], version: "2026-10-13T00:00:00Z" }
@@ -20,28 +21,26 @@ test("localized composition preserves dimensions and every pixel outside edit ar
   await mkdir(folder, { recursive: true })
   const original = await sharp({ create: { width: 600, height: 581, channels: 3, background: "#607090" } }).jpeg().toBuffer()
   const logo = await sharp({ create: { width: 100, height: 60, channels: 4, background: "#ffbb00" } }).png().toBuffer()
-  let requests = 0
-  const generate = async (crop: Buffer) => {
-    requests++
-    const dimensions = await sharp(crop).metadata()
-    assert.equal(dimensions.width, dimensions.height)
-    // Deliberately change the entire generated context. Only the name region may survive.
-    return sharp({ create: { width: 100, height: 100, channels: 3, background: "#112233" } }).png().toBuffer()
-  }
-  const result = await renderLocalizedImage(original, logo, instructions, product, "apindexpharma.com", folder, generate)
+  const key = await prepareImagegen(original, instructions, folder)
+  assert.ok(key)
+  // Deliberately change the entire generated context. Only the name region may survive.
+  const external = path.join(folder, "external.png")
+  await writeFile(external, await sharp({ create: { width: 100, height: 100, channels: 3, background: "#112233" } }).png().toBuffer())
+  await importImagegenOutput(folder, external, key, 2000)
+  const result = await renderLocalizedImage(original, logo, instructions, product, "apindexpharma.com", folder)
   const edits = validateEditPlan(instructions, product)
   await verifyProtectedPixels(original, result, edits)
   assert.equal((await sharp(result).metadata()).width, 600)
   assert.equal((await sharp(result).metadata()).height, 581)
-  await renderLocalizedImage(original, logo, instructions, product, "apindexpharma.com", folder, generate)
-  assert.equal(requests, 1)
+  await renderLocalizedImage(original, logo, instructions, product, "apindexpharma.com", folder)
+  assert.deepEqual(await generationMetrics(folder), { calls: 1, elapsedMs: 2000 })
   const plan = instructions.editPlan
   assert.ok(plan)
   const retained = await readFile(path.join(folder, "name-region-0.png"))
   const reuse = { ...instructions, editPlan: { ...plan, names: [{ ...plan.names[0], reuseImageHash: sha256(retained) }] } }
-  await renderLocalizedImage(original, logo, reuse, product, "apindexpharma.com", folder, async () => { throw new Error("Must reuse inspected patch") })
+  await renderLocalizedImage(original, logo, reuse, product, "apindexpharma.com", folder)
   await writeFile(path.join(folder, "name-region-0.png"), Buffer.from("tampered"))
-  await assert.rejects(renderLocalizedImage(original, logo, reuse, product, "apindexpharma.com", folder, generate))
+  await assert.rejects(renderLocalizedImage(original, logo, reuse, product, "apindexpharma.com", folder))
   const corrupted = await sharp(result).composite([{ input: { create: { width: 1, height: 1, channels: 4, background: "red" } }, left: 100, top: 210 }]).png().toBuffer()
   await assert.rejects(verifyProtectedPixels(original, corrupted, edits), /protected original pixels/)
 })
@@ -80,7 +79,7 @@ test("pixel checks cover image edges and gaps between edit regions at both expor
   }
 })
 
-test("an existing domain can be replaced once without a Gemini request", async () => {
+test("an existing domain can be replaced once without ImageGen", async () => {
   const folder = path.resolve(".cache/rebrand-checks", randomUUID())
   await mkdir(folder, { recursive: true })
   const original = await sharp({ create: { width: 600, height: 581, channels: 3, background: "white" } }).png().toBuffer()
@@ -88,7 +87,7 @@ test("an existing domain can be replaced once without a Gemini request", async (
   assert.ok(plan)
   const domainOnly: Instructions = { ...instructions, ownership: "other", wellonaBrandingPresent: false,
     editPlan: { ...plan, names: [], logos: [] } }
-  const result = await renderLocalizedImage(original, original, domainOnly, product, "apindexpharma.com", folder, async () => { throw new Error("Must not generate") })
+  const result = await renderLocalizedImage(original, original, domainOnly, product, "apindexpharma.com", folder)
   await verifyProtectedPixels(original, result, validateEditPlan(domainOnly, product))
 })
 
@@ -100,7 +99,7 @@ test("no source domain means no added domain; logo uses supplied pixels without 
   const plan = instructions.editPlan
   assert.ok(plan)
   const logoOnly = { ...instructions, domainPresent: false, editPlan: { ...plan, names: [], domains: undefined } }
-  const result = await renderLocalizedImage(original, logo, logoOnly, product, "apindexpharma.com", folder, async () => { throw new Error("Must not generate") })
+  const result = await renderLocalizedImage(original, logo, logoOnly, product, "apindexpharma.com", folder)
   await verifyProtectedPixels(original, result, plan.logos)
   const rect = plan.logos[0]
   const expected = await sharp(logo).resize(rect.width, rect.height, { fit: "contain", background: rect.background }).flatten({ background: rect.background }).ensureAlpha().raw().toBuffer()
@@ -108,7 +107,7 @@ test("no source domain means no added domain; logo uses supplied pixels without 
   assert.deepEqual(actual, expected)
   assert.throws(() => instructionSchema.parse({ ...logoOnly, editPlan: { ...logoOnly.editPlan, domains: plan.domains } }))
   const larger = { ...logoOnly, editPlan: { ...logoOnly.editPlan, outputScale: 2 as const } }
-  const exported = await renderLocalizedImage(original, logo, larger, product, "apindexpharma.com", folder, async () => { throw new Error("Must not generate") })
+  const exported = await renderLocalizedImage(original, logo, larger, product, "apindexpharma.com", folder)
   assert.equal((await sharp(exported).metadata()).width, 1200)
   assert.equal((await sharp(exported).metadata()).height, 1162)
   await verifyProtectedPixels(original, exported, plan.logos, 2)
