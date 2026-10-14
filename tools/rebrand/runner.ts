@@ -12,7 +12,7 @@ import { inspectImage } from "../../src/lib/rebrand/media"
 import { downloadImage, readBytes, request } from "./network"
 import { renderLocalizedImage, RENDERER_VERSION, validateEditPlan, verifyProtectedPixels } from "./localized-image"
 import { atomicWrite, exists, readJson, writeJson } from "./files"
-import { generationMetrics, importImagegenOutput, prepareImagegen } from "./imagegen"
+import { generationMetrics, imagegenResultReady, importImagegenOutput, prepareImagegen } from "./imagegen"
 
 const itemSchema = z.object({
   id: z.string(), product: productSchema.nullable(), etag: z.string().nullable(),
@@ -86,7 +86,11 @@ export async function prepareItem(item: Item, directory: string, domain: string)
   preparePatch(item.product, instructions)
   if (instructions.imageAction === "edit") validateEditPlan(instructions, item.product)
   const key = await prepareImagegen(original, instructions, directory)
-  if (!key) await prepareCandidate(item, directory, domain)
+  if (!key || await imagegenResultReady(directory, key)) {
+    await prepareCandidate(item, directory, domain)
+    return null
+  }
+  if ((await generationMetrics(directory)).calls >= 2) throw new Error("ImageGen correction budget exhausted. Leave this product unchanged and report it.")
   return key
 }
 

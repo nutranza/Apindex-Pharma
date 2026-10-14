@@ -83,6 +83,15 @@ export async function importImagegenOutput(directory: string, file: string, inpu
   await writeJson(historyFile, history)
 }
 
+export async function imagegenResultReady(directory: string, inputKey: string): Promise<boolean> {
+  const file = path.join(directory, "imagegen-result.json")
+  if (!await exists(file)) return false
+  const result = resultSchema.parse(await readJson(file))
+  if (result.inputKey !== inputKey) return false
+  if (sha256(await readFile(path.join(directory, result.file))) !== result.outputHash) throw new Error("Imported ImageGen result changed.")
+  return true
+}
+
 export async function imagegenPatches(original: Buffer, instructions: Instructions, directory: string): Promise<Map<number, Buffer>> {
   const plan = instructions.editPlan
   const patches = new Map<number, Buffer>()

@@ -134,6 +134,8 @@ test("preparation of text-only changes creates pending review, and resume reuses
   assert.equal(z.object({ status: z.string() }).parse(savedReview).status, "needs_review")
   await prepareCandidate(item, root, "apindexpharma.com")
   assert.equal(JSON.stringify(item.candidate), first)
+  assert.equal(await prepareItem(item, root, "apindexpharma.com"), null)
+  assert.equal(JSON.stringify(item.candidate), first)
   await writeFile(path.join(root, "original.png"), "changed")
   await assert.rejects(prepareCandidate(item, root, "apindexpharma.com"))
 })
