@@ -140,6 +140,9 @@ call that tool or inspect images. Resume checkpoints when the session is interru
 
 - Discovery: `GET /api/artistly/products?status=active&limit=100&cursor=...`.
 - Read: `GET /api/rebrand/products/{id}` returns product details and quoted ETag.
+  Proxies may return the matching weak form `W/"version"`; the runner checks
+  the exact JSON version and uses `"version"` for publication. Other validators
+  are rejected, and database version checks remain mandatory.
 - Save: `POST /api/rebrand/products/{id}/publish`, multipart JSON `patch` and
   optional `image`, with bearer token, `If-Match` and `X-Idempotency-Key`.
 - Images: valid single-frame JPEG/PNG/WebP, maximum 3 MB; full request maximum
