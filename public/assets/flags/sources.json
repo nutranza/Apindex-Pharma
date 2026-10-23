@@ -1,0 +1,16 @@
+{
+  "sources": [
+    "https://flagpedia.net/download/api",
+    "https://commons.wikimedia.org/wiki/File:Flag_of_Somaliland.svg"
+  ],
+  "files": {
+    "ng.svg": "https://flagcdn.com/ng.svg",
+    "ug.svg": "https://flagcdn.com/ug.svg",
+    "zm.svg": "https://flagcdn.com/zm.svg",
+    "tz.svg": "https://flagcdn.com/tz.svg",
+    "jp.svg": "https://flagcdn.com/jp.svg",
+    "in.svg": "https://flagcdn.com/in.svg",
+    "somaliland.svg": "https://commons.wikimedia.org/wiki/File:Flag_of_Somaliland.svg"
+  },
+  "modified": false
+}

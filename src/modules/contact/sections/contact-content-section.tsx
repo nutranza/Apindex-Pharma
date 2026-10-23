@@ -4,7 +4,7 @@ import { COMPANY_ADDRESS_TEXT } from "@/modules/company/constants"
 import ContactInquiryForm from "@modules/contact/components/contact-inquiry-form"
 
 const GOOGLE_MAP_EMBED_URL =
-  "https://www.google.com/maps?q=401%2C%20Rudra%20Diamond%2C%20Near%20Zalal%20Liquid%2C%20Near%20Kiran%20Hospital%2C%20Katargam%2C%20Surat%2C%20Gujarat%20395004%2C%20India&z=17&hl=en&gl=IN&output=embed"
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3719.3077316085414!2d72.8343655759732!3d21.21964238119365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be04f9e6275b2c9%3A0xed53fcb5ea9a4475!2sAPINDEX%20PHARMACEUTICALS%20PVT.%20LTD.!5e0!3m2!1sen!2sin!4v1792667178983!5m2!1sen!2sin"
 
 const CONTACT_EMAIL = "info@apindexpharma.com"
 
@@ -78,7 +78,8 @@ export default function ContactContentSection() {
                 title="Apindex Corporate Office Map"
                 src={GOOGLE_MAP_EMBED_URL}
                 loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
                 className="absolute inset-0 h-full w-full border-0 saturate-[1.15] contrast-[1.02]"
               />
             </div>

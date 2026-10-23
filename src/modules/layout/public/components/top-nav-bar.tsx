@@ -105,7 +105,7 @@ export default function TopNavBar() {
         <div className="flex h-20 w-full items-center justify-between">
           <Link href="/" aria-label="Apindex home" className="shrink-0">
             <Image
-              src="/apindex-logo.jpg"
+              src="/apindex-logo-registered.png"
               alt="Apindex"
               width={1920}
               height={1187}
@@ -179,7 +179,7 @@ export default function TopNavBar() {
           >
             <div className="flex h-20 items-center justify-between border-b border-gray-200/80 px-6">
               <Image
-                src="/apindex-logo.jpg"
+                src="/apindex-logo-registered.png"
                 alt="Apindex"
                 width={1920}
                 height={1187}

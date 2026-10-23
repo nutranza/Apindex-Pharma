@@ -43,9 +43,9 @@ const SOCIAL_ICONS = [
     icon: FaLinkedinIn,
     href: "https://www.linkedin.com/in/ashish-chovatiya-822732231/",
   },
-  { label: "X", icon: FaXTwitter },
-  { label: "Instagram", icon: FaInstagram },
-  { label: "YouTube", icon: FaYoutube },
+  // { label: "X", icon: FaXTwitter },
+  { label: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/apindex.pharmaceutical/" },
+  // { label: "YouTube", icon: FaYoutube },
   { label: "WhatsApp", icon: FaWhatsapp, href: WHATSAPP_URL },
 ]
 
@@ -61,7 +61,7 @@ export default function FooterSection() {
               className="inline-flex focus-visible:outline-none"
             >
               <Image
-                src="/apindex-logo.jpg"
+                src="/apindex-logo-registered.png"
                 alt="Apindex Pharmaceuticals"
                 width={1920}
                 height={1187}

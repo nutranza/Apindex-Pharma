@@ -1,4 +1,7 @@
 import type { PublicProductDetail } from "@/lib/data/public-product-detail"
+import { FaWhatsapp } from "react-icons/fa6"
+import { FileText } from "lucide-react"
+import { WHATSAPP_URL } from "@/modules/layout/public/constants"
 import ProductImageGallery from "@/modules/products/components/product-image-gallery"
 import {
   buildProductDetailQuoteHref,
@@ -55,6 +58,8 @@ export default function ProductDetailContentSection({
   product,
 }: ProductDetailContentSectionProps) {
   const detailRows = buildDetailRows(product)
+  const whatsappMessage = `Hello Apindex Pharma, I would like to enquire about ${product.name}. Please share your quotation and COA.`
+  const whatsappHref = `${WHATSAPP_URL}?text=${encodeURIComponent(whatsappMessage)}`
   const descriptionHtml = getProductDescriptionHtml(product)
   const descriptionParagraphs = descriptionHtml
     ? null
@@ -94,12 +99,35 @@ export default function ProductDetailContentSection({
               ))}
             </div>
 
-            <a
-              href={buildProductDetailQuoteHref(product)}
-              className="apx-button-secondary mt-7 w-full min-h-12 px-7"
-            >
-              Get a Quote
-            </a>
+            <div className="mt-7 grid gap-3">
+              <a
+                href={buildProductDetailQuoteHref(product)}
+                className="apx-button-secondary w-full min-h-12 px-7"
+              >
+                Get a Quote
+              </a>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#1ebe5d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2"
+                >
+                  <FaWhatsapp aria-hidden="true" className="size-5 shrink-0" />
+                  Enquire on WhatsApp
+                </a>
+                <a
+                  href="/assets/pdf/Apindex-Pharma-MOQ.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="apx-button-primary min-h-12 gap-2 px-4"
+                  aria-label="Check MOQ (PDF, opens in a new tab)"
+                >
+                  <FileText aria-hidden="true" className="size-5 shrink-0" />
+                  Check MOQ
+                </a>
+              </div>
+            </div>
           </div>
         </div>
 
