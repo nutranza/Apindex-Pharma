@@ -43,9 +43,9 @@ const SOCIAL_ICONS = [
     icon: FaLinkedinIn,
     href: "https://www.linkedin.com/in/ashish-chovatiya-822732231/",
   },
-  { label: "X", icon: FaXTwitter },
-  { label: "Instagram", icon: FaInstagram },
-  { label: "YouTube", icon: FaYoutube },
+  // { label: "X", icon: FaXTwitter },
+  { label: "Instagram", icon: FaInstagram, href: "https://www.instagram.com/apindex.pharmaceutical/" },
+  // { label: "YouTube", icon: FaYoutube },
   { label: "WhatsApp", icon: FaWhatsapp, href: WHATSAPP_URL },
 ]
 
