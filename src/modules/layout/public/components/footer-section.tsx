@@ -61,7 +61,7 @@ export default function FooterSection() {
               className="inline-flex focus-visible:outline-none"
             >
               <Image
-                src="/apindex-logo.jpg"
+                src="/apindex-logo-registered.png"
                 alt="Apindex Pharmaceuticals"
                 width={1920}
                 height={1187}

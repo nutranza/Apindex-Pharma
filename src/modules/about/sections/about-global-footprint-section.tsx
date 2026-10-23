@@ -1,150 +1,206 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useEffect, useRef } from "react"
 import Image from "next/image"
 
 type MarketPoint = {
-  id: string
-  label: string
-  markets: string
-  description: string
+  code: string
+  name: string
   x: number
   y: number
-  tone: "primary" | "secondary"
+  flagY: number
+  labelSide: "left" | "right"
+  homeBase?: boolean
 }
 
 const MARKET_POINTS: MarketPoint[] = [
   {
-    id: "india",
-    label: "India",
-    markets: "Manufacturing Base",
-    description:
-      "Integrated production planning, quality systems, and export documentation are coordinated from India.",
-    x: 66.0,
-    y: 53.8,
-    tone: "primary",
+    code: "ng",
+    name: "Nigeria",
+    x: 45.1,
+    y: 63.5,
+    flagY: 43,
+    labelSide: "left",
   },
   {
-    id: "africa",
-    label: "Africa",
-    markets: "Regional Healthcare Supply",
-    description:
-      "Reliable supply support for high-growth healthcare markets that need consistent batches and dependable records.",
-    x: 56.1,
-    y: 61.8,
-    tone: "secondary",
+    code: "ug",
+    name: "Uganda",
+    x: 51.6,
+    y: 68.2,
+    flagY: 14,
+    labelSide: "right",
   },
   {
-    id: "southeast-asia",
-    label: "Southeast Asia",
-    markets: "Distributor Supply Support",
-    description:
-      "Responsive manufacturing alignment for distributors serving fast-moving regional demand.",
-    x: 76.5,
-    y: 42.5,
-    tone: "secondary",
+    code: "zm",
+    name: "Zambia",
+    x: 49.8,
+    y: 76.5,
+    flagY: 31,
+    labelSide: "left",
   },
   {
-    id: "europe",
-    label: "Europe",
-    markets: "Regulated Market Readiness",
-    description:
-      "Structured export readiness and documentation discipline for tightly regulated procurement environments.",
-    x: 54,
-    y: 34.8,
-    tone: "primary",
+    code: "tz",
+    name: "Tanzania",
+    x: 52.6,
+    y: 72.4,
+    flagY: 54,
+    labelSide: "left",
   },
   {
-    id: "latin-america",
-    label: "Latin America",
-    markets: "Partner-Led Supply Programs",
-    description:
-      "Partner-focused supply planning for programs that require traceable quality and stable delivery cycles.",
-    x: 25.2,
-    y: 67,
-    tone: "primary",
+    code: "somaliland",
+    name: "Somaliland",
+    x: 56.3,
+    y: 63.8,
+    flagY: 43,
+    labelSide: "right",
+  },
+  {
+    code: "jp",
+    name: "Japan",
+    x: 80.5,
+    y: 53.5,
+    flagY: 32,
+    labelSide: "right",
+  },
+  {
+    code: "in",
+    name: "India",
+    x: 65.1,
+    y: 58.5,
+    flagY: 24,
+    labelSide: "right",
+    homeBase: true,
   },
 ]
 
 export default function AboutGlobalFootprintSection() {
-  const [activePointId, setActivePointId] = useState(MARKET_POINTS[0].id)
+  const mapRef = useRef<HTMLDivElement>(null)
 
-  const activePoint = useMemo(
-    () =>
-      MARKET_POINTS.find((point) => point.id === activePointId) ??
-      MARKET_POINTS[0],
-    [activePointId]
-  )
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    const centerMap = () => {
+      map.scrollLeft = (map.scrollWidth - map.clientWidth) / 2
+    }
+
+    centerMap()
+    window.addEventListener("resize", centerMap)
+    return () => window.removeEventListener("resize", centerMap)
+  }, [])
 
   return (
-    <section id="global-presence" className="bg-surface apx-section-compact">
+    <section
+      id="global-presence"
+      aria-labelledby="global-footprint-heading"
+      className="bg-surface apx-section-compact"
+    >
       <div className="content-container">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="section-heading">Global <span className="text-primary">Footprint</span></h2>
+          <h2 id="global-footprint-heading" className="section-heading">
+            Global <span className="text-primary">Footprint</span>
+          </h2>
           <p className="mt-3 section-description">
-            Connecting pharmaceutical partners with finished formulations,
-            clear documentation, and dependable global supply support across
-            domestic and international healthcare markets.
+            Serving 5+ countries with dependable pharmaceutical supply and
+            lasting healthcare partnerships, coordinated from India.
           </p>
         </div>
-
-        <div className="mt-10 overflow-hidden rounded-2xl bg-white">
-          <div className="relative aspect-[16/9] min-h-[300px] w-full overflow-hidden bg-surface-low sm:min-h-[420px] lg:min-h-[560px]">
-            <Image
-              fill
-              priority={false}
-              sizes="(min-width: 1280px) 1180px, 100vw"
-              src="/global-footprint-map.png"
-              alt="World map showing Apindex pharmaceutical export reach"
-              className="object-cover object-center"
-            />
-            <div className="absolute inset-0 bg-white/10" />
-
-            {MARKET_POINTS.map((point) => {
-              const isActive = point.id === activePoint.id
-              const markerColor =
-                point.tone === "primary"
-                  ? "bg-primary ring-primary/25"
-                  : "bg-secondary ring-secondary/25"
-
-              return (
-                <button
-                  key={point.id}
-                  type="button"
-                  aria-label={`Show ${point.label} market details`}
-                  onClick={() => setActivePointId(point.id)}
-                  onFocus={() => setActivePointId(point.id)}
-                  onMouseEnter={() => setActivePointId(point.id)}
-                  className="group absolute z-20 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full focus:outline-none"
-                  style={{ left: `${point.x}%`, top: `${point.y}%` }}
+        <div className="mt-10 overflow-hidden">
+          <p
+            id="footprint-map-help"
+            className="px-4 pt-4 text-xs text-on-surface-variant sm:hidden"
+          >
+            Swipe across the map to explore our locations.
+          </p>
+          <div
+            ref={mapRef}
+            role="region"
+            aria-label="Apindex global footprint map"
+            aria-describedby="footprint-map-help"
+            tabIndex={0}
+            className="overflow-x-auto overscroll-x-contain focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-primary"
+          >
+            <div className="relative aspect-[2/1] min-w-[900px]">
+              <Image
+                fill
+                sizes="(min-width: 1280px) 1180px, (min-width: 900px) 100vw, 900px"
+                src="/global-footprint-map-transparent.webp"
+                alt="Tilted gray world map showing Apindex pharmaceutical export locations"
+                className="object-contain opacity-50"
+              />
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 100 100"
+                preserveAspectRatio="none"
+                className="pointer-events-none absolute inset-0 h-full w-full"
+                focusable="false"
+              >
+                {MARKET_POINTS.map((point) => (
+                  <g key={point.code}>
+                    <ellipse
+                      cx={point.x}
+                      cy={point.y}
+                      rx="0.75"
+                      ry="0.4"
+                      fill="#30363a"
+                      opacity="0.18"
+                    />
+                    <line
+                      x1={point.x}
+                      y1={point.y}
+                      x2={point.x}
+                      y2={point.flagY}
+                      stroke="#42494d"
+                      strokeWidth={1.8}
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </g>
+                ))}
+              </svg>
+              {MARKET_POINTS.map((point) => (
+                <div
+                  key={point.code}
+                  role="img"
+                  aria-label={`${point.name}, ${
+                    point.homeBase ? "India home base" : "export market"
+                  }`}
+                  className="absolute -translate-x-1/2 -translate-y-1/2"
+                  style={{ left: `${point.x}%`, top: `${point.flagY}%` }}
                 >
-                  <span
-                    className={`absolute h-8 w-8 rounded-full ${markerColor} opacity-45 ring-8 transition-transform duration-200 group-hover:scale-125 ${
-                      isActive ? "scale-125" : "scale-100"
+                  <div className="relative size-16 overflow-hidden rounded-full bg-white shadow-[0_4px_8px_rgba(0,0,0,0.18)] sm:size-[72px]">
+                    <Image
+                      src={`/assets/flags/${point.code}.svg`}
+                      alt=""
+                      fill
+                      sizes="(min-width: 640px) 72px, 64px"
+                      className={`object-cover ${
+                        point.code === "zm" ? "object-right" : "object-center"
+                      }`}
+                    />
+                  </div>
+                  <div
+                    aria-hidden="true"
+                    className={`absolute top-1/2 w-max max-w-32 -translate-y-1/2 rounded bg-surface/95 px-1 ${
+                      point.labelSide === "left"
+                        ? "right-full mr-3 text-right"
+                        : "left-full ml-3 text-left"
                     }`}
-                  />
-                  <span
-                    className={`relative h-3.5 w-3.5 rounded-full ${markerColor} ring-4 transition-transform duration-200 ${
-                      isActive ? "scale-125" : "scale-100"
-                    }`}
-                  />
-                </button>
-              )
-            })}
-
-            <div
-              key={activePoint.id}
-              className="absolute bottom-4 left-4 right-4 z-20 rounded-xl bg-white/95 p-4 shadow-[0_18px_45px_rgba(27,28,28,0.12)] backdrop-blur-sm animate-global-market-card sm:bottom-6 sm:left-auto sm:right-6 sm:w-[360px]"
-            >
-              <p className="text-sm font-bold text-primary">
-                {activePoint.label}
-              </p>
-              <h3 className="apx-font-headline mt-1 text-xl font-extrabold text-on-surface">
-                {activePoint.markets}
-              </h3>
-              <p className="mt-2 text-sm leading-6 text-on-surface-variant">
-                {activePoint.description}
-              </p>
+                  >
+                    <p
+                      className={`text-sm font-bold sm:text-base ${
+                        point.homeBase ? "text-primary" : "text-on-surface"
+                      }`}
+                    >
+                      {point.name}
+                    </p>
+                    {point.homeBase ? (
+                      <p className="mt-0.5 text-[11px] font-medium text-on-surface-variant">
+                        Home base
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>

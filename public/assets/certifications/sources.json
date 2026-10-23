@@ -1,0 +1,34 @@
+{
+  "fdca.png": {
+    "source": "https://fdcadata.in/food/logo.png",
+    "publisher": "Food & Drugs Control Administration, Gujarat",
+    "modified": false
+  },
+  "pharmexcil.png": {
+    "source": "https://pharmexcil.com/resp/images/pharmexcil_logo_new_MB.png",
+    "publisher": "Pharmaceuticals Export Promotion Council of India",
+    "modified": false
+  },
+  "msme.svg": {
+    "source": "https://commons.wikimedia.org/wiki/File:MSME_Logo_India.svg",
+    "publisher": "Ministry of Micro, Small & Medium Enterprises, India",
+    "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "modified": false
+  },
+  "who.svg": {
+    "source": "https://www.who.int/images/default-source/fallback/header-logos/h-logo-blue1820eae93c154e37b2588ab90fdbc17e.svg?sfvrsn=aaed4f35_20",
+    "publisher": "World Health Organization",
+    "modified": "XML encoding declaration corrected to UTF-8; artwork unchanged"
+  },
+  "gmp.png": {
+    "source": "https://iconape.com/wp-content/files/op/339123/png/gmp-good-manufacturing-practice-logo.png",
+    "sourcePage": "https://iconape.com/gmp-good-manufacturing-practice-logo-logo-icon-svg-png.html",
+    "modified": false
+  },
+  "iso.svg": {
+    "source": "https://cdn.freebiesupply.com/logos/large/2x/iso-1-logo-svg-vector.svg",
+    "sourcePage": "https://freebiesupply.com/logos/iso-logo-3/",
+    "publisher": "International Organization for Standardization",
+    "modified": "Transparent outer margins cropped through the SVG viewBox; artwork unchanged"
+  }
+}

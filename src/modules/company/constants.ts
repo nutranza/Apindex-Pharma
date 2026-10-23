@@ -4,10 +4,10 @@ export type CompanyStat = {
 }
 
 export const GLOBAL_STATS: CompanyStat[] = [
-  { value: "25+", label: "Countries Served" },
-  { value: "1000+", label: "Global Clients" },
-  { value: "400+", label: "Sterile Products" },
-  { value: "500+", label: "Non-Sterile Products" },
+  { value: "5+", label: "Countries Served" },
+  { value: "50+", label: "Global Clients" },
+  { value: "1000+", label: "Products" },
+  { value: "5+", label: "Years of Expertise" },
 ]
 
 export const COMPANY_TAGLINE =

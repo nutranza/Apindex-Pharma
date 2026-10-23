@@ -17,50 +17,50 @@ const CATEGORY_CARDS: CategoryCard[] = [
     title: "Tablet",
     description: "Solid oral dosage forms for precise daily therapy.",
     filterLabel: "Tablet",
-    imageUrl: "/category-tablets-v3.png",
-    imageAlt: "Tablet pharmaceutical products and packaging",
+    imageUrl: "/1.jpg",
+    imageAlt: "Apindex Dexyrona-100 tablet bottle and packaging",
   },
   {
     title: "Capsule",
     description: "Encapsulated formulations for controlled delivery.",
     filterLabel: "Capsule",
-    imageUrl: "/category-capsules-v3.png",
-    imageAlt: "Blue and white capsules in a pharmaceutical production environment",
+    imageUrl: "/2.png",
+    imageAlt: "Apindex MetroDex-500 capsule packaging and blister pack",
   },
   {
     title: "Injection",
     description: "Sterile injectable products for clinical requirements.",
     filterLabel: "Injection",
-    imageUrl: "/category-injections-v3.png",
-    imageAlt: "Unbranded injectable vials and ampoules on a sterile filling line",
+    imageUrl: "/3.png",
+    imageAlt: "Apindex Gemdex-200 injection vial and packaging",
   },
   {
     title: "Eye / Ear Drops",
     description: "Focused liquid care for ophthalmic and otic use.",
     filterLabel: "Eye / Ear Drops",
-    imageUrl: "/category-eye-ear-drops-v3.png",
-    imageAlt: "Unbranded eye and ear dropper bottles in a sterile filling area",
+    imageUrl: "/4.png",
+    imageAlt: "Apindex Tobradex-D eye drop bottle and packaging",
   },
   {
     title: "Creams",
     description: "Topical preparations built for smooth application.",
     filterLabel: "Creams",
-    imageUrl: "/category-creams-v3.png",
-    imageAlt: "Unbranded pharmaceutical cream jars and topical tubes",
+    imageUrl: "/5.jpg",
+    imageAlt: "Apindex Hexina-Dex cream tube and packaging",
   },
   {
     title: "Suspension / Syrup",
     description: "Palatable liquid medicines for flexible dosing.",
     filterLabel: "Suspension / Syrup",
-    imageUrl: "/category-suspensions-syrups-v3.png",
-    imageAlt: "Unbranded liquid medicine bottles on a pharmaceutical filling line",
+    imageUrl: "/6.jpg",
+    imageAlt: "Apindex Zincdex syrup bottle and packaging",
   },
   {
     title: "Other Dosage Forms",
     description: "Additional formulations for specialized needs.",
     filterLabel: "Other",
-    imageUrl: "/category-other-dosage-forms-v3.png",
-    imageAlt: "Assorted unbranded pharmaceutical dosage forms in a clean production area",
+    imageUrl: "/7.jpg",
+    imageAlt: "Apindex Tadarise-20 oral jelly sachets",
   },
 ]
 
@@ -79,7 +79,7 @@ export default function CategoriesSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {CATEGORY_CARDS.map((card) => {
             return (
               <Link
@@ -88,7 +88,7 @@ export default function CategoriesSection() {
                 className="group relative h-[260px] overflow-hidden rounded-2xl shadow-none transition-[transform,box-shadow] duration-300 focus-visible:outline-none sm:h-[310px] xl:h-[360px]">
                 <Image
                   fill
-                  sizes="(min-width: 1280px) 18vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                  sizes="(min-width: 1280px) 25vw, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                   src={card.imageUrl}
                   alt={card.imageAlt}
                   className="object-cover transition-transform duration-500 group-hover:scale-110"

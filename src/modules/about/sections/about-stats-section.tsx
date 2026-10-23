@@ -6,8 +6,8 @@ import { GLOBAL_STATS } from "@/modules/company/constants"
 const STAT_ICONS: Record<string, LucideIcon> = {
   "Countries Served": Globe2,
   "Global Clients": UsersRound,
-  "Sterile Products": FlaskConical,
-  "Non-Sterile Products": BadgeCheck,
+  Products: FlaskConical,
+  "Years of Expertise": BadgeCheck,
 }
 
 export default function AboutStatsSection() {

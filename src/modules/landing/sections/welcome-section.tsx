@@ -4,7 +4,7 @@ import Link from "next/link"
 const TRUST_POINTS = [
   { value: "WHO-GMP", label: "Certified" },
   { value: "500+", label: "Products" },
-  { value: "25+", label: "Countries" },
+  { value: "5+", label: "Countries" },
 ]
 
 export default function WelcomeSection() {
@@ -29,7 +29,7 @@ export default function WelcomeSection() {
               </p>
               <p>
                 Our portfolio of 500+ products spans diverse therapeutic
-                categories and reaches 25+ countries through quality-focused
+                categories and reaches 5+ countries through quality-focused
                 processes, dependable sourcing, and partner-first execution.
               </p>
             </div>
