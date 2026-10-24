@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   ClipboardDocumentListIcon,
+  PhotoIcon,
   FolderIcon,
   RectangleStackIcon,
   TagIcon,
@@ -20,6 +21,12 @@ type NavItemConfig = {
 }
 
 const NAV_ITEMS: NavItemConfig[] = [
+  {
+    label: "Event Banner",
+    href: "/admin/event-banner",
+    icon: PhotoIcon,
+    permission: PERMISSIONS.HOME_SETTINGS_READ,
+  },
   {
     label: "Products",
     href: "/admin/products",

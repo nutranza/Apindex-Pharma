@@ -62,20 +62,16 @@ const FEATURES: FeatureItem[] = [
 
 export default function WhyChooseUsSection() {
   return (
-    <section
-      id="why-choose-us"
-      className="bg-white apx-section-compact"
-    >
+    <section id="why-choose-us" className="bg-white apx-section-compact">
       <div className="content-container">
         <div className="mb-12 max-w-3xl">
           <h2 className="section-heading">
-            Why Choose{" "}
-            <span className="text-primary">Apindex?</span>
+            Why Choose <span className="text-primary">Apindex?</span>
           </h2>
           <p className="mt-5 max-w-2xl section-description">
             A dependable pharmaceutical partner for finished formulations,
-            contract manufacturing coordination, domestic and global supply,
-            and long-term partnership confidence.
+            contract manufacturing coordination, domestic and global supply, and
+            long-term partnership confidence.
           </p>
         </div>
 
@@ -83,16 +79,15 @@ export default function WhyChooseUsSection() {
           {FEATURES.map((item) => {
             const Icon = item.icon
             return (
-              <div
-                key={item.title}
-                className="max-w-sm"
-              >
-                <Icon
-                  aria-hidden="true"
-                  className="size-12 text-on-surface-variant"
-                  strokeWidth={1.5}
-                />
-                <h3 className="mt-5 text-lg font-extrabold leading-tight text-on-surface">
+              <div key={item.title} className="max-w-sm">
+                <div className="relative inline-flex size-16 items-center justify-center rounded-2xl border border-secondary/20 bg-secondary/10 shadow-sm">
+                  <Icon
+                    aria-hidden="true"
+                    className="size-8 text-secondary"
+                    strokeWidth={1.75}
+                  />
+                </div>
+                <h3 className="mt-5 text-lg font-semibold leading-tight text-on-surface">
                   {item.title}
                 </h3>
                 <p className="mt-3 text-sm leading-6 text-on-surface-variant">
