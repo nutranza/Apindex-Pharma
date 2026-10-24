@@ -1,8 +1,6 @@
 import { lookup } from "node:dns/promises"
 import { BlockList, isIP } from "node:net"
 import { setTimeout as delay } from "node:timers/promises"
-import { z } from "zod"
-import { vertexConnection } from "./vertex-auth"
 
 export class HttpError extends Error {
   constructor(readonly status: number) { super(`Request failed (HTTP ${status}).`) }
@@ -29,7 +27,16 @@ export async function request(url: string | URL, init: RequestInit, timeout = 60
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
       const response = await fetch(url, { ...init, redirect: "error", signal: AbortSignal.timeout(timeout) })
-      if (!response.ok) { await response.body?.cancel(); throw new HttpError(response.status) }
+      if (!response.ok) {
+        const retryAfter = response.headers.get("retry-after")
+        await response.body?.cancel()
+        if ((response.status === 429 || response.status === 503) && retryAfter && attempt < 2) {
+          const seconds = Number(retryAfter)
+          const wait = Number.isFinite(seconds) ? seconds * 1000 : Date.parse(retryAfter) - Date.now()
+          if (wait > 0 && wait <= 60_000) await delay(wait)
+        }
+        throw new HttpError(response.status)
+      }
       return response
     } catch (error) {
       if (error instanceof HttpError && error.status !== 429 && error.status < 500) throw error
@@ -72,40 +79,4 @@ export async function downloadImage(url: string): Promise<Buffer> {
     return readBytes(response, 7 * 1024 * 1024)
   }
   throw new Error("Image download failed.")
-}
-
-const geminiSchema = z.object({
-  candidates: z.array(z.object({
-    finishReason: z.string().optional(),
-    content: z.object({ parts: z.array(z.object({
-      text: z.string().optional(),
-      inlineData: z.object({ mimeType: z.enum(["image/png", "image/jpeg", "image/webp"]), data: z.string().min(1) }).optional(),
-    })) }).optional(),
-  })).optional(),
-})
-
-export function extractGeneratedImage(value: unknown): Buffer {
-  const response = geminiSchema.parse(value)
-  if (response.candidates?.length !== 1) throw new Error("Gemini did not return exactly one candidate. Review the request.")
-  const candidate = response.candidates[0]
-  if (candidate.finishReason && candidate.finishReason !== "STOP") throw new Error("Gemini returned an incomplete or blocked result.")
-  const images = candidate.content?.parts.flatMap(part => part.inlineData ? [part.inlineData] : []) ?? []
-  if (images.length !== 1) throw new Error("Gemini did not return exactly one image. No candidate can be published.")
-  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(images[0].data)) throw new Error("Invalid generated image encoding.")
-  return Buffer.from(images[0].data, "base64")
-}
-
-export async function generateImage(original: Buffer, originalMime: string, logo: Buffer, logoMime: string, prompt: string): Promise<Buffer> {
-  const model = process.env.REBRAND_IMAGE_MODEL || "gemini-2.5-flash-image"
-  if (!/^[a-zA-Z0-9.-]+$/.test(model)) throw new Error("Invalid model ID.")
-  const { endpoint, headers } = await vertexConnection(model, request)
-  const contents = [{ role: "user", parts: [
-    { text: prompt },
-    { inlineData: { mimeType: logoMime, data: logo.toString("base64") } },
-    { inlineData: { mimeType: originalMime, data: original.toString("base64") } },
-  ] }]
-  const response = await request(`${endpoint}:generateContent`, { method: "POST", headers,
-    body: JSON.stringify({ contents, generationConfig: { responseModalities: ["TEXT", "IMAGE"] } }) }, 180_000)
-  const value: unknown = JSON.parse((await readBytes(response, 24 * 1024 * 1024)).toString("utf8"))
-  return extractGeneratedImage(value)
 }

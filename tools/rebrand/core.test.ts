@@ -9,8 +9,9 @@ import { candidateHash, instructionSchema, preparePatch, renameWellonaBrand, req
 import { inspectImage } from "../../src/lib/rebrand/media"
 import { publishProduct, readPublishInput, RebrandError, type PublishInput } from "../../src/lib/rebrand/publication"
 import { toRebrandProduct } from "../../src/lib/rebrand/product"
-import { extractGeneratedImage, isPrivateAddress, generateImage } from "./network"
-import { fetchItem, prepareCandidate, verifySavedProduct } from "./runner"
+import { isPrivateAddress } from "./network"
+import { discoverActiveProducts, fetchItem, main, prepareCandidate, prepareItem, publicationEtag, publishItem, verifySavedProduct } from "./runner"
+import { importImagegenOutput, generationMetrics } from "./imagegen"
 
 const product: RebrandProduct = { id: "p1", handle: "original-url", name: "Wellovir", description: '<p class="Wellovir">Wellona Pharma supplies Wellovir; well tolerated. Cipla and Lupin.</p>',
   shortDescription: "Wellona Pharma Wellovir", tradeName: "Wellovir", imageUrl: "https://wellonapharma.com/a.png", imageUrls: ["https://wellonapharma.com/a.png"], version: "2026-10-13T00:00:00+00:00" }
@@ -25,6 +26,15 @@ const review = (digest: string) => ({ status: "passed", candidateHash: digest, i
 const input: PublishInput = { productId: "p1", version: product.version, key: "test-request-123", patch: { tradeName: "Dexovir" },
   image: null, mimeType: null, extension: null, digest: "a".repeat(64) }
 const publication = { productId: "p1", handle: product.handle, imageUrl: product.imageUrl, version: product.version, replayed: false }
+
+test("matching weak response ETags become strong publication versions without accepting mismatches", () => {
+  const strong = `"${product.version}"`
+  assert.equal(publicationEtag(strong, product.version), strong)
+  assert.equal(publicationEtag(`W/${strong}`, product.version), strong)
+  for (const invalid of [null, "*", product.version, 'W/"stale"', '"stale"', `${strong}, ${strong}`, `w/${strong}`]) {
+    assert.throws(() => publicationEtag(invalid, product.version), /matching ETag/)
+  }
+})
 
 test("multiple trade names replace individual references and retain other brands", () => {
   const patch = preparePatch({ ...product, name: "Medicine Syrup", tradeName: "Ascoril, Chestwell",
@@ -66,23 +76,14 @@ test("first detail image wins; object gallery images and missing images are supp
   assert.equal(toRebrandProduct({ ...row, image_url: null }).imageUrl, "https://images.example/gallery.png")
   assert.equal(toRebrandProduct({ ...row, image_url: null, images: [] }).imageUrl, null)
 })
-test("review gates require exact bytes/text, every check, and explicit user approval", () => {
+test("automatic review gates require exact bytes/text and every Codex check", () => {
   const digest = candidateHash(product, { name: "Dexovir" }, "a".repeat(64), instructions)
-  const approval = { approved: true, candidateHash: digest, reference: "User approved p1 in this chat." }
-  requireReview(review(digest), approval, digest, false)
-  assert.throws(() => requireReview(null, approval, digest, false))
-  assert.throws(() => requireReview({ ...review(digest), status: "needs_review" }, approval, digest, false))
-  assert.throws(() => requireReview({ ...review(digest), checks: { ...review(digest).checks, medicineTextPreserved: false } }, approval, digest, false))
-  assert.throws(() => requireReview(review(digest), null, digest, false))
-  assert.throws(() => requireReview(review(digest), approval, candidateHash(product, { name: "Changed" }, "a".repeat(64), instructions), false))
-  assert.throws(() => requireReview(review(digest), approval, candidateHash(product, { name: "Dexovir" }, "b".repeat(64), instructions), false))
-  requireReview(review(digest), null, digest, true)
-})
-test("Gemini responses must contain exactly one complete valid image", () => {
-  assert.throws(() => extractGeneratedImage({ candidates: [{ content: { parts: [{ text: "Cannot generate." }] }, finishReason: "STOP" }] }))
-  assert.throws(() => extractGeneratedImage({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "AAAA" } }] }, finishReason: "SAFETY" }] }))
-  assert.throws(() => extractGeneratedImage({ candidates: [] }))
-  assert.equal(extractGeneratedImage({ candidates: [{ content: { parts: [{ inlineData: { mimeType: "image/png", data: "AAAA" } }] }, finishReason: "STOP" }] }).length, 3)
+  requireReview(review(digest), digest)
+  assert.throws(() => requireReview(null, digest))
+  assert.throws(() => requireReview({ ...review(digest), status: "needs_review" }, digest))
+  assert.throws(() => requireReview({ ...review(digest), checks: { ...review(digest).checks, medicineTextPreserved: false } }, digest))
+  assert.throws(() => requireReview(review(digest), candidateHash(product, { name: "Changed" }, "a".repeat(64), instructions)))
+  assert.throws(() => requireReview(review(digest), candidateHash(product, { name: "Dexovir" }, "b".repeat(64), instructions)))
 })
 test("image validation rejects fake files and oversized images", async () => {
   await assert.rejects(inspectImage(Buffer.from("not an image")))
@@ -142,6 +143,8 @@ test("preparation of text-only changes creates pending review, and resume reuses
   assert.equal(z.object({ status: z.string() }).parse(savedReview).status, "needs_review")
   await prepareCandidate(item, root, "apindexpharma.com")
   assert.equal(JSON.stringify(item.candidate), first)
+  assert.equal(await prepareItem(item, root, "apindexpharma.com"), null)
+  assert.equal(JSON.stringify(item.candidate), first)
   await writeFile(path.join(root, "original.png"), "changed")
   await assert.rejects(prepareCandidate(item, root, "apindexpharma.com"))
 })
@@ -153,13 +156,14 @@ test("fetch performs only a read and checkpoints validated source bytes; missing
   context.mock.method(globalThis, "fetch", async (_url: string | URL | Request, init?: RequestInit) => {
     assert.equal(init?.method ?? "GET", "GET")
     reads++
-    return Response.json(product, { headers: { ETag: `"${product.version}"` } })
+    return Response.json(product, { headers: { ETag: `W/"${product.version}"` } })
   })
   const item = { id: "p1", product: null, etag: null, original: null, originalHash: null, candidate: null,
     publication: null, verified: false, skipped: false, error: null }
   await fetchItem(item, root, "https://api.example", "test-token", async url => { assert.equal(url, product.imageUrl); return bytes })
   assert.equal(reads, 1)
   assert.equal(item.originalHash, sha256(bytes))
+  assert.equal(item.etag, `"${product.version}"`)
   assert.equal(item.publication, null)
   await fetchItem(item, root, "https://api.example", "test-token", async () => { throw new Error("Should not download twice") })
   assert.equal(reads, 1)
@@ -167,7 +171,7 @@ test("fetch performs only a read and checkpoints validated source bytes; missing
   context.mock.method(globalThis, "fetch", async () => Response.json({ ...product, imageUrl: null, imageUrls: [] }, { headers: { ETag: `"${product.version}"` } }))
   await assert.rejects(fetchItem({ ...item, product: null, original: null }, root, "https://api.example", "test-token", async () => bytes), /no first image/)
 })
-test("image generation stays local, uses exact branding instructions, and resume avoids generation", async () => {
+test("ImageGen preparation and composition stay local, remain unchecked, and resume exact candidates", async context => {
   const root = path.resolve(".cache/rebrand-checks", randomUUID())
   await mkdir(root, { recursive: true })
   const bytes = await sharp({ create: { width: 600, height: 581, channels: 3, background: "white" } }).png().toBuffer()
@@ -175,45 +179,103 @@ test("image generation stays local, uses exact branding instructions, and resume
   await writeFile(path.join(root, "instructions.json"), JSON.stringify(instructions))
   const item = { id: "p1", product, etag: `"${product.version}"`, original: "original.png", originalHash: sha256(bytes), candidate: null,
     publication: null, verified: false, skipped: false, error: null }
-  let generations = 0
-  const generate = async (original: Buffer, _mime: string, logo: Buffer, _logoMime: string, prompt: string) => {
-    const crop = await sharp(original).metadata()
-    assert.equal(crop.width, 50); assert.equal(crop.height, 50); assert.ok(logo.length)
-    assert.match(prompt, /Wellovir/); assert.match(prompt, /Dexovir/)
-    assert.doesNotMatch(prompt, /Cipla|Lupin/)
-    generations++; return original
-  }
-  await prepareCandidate(item, root, "apindexpharma.com", generate)
-  assert.equal(generations, 1); assert.equal(item.publication, null)
+  context.mock.method(globalThis, "fetch", async () => { throw new Error("Preparation/composition must not call a provider or publish") })
+  const key = await prepareItem(item, root, "apindexpharma.com")
+  assert.ok(key)
+  assert.equal(item.candidate, null)
+  const prompt = await readFile(path.join(root, "imagegen-prompt.txt"), "utf8")
+  assert.match(prompt, /Wellovir/); assert.match(prompt, /Dexovir/)
+  const external = path.join(root, "external-imagegen.png")
+  await writeFile(external, await readFile(path.join(root, "imagegen-input.png")))
+  await importImagegenOutput(root, external, key, 1200)
+  await prepareCandidate(item, root, "apindexpharma.com")
+  assert.equal(item.publication, null)
   assert.equal(z.object({ status: z.string() }).parse(await readJsonForTest(path.join(root, "review.json"))).status, "needs_review")
-  await prepareCandidate(item, root, "apindexpharma.com", generate)
-  assert.equal(generations, 1)
+  const first = JSON.stringify(item.candidate)
+  await prepareCandidate(item, root, "apindexpharma.com")
+  assert.equal(JSON.stringify(item.candidate), first)
+  assert.deepEqual(await generationMetrics(root), { calls: 1, elapsedMs: 1200 })
+  await assert.rejects(publishItem(item, root, "https://api.example", "test-token"), /passing Codex inspection/)
 })
 
 async function readJsonForTest(file: string): Promise<unknown> { return JSON.parse(await readFile(file, "utf8")) }
 
-test("Gemini receives the logo first and square target last, with no other model", async context => {
-  const oldMode = process.env.REBRAND_VERTEX_AUTH
-  const oldKey = process.env.VERTEX_EXPRESS_API_KEY
-  const oldModel = process.env.REBRAND_IMAGE_MODEL
-  let requests = 0
+test("active catalogue pagination freezes unique IDs and rejects repeated cursors", async context => {
+  let reads = 0
+  context.mock.method(globalThis, "fetch", async (value: string | URL | Request) => {
+    const url = new URL(String(value))
+    assert.equal(url.searchParams.get("status"), "active")
+    reads++
+    return Response.json(reads === 1 ? { products: [{ id: "a", status: "active" }], nextCursor: "next" }
+      : { products: [{ id: "a", status: "active" }, { id: "b", status: "active" }], nextCursor: null })
+  })
+  assert.deepEqual(await discoverActiveProducts("https://api.example", "test-token"), ["a", "b"])
+  context.mock.restoreAll()
+  context.mock.method(globalThis, "fetch", async () => Response.json({ products: [], nextCursor: "loop" }))
+  await assert.rejects(discoverActiveProducts("https://api.example", "test-token"), /repeated pagination/)
+})
+
+test("interrupted website verification resumes without publishing the product twice", async context => {
+  const root = path.resolve(".cache/rebrand-checks", randomUUID())
+  await mkdir(root, { recursive: true })
+  const bytes = await sharp({ create: { width: 8, height: 8, channels: 3, background: "white" } }).png().toBuffer()
+  const keep: Instructions = { ...instructions, editPlan: undefined, imageAction: "keep", wellonaBrandingPresent: false, domainPlacementsAlreadyCorrect: true }
+  await writeFile(path.join(root, "original.png"), bytes)
+  await writeFile(path.join(root, "instructions.json"), JSON.stringify(keep))
+  const item = { id: "p1", product, etag: `"${product.version}"`, original: "original.png", originalHash: sha256(bytes), candidate: null,
+    publication: null, verified: false, skipped: false, error: null }
+  await prepareCandidate(item, root, "apindexpharma.com")
+  const digest = z.object({ candidateHash: z.string() }).parse(await readJsonForTest(path.join(root, "changes.json"))).candidateHash
+  await writeFile(path.join(root, "review.json"), JSON.stringify(review(digest)))
+  const saved = { ...product, ...preparePatch(product, keep) }
+  let writes = 0
+  let visible = false
+  context.mock.method(globalThis, "fetch", async (value: string | URL | Request, init?: RequestInit) => {
+    if (init?.method === "POST") { writes++; return Response.json(publication) }
+    if (String(value).includes("/api/rebrand/")) return Response.json(saved, { headers: { ETag: `"${product.version}"` } })
+    return new Response(visible ? `<img src="${product.imageUrl}"/>` : "Old cached page")
+  })
+  await assert.rejects(publishItem(item, root, "https://api.example", "test-token"), /public page/)
+  assert.equal(writes, 1)
+  assert.equal(item.verified, false)
+  assert.ok(await readJsonForTest(path.join(root, "publication.json")))
+  visible = true
+  await publishItem(item, root, "https://api.example", "test-token")
+  assert.equal(writes, 1)
+  assert.equal(item.verified, true)
+})
+
+test("publication refuses missing run authorization and reporting includes Codex rejections", async context => {
+  const runId = randomUUID()
+  const root = path.resolve(".cache/rebrand", runId)
+  const folder = path.join(root, sha256(product.id).slice(0, 24))
+  await mkdir(folder, { recursive: true })
+  const keep: Instructions = { ...instructions, editPlan: undefined, imageAction: "keep", wellonaBrandingPresent: false, domainPlacementsAlreadyCorrect: true }
+  const bytes = await sharp({ create: { width: 8, height: 8, channels: 3, background: "white" } }).png().toBuffer()
+  await writeFile(path.join(folder, "original.png"), bytes)
+  await writeFile(path.join(folder, "instructions.json"), JSON.stringify(keep))
+  const item = { id: "p1", product, etag: `"${product.version}"`, original: "original.png", originalHash: sha256(bytes), candidate: null,
+    publication: null, verified: false, skipped: false, error: null }
+  await prepareCandidate(item, folder, "apindexpharma.com")
+  const digest = z.object({ candidateHash: z.string() }).parse(await readJsonForTest(path.join(folder, "changes.json"))).candidateHash
+  await writeFile(path.join(folder, "review.json"), JSON.stringify({ ...review(digest), status: "failed", explanation: "Trade-name lettering is shifted." }))
+  await writeFile(path.join(root, "run.json"), JSON.stringify({ runId, apiBaseUrl: "https://api.example", domain: "apindexpharma.com", items: [item] }))
+  const oldBase = process.env.APINDEX_API_BASE_URL
+  const oldToken = process.env.ARTISTLY_STORE_API_TOKEN
+  const oldDomain = process.env.REBRAND_DOMAIN
   try {
-    process.env.REBRAND_VERTEX_AUTH = "express"
-    process.env.VERTEX_EXPRESS_API_KEY = "test-key"
-    process.env.REBRAND_IMAGE_MODEL = "gemini-2.5-flash-image"
-    context.mock.method(globalThis, "fetch", async (url: string | URL | Request, init?: RequestInit) => {
-      assert.match(String(url), /gemini-2\.5-flash-image:generateContent$/)
-      if (typeof init?.body !== "string") throw new Error("Expected JSON body")
-      const body = z.object({ contents: z.array(z.object({ parts: z.array(z.object({ inlineData: z.object({ data: z.string() }).optional() })) })) }).parse(JSON.parse(init.body))
-      assert.equal(body.contents[0].parts[1].inlineData?.data, Buffer.from("logo").toString("base64"))
-      assert.equal(body.contents[0].parts[2].inlineData?.data, Buffer.from("crop").toString("base64"))
-      requests++
-      return Response.json({ candidates: [{ finishReason: "STOP", content: { parts: [{ inlineData: { mimeType: "image/png", data: Buffer.from("result").toString("base64") } }] } }] })
-    })
-    assert.equal((await generateImage(Buffer.from("crop"), "image/png", Buffer.from("logo"), "image/png", "Edit the name only.")).toString(), "result")
-    assert.equal(requests, 1)
+    process.env.APINDEX_API_BASE_URL = "https://api.example"
+    process.env.ARTISTLY_STORE_API_TOKEN = "test-token"
+    process.env.REBRAND_DOMAIN = "apindexpharma.com"
+    context.mock.method(globalThis, "fetch", async () => { throw new Error("Unauthorized run must not publish") })
+    await assert.rejects(main(["publish", "--run", runId]))
+    await main(["status", "--run", runId])
+    const report = z.object({ totals: z.object({ failed: z.number(), published: z.number() }), products: z.array(z.object({ reason: z.string() })) }).parse(await readJsonForTest(path.join(root, "report.json")))
+    assert.equal(report.totals.failed, 1)
+    assert.equal(report.totals.published, 0)
+    assert.equal(report.products[0].reason, "Trade-name lettering is shifted.")
   } finally {
-    for (const [key, value] of [["REBRAND_VERTEX_AUTH", oldMode], ["VERTEX_EXPRESS_API_KEY", oldKey], ["REBRAND_IMAGE_MODEL", oldModel]] as const) {
+    for (const [key, value] of [["APINDEX_API_BASE_URL", oldBase], ["ARTISTLY_STORE_API_TOKEN", oldToken], ["REBRAND_DOMAIN", oldDomain]] as const) {
       if (value === undefined) delete process.env[key]
       else process.env[key] = value
     }

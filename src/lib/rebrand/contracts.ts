@@ -84,12 +84,8 @@ export const reviewSchema = z.object({
     medicineTextPreserved: z.boolean(),
   }).strict(),
 }).strict()
-export const approvalSchema = z.object({
-  approved: z.literal(true), candidateHash: hashSchema,
-  reference: z.string().trim().min(1).max(2000),
-}).strict()
-export const automationSchema = z.object({
-  enabled: z.literal(true), reference: z.string().trim().min(1).max(2000),
+export const authorizationSchema = z.object({
+  scope: z.enum(["active", "selected"]), reference: z.string().trim().min(1).max(2000),
 }).strict()
 
 export const publicationSchema = z.object({
@@ -117,14 +113,10 @@ export function candidateHash(product: RebrandProduct, patch: ProductPatch, imag
   return sha256(stableJson({ product, patch, imageHash, instructions }))
 }
 
-export function requireReview(review: unknown, approval: unknown, digest: string, automated: boolean): void {
+export function requireReview(review: unknown, digest: string): void {
   const checked = reviewSchema.parse(review)
   if (checked.status !== "passed" || checked.candidateHash !== digest || !Object.values(checked.checks).every(Boolean)) {
     throw new Error("Candidate needs a passing Codex inspection of the exact image and text before publishing.")
-  }
-  if (!automated) {
-    const approved = approvalSchema.parse(approval)
-    if (approved.candidateHash !== digest) throw new Error("User approval belongs to a different candidate.")
   }
 }
 

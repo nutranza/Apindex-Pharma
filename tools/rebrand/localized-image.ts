@@ -1,14 +1,9 @@
 import sharp from "sharp"
-import { readFile } from "node:fs/promises"
-import path from "node:path"
-import { z } from "zod"
 import { inspectImage } from "../../src/lib/rebrand/media"
-import { hashSchema, instructionSchema, renameWellonaBrand, sha256, stableJson, type Instructions, type Rectangle, type RebrandProduct } from "../../src/lib/rebrand/contracts"
-import { generateImage } from "./network"
-import { atomicWrite, readJson, writeJson } from "./files"
+import { instructionSchema, renameWellonaBrand, type Instructions, type Rectangle, type RebrandProduct } from "../../src/lib/rebrand/contracts"
+import { imagegenPatches } from "./imagegen"
 
-export const RENDERER_VERSION = "localized-v3-sharp-aligned"
-const NAME_EDITOR_VERSION = "localized-v1"
+export const RENDERER_VERSION = "imagegen-v1-protected-pixels"
 function overlaps(a: Rectangle, b: Rectangle): boolean {
   return a.left < b.left + b.width && b.left < a.left + a.width && a.top < b.top + b.height && b.top < a.top + a.height
 }
@@ -45,8 +40,6 @@ export function validateEditPlan(instructions: Instructions, product: RebrandPro
   if (plan.logos.some(rect => rect.width < 40 || rect.height < 22)) throw new Error("Logo space is too small. Review layout.")
   return edits
 }
-
-const cacheSchema = z.object({ key: hashSchema, imageHash: hashSchema }).strict()
 
 // Compare decoded pixels, not compressed JPEG/PNG bytes. PNG output is lossless.
 async function sourcePixels(original: Buffer, scale: number) {
@@ -88,59 +81,19 @@ function textOverlay(rect: Rectangle, text: string, background: string, fontSize
 }
 
 export async function renderLocalizedImage(original: Buffer, logo: Buffer, instructions: Instructions, product: RebrandProduct,
-  domain: string, directory: string, generate = generateImage): Promise<Buffer> {
+  domain: string, directory: string): Promise<Buffer> {
   const edits = validateEditPlan(instructions, product)
   const plan = instructions.editPlan
   if (!plan) throw new Error("Record the edit plan before generation.")
   const scale = plan.outputScale ?? 1
   const source = await sharp(original).metadata()
   if (source.width !== plan.sourceWidth || source.height !== plan.sourceHeight) throw new Error("Edit plan belongs to a different image size.")
-  const logoFormat = await inspectImage(logo, 7 * 1024 * 1024)
+  await inspectImage(logo, 7 * 1024 * 1024)
   const overlays: sharp.OverlayOptions[] = []
+  const patches = await imagegenPatches(original, instructions, directory)
   for (const [index, region] of Array.from(plan.names.entries())) {
-    if (region.reuseImageHash) {
-      // Codex can retain a visually checked name patch while changing only logos/domains.
-      // The explicit hash is part of the instruction/candidate review digest.
-      const retained = await readFile(path.join(directory, `name-region-${index}.png`))
-      await inspectImage(retained)
-      const dimensions = await sharp(retained).metadata()
-      if (sha256(retained) !== region.reuseImageHash || dimensions.width !== region.width || dimensions.height !== region.height) {
-        throw new Error("Retained name patch changed or belongs to another region. Inspect it again.")
-      }
-      const rect = scaleRect(region, scale)
-      overlays.push({ input: scale === 1 ? retained : await sharp(retained).resize(rect.width, rect.height, { kernel: "lanczos3" }).png().toBuffer(), left: rect.left, top: rect.top })
-      continue
-    }
-    // Square context avoids unsupported, extremely wide text-only aspect ratios.
-    // Only the specified name rectangle is pasted back, never surrounding context.
-    const side = Math.max(region.width, region.height)
-    if (side > Math.min(plan.sourceWidth, plan.sourceHeight)) throw new Error("Name region is too large for square editing context.")
-    const context = { left: Math.min(plan.sourceWidth - side, Math.max(0, Math.round(region.left + region.width / 2 - side / 2))),
-      top: Math.min(plan.sourceHeight - side, Math.max(0, Math.round(region.top + region.height / 2 - side / 2))), width: side, height: side }
-    const crop = await sharp(original).extract(context).png().toBuffer()
-    const prompt = `Edit only the trade-name lettering in image 2, the square target crop. Replace the exact text "${region.from}" with "${region.to}" in the same lettering style, colour, position and perspective. The target rectangle is x=${region.left - context.left}, y=${region.top - context.top}, width=${region.width}, height=${region.height} in the ${side} by ${side} input crop. Preserve background, geometry and all other marks. Keep the square crop and layout unchanged. Output one image of this crop only. Image 1 is reference context; do not insert its logo or any other brand into this crop.`
-    const key = sha256(stableJson({ version: NAME_EDITOR_VERSION, crop: sha256(crop), logo: sha256(logo), prompt, model: process.env.REBRAND_IMAGE_MODEL || "gemini-2.5-flash-image" }))
-    await atomicWrite(path.join(directory, `name-region-${index}-prompt.txt`), prompt)
-    const file = path.join(directory, `name-region-${index}.png`)
-    const record = path.join(directory, `name-region-${index}.json`)
-    let edited: Buffer | undefined
-    try {
-      const cached = cacheSchema.parse(await readJson(record))
-      const bytes = await readFile(file)
-      if (cached.key === key && sha256(bytes) === cached.imageHash) edited = bytes
-    } catch (error) {
-      if (!(error instanceof z.ZodError) && !(error instanceof SyntaxError) && !(error && typeof error === "object" && "code" in error && error.code === "ENOENT")) throw error
-    }
-    if (!edited) {
-      const generated = await generate(crop, "image/png", logo, logoFormat.mimeType, prompt)
-      await inspectImage(generated)
-      const dimensions = await sharp(generated).metadata()
-      if (!dimensions.width || !dimensions.height || Math.abs(dimensions.width / dimensions.height - 1) > 0.05) throw new Error("Generated crop changed aspect ratio. Review the region.")
-      const normalized = await sharp(generated).resize(side, side, { fit: "fill" }).png().toBuffer()
-      edited = await sharp(normalized).extract({ left: region.left - context.left, top: region.top - context.top, width: region.width, height: region.height }).png().toBuffer()
-      await atomicWrite(file, edited)
-      await writeJson(record, { key, imageHash: sha256(edited) })
-    }
+    const edited = patches.get(index)
+    if (!edited) throw new Error("Name region has no imported ImageGen patch.")
     const rect = scaleRect(region, scale)
     overlays.push({ input: scale === 1 ? edited : await sharp(edited).resize(rect.width, rect.height, { kernel: "lanczos3" }).png().toBuffer(), left: rect.left, top: rect.top })
   }
