@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, type MouseEvent } from "react"
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline"
 import Image from "next/image"
 import Link from "next/link"
@@ -18,7 +18,6 @@ const NAV_ITEMS: NavItem[] = [
   { label: "Products", href: "/products" },
   { label: "Blog", href: "/blog" },
   { label: "FAQ", href: "/faq" },
-  { label: "Contact", href: "/contact" },
 ]
 
 function normalizePathname(pathname: string) {
@@ -39,7 +38,7 @@ function isNavItemActive(pathname: string, href: string) {
   const hrefPathname = getHrefPathname(href)
 
   if (hrefPathname === "/") {
-    return false
+    return pathname === "/"
   }
 
   if (hrefPathname === "/products") {
@@ -57,6 +56,26 @@ export default function TopNavBar() {
   const pathname = normalizePathname(usePathname() ?? "/")
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const scrollPositionRef = useRef(0)
+  const isContactActive = isNavItemActive(pathname, "/contact")
+  const contactActiveClass = isContactActive
+    ? "bg-on-secondary-container ring-2 ring-secondary/40 ring-offset-2"
+    : ""
+
+  function handleHomeClick(event: MouseEvent<HTMLAnchorElement>) {
+    if (
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      event.button !== 0
+    )
+      return
+    setIsMobileMenuOpen(false)
+    if (pathname !== "/") return
+    event.preventDefault()
+    window.scrollTo({ top: 0, behavior: "smooth" })
+    window.dispatchEvent(new Event("apindex:home-activated"))
+  }
 
   useEffect(() => {
     setIsMobileMenuOpen(false)
@@ -103,7 +122,12 @@ export default function TopNavBar() {
     <nav className="fixed top-0 z-50 w-full border-b border-gray-200/60 shadow-sm bg-white">
       <div className="content-container">
         <div className="flex h-20 w-full items-center justify-between">
-          <Link href="/" aria-label="Apindex home" className="shrink-0">
+          <Link
+            href="/"
+            aria-label="Apindex home"
+            onClick={handleHomeClick}
+            className="shrink-0"
+          >
             <Image
               src="/apindex-logo-registered.png"
               alt="Apindex"
@@ -124,6 +148,7 @@ export default function TopNavBar() {
                 <Link
                   key={item.label}
                   href={item.href}
+                  onClick={item.href === "/" ? handleHomeClick : undefined}
                   aria-current={isActive ? "page" : undefined}
                   className={`group apx-font-headline inline-flex shrink-0 items-center py-2 text-sm font-medium uppercase transition-colors focus-visible:outline-none medium:text-base ${
                     isActive
@@ -141,6 +166,13 @@ export default function TopNavBar() {
                 </Link>
               )
             })}
+            <Link
+              href="/contact"
+              aria-current={isContactActive ? "page" : undefined}
+              className={`apx-button-secondary apx-font-headline shrink-0 uppercase ${contactActiveClass}`}
+            >
+              Contact
+            </Link>
           </div>
 
           <button
@@ -178,15 +210,21 @@ export default function TopNavBar() {
             className="absolute left-0 top-0 flex h-full w-[min(80vw,360px)] animate-fade-in-left flex-col bg-white shadow-[18px_0_36px_rgba(86,67,54,0.16)]"
           >
             <div className="flex h-20 items-center justify-between border-b border-gray-200/80 px-6">
-              <Image
-                src="/apindex-logo-registered.png"
-                alt="Apindex"
-                width={1920}
-                height={1187}
-                sizes="104px"
-                quality={90}
-                className="h-14 w-auto object-contain"
-              />
+              <Link
+                href="/"
+                aria-label="Apindex home"
+                onClick={handleHomeClick}
+              >
+                <Image
+                  src="/apindex-logo-registered.png"
+                  alt="Apindex"
+                  width={1920}
+                  height={1187}
+                  sizes="104px"
+                  quality={90}
+                  className="h-14 w-auto object-contain"
+                />
+              </Link>
               <button
                 type="button"
                 aria-label="Close navigation menu"
@@ -206,7 +244,10 @@ export default function TopNavBar() {
                     key={item.label}
                     href={item.href}
                     aria-current={isActive ? "page" : undefined}
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={(event) => {
+                      if (item.href === "/") handleHomeClick(event)
+                      else setIsMobileMenuOpen(false)
+                    }}
                     className={`group apx-font-headline rounded-lg px-4 py-3 text-base font-bold uppercase transition-colors focus-visible:outline-none ${
                       isActive
                         ? "bg-primary-fixed text-primary"
@@ -223,7 +264,14 @@ export default function TopNavBar() {
                   </Link>
                 )
               })}
-
+              <Link
+                href="/contact"
+                aria-current={isContactActive ? "page" : undefined}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`apx-button-secondary apx-font-headline mt-4 w-full uppercase ${contactActiveClass}`}
+              >
+                Contact
+              </Link>
             </div>
           </div>
         </div>

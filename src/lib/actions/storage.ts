@@ -4,6 +4,9 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3"
 import { r2Client } from "../r2"
 import { v4 as uuidv4 } from "uuid"
+import { ensureAdmin } from "@/lib/data/admin"
+import { requirePermission } from "@/lib/permissions/server"
+import { PERMISSIONS } from "@/lib/permissions"
 import {
   getProductMediaBaseUrl,
   PRODUCT_MEDIA_CONFIG_ERROR,
@@ -15,9 +18,16 @@ export async function getPresignedUploadUrl({
     maxSizeMB: _maxSizeMB = 10,
 }: {
     fileType: string
-    folder?: "reviews" | "banners" | "exclusive-videos" | "products" | "categories" | "collections"
+    folder?: "reviews" | "banners" | "event-banners" | "exclusive-videos" | "products" | "categories" | "collections"
     maxSizeMB?: number
 }) {
+    if (folder === "event-banners") {
+        await ensureAdmin()
+        await requirePermission(PERMISSIONS.HOME_SETTINGS_UPDATE)
+        if (!getProductMediaBaseUrl()) {
+            return { error: "Event image storage is not configured." }
+        }
+    }
     try {
         if (folder === "products" && !getProductMediaBaseUrl()) {
             return { error: PRODUCT_MEDIA_CONFIG_ERROR }
@@ -36,6 +46,7 @@ export async function getPresignedUploadUrl({
                 "audio/webm;codecs=opus"
             ],
             banners: ["image/jpeg", "image/png", "image/webp"],
+            "event-banners": ["image/jpeg", "image/png", "image/webp"],
             "exclusive-videos": ["video/mp4", "video/webm"],
             products: ["image/jpeg", "image/png", "image/webp"],
             categories: ["image/jpeg", "image/png", "image/webp"],

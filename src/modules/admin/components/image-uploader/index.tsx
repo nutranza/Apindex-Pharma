@@ -8,11 +8,13 @@ import { getFileUrl } from "@/lib/r2"
 import { useToast } from "@modules/common/context/toast-context"
 
 type Props = {
-    folder: "banners" | "exclusive-videos" | "categories" | "collections"
+    folder: "banners" | "event-banners" | "exclusive-videos" | "categories" | "collections"
     value?: string
     onChange: (_url: string) => void
     acceptedFormats: string[]
     maxSizeMB: number
+    onUploadingChange?: (_uploading: boolean) => void
+    disabled?: boolean
 }
 
 export default function ImageUploader({
@@ -21,6 +23,8 @@ export default function ImageUploader({
     onChange,
     acceptedFormats,
     maxSizeMB,
+    onUploadingChange,
+    disabled = false,
 }: Props) {
     const { showToast } = useToast()
     const [isUploading, setIsUploading] = useState(false)
@@ -28,6 +32,7 @@ export default function ImageUploader({
     const [isDragging, setIsDragging] = useState(false)
 
     const handleUpload = useCallback(async (file: File) => {
+        if (disabled || isUploading) return
         // Validate file size
         if (file.size > maxSizeMB * 1024 * 1024) {
             showToast(`File must be smaller than ${maxSizeMB}MB`, "error")
@@ -41,6 +46,7 @@ export default function ImageUploader({
         }
 
         setIsUploading(true)
+        onUploadingChange?.(true)
         setUploadProgress(0)
 
         try {
@@ -68,7 +74,9 @@ export default function ImageUploader({
 
                 xhr.addEventListener("load", () => {
                     if (xhr.status === 200) {
-                        const publicUrl = getFileUrl(key)
+                        const publicUrl = folder === "event-banners"
+                            ? `${process.env.NEXT_PUBLIC_R2_PUBLIC_URL?.replace(/\/+$/, "")}/${key}`
+                            : getFileUrl(key)
                         onChange(publicUrl)
                         showToast("Upload complete!", "success")
                         resolve()
@@ -93,9 +101,10 @@ export default function ImageUploader({
             )
         } finally {
             setIsUploading(false)
+            onUploadingChange?.(false)
             setUploadProgress(0)
         }
-    }, [acceptedFormats, folder, maxSizeMB, onChange, showToast])
+    }, [acceptedFormats, disabled, folder, isUploading, maxSizeMB, onChange, onUploadingChange, showToast])
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0]
@@ -129,10 +138,11 @@ export default function ImageUploader({
     }
 
     const handleRemove = () => {
+        if (disabled) return
         onChange("")
     }
 
-    const isImage = folder === "banners" || folder === "categories" || folder === "collections"
+    const isImage = folder === "banners" || folder === "event-banners" || folder === "categories" || folder === "collections"
     const isVideo = folder === "exclusive-videos"
 
     return (
@@ -145,7 +155,7 @@ export default function ImageUploader({
                                 src={value}
                                 alt="Uploaded image"
                                 fill
-                                className="object-cover"
+                                className={folder === "event-banners" ? "object-contain" : "object-cover"}
                             />
                         ) : isVideo ? (
                             <video
@@ -158,6 +168,7 @@ export default function ImageUploader({
                     <button
                         type="button"
                         onClick={handleRemove}
+                        disabled={disabled}
                         className="absolute top-2 right-2 p-2 bg-red-600 text-white rounded-lg hover:bg-red-700 shadow-lg transition-colors"
                     >
                         <XMarkIcon className="h-4 w-4" />
@@ -179,7 +190,7 @@ export default function ImageUploader({
                         onChange={handleFileSelect}
                         className="hidden"
                         id="file-upload"
-                        disabled={isUploading}
+                        disabled={disabled || isUploading}
                     />
                     <label htmlFor="file-upload" className="cursor-pointer">
                         <CloudArrowUpIcon className="mx-auto h-12 w-12 text-gray-400" />
