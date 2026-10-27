@@ -66,7 +66,7 @@ export default function WhyChooseUsSection() {
       <div className="content-container">
         <div className="mb-12 max-w-3xl">
           <h2 className="section-heading">
-            Why Choose <span className="text-primary">Apindex?</span>
+            Why Choose <span className="text-secondary">Apindex?</span>
           </h2>
           <p className="mt-5 max-w-2xl section-description">
             A dependable pharmaceutical partner for finished formulations,

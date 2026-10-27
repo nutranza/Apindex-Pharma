@@ -58,7 +58,7 @@ export default function TopNavBar() {
   const scrollPositionRef = useRef(0)
   const isContactActive = isNavItemActive(pathname, "/contact")
   const contactActiveClass = isContactActive
-    ? "bg-on-secondary-container ring-2 ring-secondary/40 ring-offset-2"
+    ? "bg-on-secondary-container"
     : ""
 
   function handleHomeClick(event: MouseEvent<HTMLAnchorElement>) {

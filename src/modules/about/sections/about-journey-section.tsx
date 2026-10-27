@@ -48,7 +48,7 @@ export default function AboutJourneySection() {
   return (
     <section aria-labelledby="journey-heading" className="apx-section bg-white">
       <div className="content-container">
-        <div>
+        <div className="text-center">
           <h2 id="journey-heading" className="section-heading">
             Our <span className="text-primary">Journey</span>
           </h2>

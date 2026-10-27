@@ -66,12 +66,12 @@ const CATEGORY_CARDS: CategoryCard[] = [
 
 export default function CategoriesSection() {
   return (
-    <section id="categories" className="bg-white apx-section">
+    <section id="categories" className="bg-[#f3f8ed] apx-section">
       <div className="content-container">
         <div className="mb-10 max-w-3xl lg:mb-12">
           <h2 className="section-heading text-on-surface">
             Product{" "}
-            <span className="text-primary">Categories</span>
+            <span className="text-secondary">Categories</span>
           </h2>
           <p className="mt-4 section-description">
             Explore dosage formats designed for institutional, domestic, and

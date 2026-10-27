@@ -52,13 +52,13 @@ export default function AboutCertificationsSection() {
     <section
       id="credentials"
       aria-labelledby="certifications-heading"
-      className="scroll-mt-28 bg-surface-low apx-section"
+      className="scroll-mt-28 bg-[#fff8ed] apx-section"
     >
       <div className="content-container">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h2 id="certifications-heading" className="section-heading">
-            Certifications &amp;{" "}
-            <span className="text-primary">Registrations</span>
+            Our{" "}
+            <span className="text-primary">Certifications</span>
           </h2>
           <p className="section-description mt-4">
             Quality standards, regulatory frameworks, and business credentials

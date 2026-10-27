@@ -13,9 +13,9 @@ export default function LandingPageTemplate() {
         <HeroSection />
         <WelcomeSection />
         <CategoriesSection />
-        <ServicesSection />
-        <GlobalPresenceSection />
         <WhyChooseUsSection />
+        <GlobalPresenceSection />
+        <ServicesSection />
         <CtaSection />
       </main>
     </div>

@@ -1,11 +1,11 @@
 import Image from "next/image"
 import Link from "next/link"
 
-const TRUST_POINTS = [
-  { value: "WHO-GMP", label: "Certified" },
-  { value: "500+", label: "Products" },
-  { value: "5+", label: "Countries" },
-]
+// const TRUST_POINTS = [
+//   { value: "WHO-GMP", label: "Certified" },
+//   { value: "500+", label: "Products" },
+//   { value: "5+", label: "Countries" },
+// ]
 
 export default function WelcomeSection() {
   return (
@@ -28,13 +28,13 @@ export default function WelcomeSection() {
                 supply.
               </p>
               <p>
-                Our portfolio of 500+ products spans diverse therapeutic
+                Our portfolio of 1000+ products spans diverse therapeutic
                 categories and reaches 5+ countries through quality-focused
                 processes, dependable sourcing, and partner-first execution.
               </p>
             </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-x-4 py-3">
+            {/* <div className="mt-8 grid grid-cols-3 gap-x-4 py-3">
               {TRUST_POINTS.map((point) => (
                 <div key={point.label}>
                   <div className="apx-font-headline text-lg font-extrabold leading-none text-on-surface sm:text-2xl">
@@ -45,10 +45,10 @@ export default function WelcomeSection() {
                   </div>
                 </div>
               ))}
-            </div>
+            </div> */}
 
-            <Link href="/about" className="apx-button-primary mt-6">
-              About Apindex
+            <Link href="/about" className="apx-button-secondary mt-6">
+              About Apindex Pharma
             </Link>
           </div>
 

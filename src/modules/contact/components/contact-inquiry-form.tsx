@@ -1,15 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { ChevronDown, Send } from "lucide-react"
-import {
-  type FormEvent,
-  type ReactNode,
-  useRef,
-  useState,
-} from "react"
+import { Send } from "lucide-react"
+import { type FormEvent, type ReactNode, useRef, useState } from "react"
 
 import Modal from "@modules/common/components/modal"
+import PhoneCountrySelect from "@modules/contact/components/phone-country-select"
 import { useOptionalToast } from "@modules/common/context/toast-context"
 import {
   getPhoneCountryRule,
@@ -117,9 +113,13 @@ export default function ContactInquiryForm() {
         className="hidden"
       />
 
+      <p className="text-xs text-on-surface-variant">
+        Fields marked <RequiredMark /> are required.
+      </p>
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
-        <Field label="Full Name">
+        <Field label="Full Name" htmlFor="contact-full-name" required>
           <input
+            id="contact-full-name"
             aria-label="Full Name"
             name="full_name"
             type="text"
@@ -130,8 +130,9 @@ export default function ContactInquiryForm() {
             maxLength={120}
           />
         </Field>
-        <Field label="Work Email">
+        <Field label="Work Email" htmlFor="contact-work-email" required>
           <input
+            id="contact-work-email"
             aria-label="Work Email"
             name="work_email"
             type="email"
@@ -144,35 +145,24 @@ export default function ContactInquiryForm() {
       </div>
 
       <div className="grid grid-cols-1 gap-5">
-        <Field label="Phone Number">
-          <div className="grid grid-cols-[minmax(0,150px)_minmax(0,1fr)] gap-2">
-            <div className="relative">
-              <select
-                aria-label="Phone Country Code"
-                name="phone_country_code"
-                value={phoneCountryCode}
-                autoComplete="tel-country-code"
-                className={`${FIELD_CLASS} appearance-none pr-10`}
-                onChange={(event) => {
-                  const nextCountryCode = event.target.value
-                  const nextRule =
-                    getPhoneCountryRule(nextCountryCode) ?? PHONE_COUNTRY_CODES[0]
+        <Field label="Phone Number" htmlFor="contact-phone-number">
+          <div className="grid grid-cols-[132px_minmax(0,1fr)] gap-2 sm:grid-cols-[150px_minmax(0,1fr)]">
+            <PhoneCountrySelect
+              value={phoneCountryCode}
+              className={FIELD_CLASS}
+              disabled={isSubmitting}
+              onChange={(nextCountryCode) => {
+                const nextRule =
+                  getPhoneCountryRule(nextCountryCode) ?? PHONE_COUNTRY_CODES[0]
 
-                  setPhoneCountryCode(nextCountryCode)
-                  setPhoneNumber((currentValue) =>
-                    currentValue.slice(0, nextRule.maxDigits)
-                  )
-                }}
-              >
-                {PHONE_COUNTRY_CODES.map((countryCode) => (
-                  <option key={countryCode.value} value={countryCode.value}>
-                    {countryCode.label}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-on-surface-variant" />
-            </div>
+                setPhoneCountryCode(nextCountryCode)
+                setPhoneNumber((currentValue) =>
+                  currentValue.slice(0, nextRule.maxDigits)
+                )
+              }}
+            />
             <input
+              id="contact-phone-number"
               aria-label="Phone Number"
               name="phone_number"
               type="tel"
@@ -201,8 +191,9 @@ export default function ContactInquiryForm() {
         </Field>
       </div>
 
-      <Field label="Message">
+      <Field label="Message" htmlFor="contact-message" required>
         <textarea
+          id="contact-message"
           aria-label="Message"
           name="message"
           rows={5}
@@ -246,7 +237,7 @@ export default function ContactInquiryForm() {
             >
               Privacy Policy
             </Link>
-            .
+            . <RequiredMark />
           </span>
         </span>
       </label>
@@ -288,17 +279,29 @@ export default function ContactInquiryForm() {
 
 function Field({
   label,
+  htmlFor,
+  required = false,
   children,
 }: {
   label: string
+  htmlFor: string
+  required?: boolean
   children: ReactNode
 }) {
   return (
-    <label className="block space-y-2">
-              <span className="apx-field-label mb-0">
-        {label}
-      </span>
+    <div className="block space-y-2">
+      <label htmlFor={htmlFor} className="apx-field-label mb-0">
+        {label} {required ? <RequiredMark /> : null}
+      </label>
       {children}
-    </label>
+    </div>
+  )
+}
+
+function RequiredMark() {
+  return (
+    <span aria-hidden="true" className="font-semibold text-red-600">
+      *
+    </span>
   )
 }
