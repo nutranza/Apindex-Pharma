@@ -308,7 +308,7 @@ export default function ProductsCatalogSection({
   return (
     <section
       id="product-catalog"
-      className="scroll-mt-24 bg-surface py-14 sm:py-16 lg:py-24"
+      className="scroll-mt-24 bg-white py-14 sm:py-16 lg:py-24"
     >
       <div className="content-container">
         <div className="mb-10 rounded-3xl border border-outline-variant/25 bg-white p-4 shadow-[0_14px_38px_rgba(86,67,54,0.06)] sm:p-7">

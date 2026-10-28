@@ -28,39 +28,48 @@ const PURPOSE_CARDS: PurposeCard[] = [
 
 export default function AboutPurposeSection() {
   return (
-    <section className="bg-white apx-section">
-      <div className="content-container">
-        <h2 id="purpose-heading" className="sr-only">
-          Mission &amp; Vision
-        </h2>
+    <div role="group" aria-labelledby="purpose-heading">
+      <h2 id="purpose-heading" className="section-heading">
+        Guided by <span className="text-secondary">purpose</span>
+      </h2>
+      <p className="mt-4 max-w-3xl section-description">
+        Our mission and vision guide how we deliver quality pharmaceutical
+        products, support healthcare partners, and grow responsibly.
+      </p>
 
-        <div
-          aria-labelledby="purpose-heading"
-          className="grid grid-cols-1 gap-14 md:grid-cols-2 md:gap-16 lg:gap-24"
-        >
-          {PURPOSE_CARDS.map((card) => {
-            const Icon = card.icon
+      <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:mt-10">
+        {PURPOSE_CARDS.map((card) => {
+          const Icon = card.icon
 
-            return (
-              <article key={card.title} className="max-w-xl">
-                <Icon
-                  aria-hidden="true"
-                  className="size-14 text-primary"
-                  strokeWidth={1.7}
-                />
-                <h3 className="mt-7 text-2xl font-medium uppercase tracking-[0.01em] text-on-surface">
-                  {card.title}
+          return (
+            <article
+              key={card.title}
+              className="min-w-0 rounded-3xl border border-secondary/20 bg-white p-6 sm:p-8 lg:p-10"
+            >
+              <div className="flex items-center gap-4">
+                <span
+                  className="inline-flex size-14 shrink-0 items-center justify-center rounded-2xl
+                    bg-secondary/20 text-secondary"
+                >
+                  <Icon
+                    aria-hidden="true"
+                    className="size-7"
+                    strokeWidth={1.7}
+                  />
+                </span>
+                <h3 className="apx-font-headline text-2xl font-semibold text-on-surface">
+                  Our {card.title}
                 </h3>
-                <div className="mt-4 space-y-4 text-base leading-7 text-on-surface sm:text-lg sm:leading-8">
-                  {card.paragraphs.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </div>
-              </article>
-            )
-          })}
-        </div>
+              </div>
+              <div className="mt-6 space-y-4 text-base leading-7 text-on-surface-variant">
+                {card.paragraphs.map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            </article>
+          )
+        })}
       </div>
-    </section>
+    </div>
   )
 }

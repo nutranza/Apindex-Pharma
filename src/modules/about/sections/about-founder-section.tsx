@@ -4,18 +4,18 @@ export default function AboutFounderSection() {
   return (
     <section className="bg-white apx-section-compact">
       <div className="content-container">
-        <div className="grid items-center gap-8 rounded-3xl bg-surface-low p-6 sm:p-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-12 lg:p-10">
-          <div className="relative h-[280px] overflow-hidden rounded-2xl sm:h-[340px] lg:h-[360px]">
+        <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-16">
+          <div className="relative h-[380px] overflow-hidden rounded-2xl sm:h-[480px] lg:h-[520px]">
             <Image
               fill
-              sizes="(min-width: 1024px) 280px, 100vw"
+              sizes="(min-width: 1280px) 592px, (min-width: 1024px) calc((100vw - 96px) / 2), calc(100vw - 32px)"
               src="/founder-of-apindex.jpeg"
               alt="Ashish Chovatiya, Director of Apindex Pharmaceuticals"
               className="object-cover object-[center_28%]"
             />
           </div>
 
-          <div className="max-w-3xl">
+          <div className="min-w-0">
             <p className="apx-eyebrow">
               Founder&apos;s Message
             </p>
