@@ -13,7 +13,8 @@ export default function VisitorRegistrationPageTemplate() {
             (IIATE) 2026 Visitor Registration Form
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-on-surface-variant sm:text-base">
-            Register to visit the IIATE 2026 event at KICC, Nairobi, Kenya.
+            Register to visit the IIATE 2026 event on 2-3-4 December 2026 at
+            Oshwal Center, Westland, Nairobi, Kenya.
           </p>
         </div>
 
