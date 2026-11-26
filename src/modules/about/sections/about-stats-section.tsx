@@ -29,7 +29,7 @@ export default function AboutStatsSection() {
       <div className="content-container">
         <AboutPurposeSection />
 
-        <div className="mt-12 lg:mt-16">
+        <div className="mt-14 lg:mt-16">
           <h2 id="about-stats-heading" className="section-heading col-span-full mb-4 lg:mb-6">
             Trusted worldwide.{" "}
             <span className="text-secondary">Committed to quality.</span>

@@ -25,7 +25,7 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        <div className="mb-10 overflow-hidden rounded-2xl border border-outline-variant/20 bg-[#0d1117] shadow-[0_24px_60px_rgba(13,17,23,0.12)] lg:mb-12">
+        <div className="overflow-hidden rounded-2xl border border-outline-variant/20 bg-[#0d1117] shadow-[0_24px_60px_rgba(13,17,23,0.12)]">
           <div className="grid lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
             <div className="relative aspect-video min-h-[240px] overflow-hidden lg:min-h-[360px]">
               {MANUFACTURING_VIDEO_URL ? (

@@ -23,7 +23,7 @@ export default function ProductCatalogLoading() {
   return (
     <section
       id="product-catalog"
-      className="scroll-mt-24 bg-surface py-14 sm:py-16 lg:py-24"
+      className="scroll-mt-24 bg-surface apx-section"
     >
       <div className="content-container">
         <ProductResultsLoading />
