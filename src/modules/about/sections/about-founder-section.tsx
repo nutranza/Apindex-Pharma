@@ -9,7 +9,7 @@ export default function AboutFounderSection() {
             <Image
               fill
               sizes="(min-width: 1280px) 592px, (min-width: 1024px) calc((100vw - 96px) / 2), calc(100vw - 32px)"
-              src="/founder-of-apindex.jpeg"
+              src="/director-img.jpeg"
               alt="Ashish Chovatiya, Director of Apindex Pharmaceuticals"
               className="object-cover object-[center_28%]"
             />

@@ -13,6 +13,7 @@ import {
   EventBannerResponseSchema,
   type PublicEventBanner,
 } from "@/lib/types/event-banner"
+import Link from "next/link"
 
 export default function EventBannerPopup() {
   const [banner, setBanner] = useState<PublicEventBanner | null>(null)
@@ -107,16 +108,18 @@ export default function EventBannerPopup() {
               type="button"
               onClick={close}
               aria-label="Close event banner"
-              className="absolute right-3 top-3 z-10 flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-900 shadow-md hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="absolute -right-3 -top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-900 shadow-md hover:bg-gray-100 focus-visible:outline-none"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
-            <img
-              src={banner.image_url}
-              alt={banner.name}
-              onError={() => setIsOpen(false)}
-              className="block max-h-[85dvh] w-auto max-w-full rounded-lg object-contain"
-            />
+            <Link href="/kenya-expo">
+              <img
+                src={banner.image_url}
+                alt={banner.name}
+                onError={() => setIsOpen(false)}
+                className="block max-h-[85dvh] w-auto max-w-full rounded-lg object-contain"
+              />
+            </Link>
           </DialogPanel>
         </div>
       </Dialog>

@@ -126,11 +126,11 @@ body {
   }
 
   .apx-section {
-    @apply py-16 lg:py-24;
+    @apply py-14 lg:py-16;
   }
 
   .apx-section-compact {
-    @apply py-12 lg:py-16;
+    @apply py-14 lg:py-16;
   }
 
   .apx-eyebrow {
